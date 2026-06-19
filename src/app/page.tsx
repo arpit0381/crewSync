@@ -2,6 +2,9 @@ import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { Calendar, MapPin, Users, Award, ShieldCheck, ArrowRight } from "lucide-react"
 
+export const dynamic = "force-dynamic"
+
+
 async function getPublishedEvents() {
   try {
     const supabase = await createClient()
@@ -172,18 +175,24 @@ export default async function LandingPage() {
           </div>
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {events.map((event) => (
-              <div
-                key={event.id}
-                className="flex flex-col rounded-3xl border border-zinc-900 bg-zinc-900/30 backdrop-blur-sm overflow-hidden hover:border-zinc-800/80 transition-all duration-300 group hover:scale-[1.01]"
-              >
-                {/* Event Image Banner (Standard CSS fallback) */}
-                <div className="h-48 w-full bg-gradient-to-br from-zinc-800 to-zinc-950 flex items-center justify-center p-6 relative">
-                  <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <span className="text-xs font-bold uppercase tracking-widest text-primary border border-primary/20 px-3 py-1.5 rounded-full bg-primary/5">
-                    {event.categories?.name || "Campus Event"}
-                  </span>
-                </div>
+            {events.map((event) => {
+              const categoryName = Array.isArray(event.categories)
+                ? event.categories[0]?.name
+                : (event.categories as any)?.name;
+
+              return (
+                <div
+                  key={event.id}
+                  className="flex flex-col rounded-3xl border border-zinc-900 bg-zinc-900/30 backdrop-blur-sm overflow-hidden hover:border-zinc-800/80 transition-all duration-300 group hover:scale-[1.01]"
+                >
+                  {/* Event Image Banner (Standard CSS fallback) */}
+                  <div className="h-48 w-full bg-gradient-to-br from-zinc-800 to-zinc-950 flex items-center justify-center p-6 relative">
+                    <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="text-xs font-bold uppercase tracking-widest text-primary border border-primary/20 px-3 py-1.5 rounded-full bg-primary/5">
+                      {categoryName || "Campus Event"}
+                    </span>
+                  </div>
+
 
                 <div className="flex flex-1 flex-col p-6 space-y-4">
                   <div className="space-y-2">
@@ -229,7 +238,11 @@ export default async function LandingPage() {
                   </Link>
                 </div>
               </div>
-            ))}
+              )
+            })}
+
+
+
           </div>
         </section>
 

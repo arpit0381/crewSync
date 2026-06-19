@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
-import { Calendar, Ticket, Award, CheckSquare, Trophy } from "lucide-react"
+import { Calendar, Ticket, Award, CheckSquare, Trophy, Users } from "lucide-react"
+
 
 async function getStudentData() {
   try {

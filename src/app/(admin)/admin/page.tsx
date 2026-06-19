@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
-import { Calendar, Users, CheckSquare, Trophy, Plus, FileText, ArrowUpRight } from "lucide-react"
+import { AnalyticsCharts } from "@/components/admin/analytics-charts"
+import { Calendar, Users, CheckSquare, Trophy, Plus, ArrowUpRight } from "lucide-react"
 
 async function getAdminData() {
   try {
@@ -53,7 +54,7 @@ export default async function AdminDashboardPage() {
         </div>
         <div>
           <Link
-            href="/admin/events?action=new"
+            href="/admin/events"
             className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/95 transition-all shadow-md shadow-primary/20"
           >
             <Plus className="h-4 w-4" />
@@ -104,6 +105,9 @@ export default async function AdminDashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Analytics Charts Panel */}
+      <AnalyticsCharts />
 
       {/* Main Grid split */}
       <div className="grid gap-6 md:grid-cols-3">

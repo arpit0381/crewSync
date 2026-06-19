@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation"
 import { signInAction } from "@/app/auth-actions"
 import { ShieldCheck, Loader2 } from "lucide-react"
 
-export default function LoginPage() {
+function LoginForm() {
   const searchParams = useSearchParams()
   const errorMsg = searchParams.get("error")
   const successMsg = searchParams.get("message")
@@ -31,6 +31,82 @@ export default function LoginPage() {
   }
 
   return (
+    <form className="space-y-6" onSubmit={handleSubmit}>
+      {error && (
+        <div className="p-4 rounded-xl bg-red-950/40 border border-red-900/50 text-red-400 text-sm text-center">
+          {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-900/50 text-emerald-400 text-sm text-center">
+          {success}
+        </div>
+      )}
+
+      <div>
+        <label htmlFor="email" className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+          Email address
+        </label>
+        <div className="mt-2">
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            required
+            className="block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 py-3 text-white placeholder-zinc-500 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
+            placeholder="name@college.edu"
+          />
+        </div>
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between">
+          <label htmlFor="password" className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+            Password
+          </label>
+          <div className="text-sm">
+            <Link
+              href="/forgot-password"
+              className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+            >
+              Forgot password?
+            </Link>
+          </div>
+        </div>
+        <div className="mt-2">
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            required
+            className="block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 py-3 text-white placeholder-zinc-500 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
+            placeholder="••••••••"
+          />
+        </div>
+      </div>
+
+      <div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="relative flex w-full items-center justify-center rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-lg hover:bg-primary/95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all disabled:opacity-50"
+        >
+          {loading ? (
+            <Loader2 className="animate-spin h-5 w-5 mr-2" />
+          ) : (
+            "Sign In"
+          )}
+        </button>
+      </div>
+    </form>
+  )
+}
+
+export default function LoginPage() {
+  return (
     <div className="relative min-h-screen flex items-center justify-center bg-zinc-950 px-4 py-12 sm:px-6 lg:px-8 overflow-hidden select-none">
       {/* Background glow effects */}
       <div className="absolute inset-0 z-0">
@@ -53,77 +129,13 @@ export default function LoginPage() {
         </div>
 
         <div className="mt-8 bg-zinc-900/60 backdrop-blur-xl border border-zinc-800/80 p-8 rounded-3xl shadow-2xl">
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {error && (
-              <div className="p-4 rounded-xl bg-red-950/40 border border-red-900/50 text-red-400 text-sm text-center">
-                {error}
-              </div>
-            )}
-
-            {success && (
-              <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-900/50 text-emerald-400 text-sm text-center">
-                {success}
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="email" className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-                Email address
-              </label>
-              <div className="mt-2">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  className="block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 py-3 text-white placeholder-zinc-500 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
-                  placeholder="name@college.edu"
-                />
-              </div>
+          <React.Suspense fallback={
+            <div className="flex justify-center py-6">
+              <Loader2 className="animate-spin h-6 w-6 text-primary" />
             </div>
-
-            <div>
-              <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-                  Password
-                </label>
-                <div className="text-sm">
-                  <Link
-                    href="/forgot-password"
-                    className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
-              </div>
-              <div className="mt-2">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  className="block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 py-3 text-white placeholder-zinc-500 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
-                  placeholder="••••••••"
-                />
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="relative flex w-full items-center justify-center rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-lg hover:bg-primary/95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all disabled:opacity-50"
-              >
-                {loading ? (
-                  <Loader2 className="animate-spin h-5 w-5 mr-2" />
-                ) : (
-                  "Sign In"
-                )}
-              </button>
-            </div>
-          </form>
+          }>
+            <LoginForm />
+          </React.Suspense>
 
           <div className="mt-6 text-center text-xs">
             <span className="text-zinc-500">Don't have an account? </span>
