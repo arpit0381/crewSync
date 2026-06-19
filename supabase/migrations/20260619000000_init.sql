@@ -301,6 +301,90 @@ create policy "Allow users to view own tickets" on tickets for select using (
   registration_id in (select id from registrations where user_id = auth.uid())
 );
 
+-- Categories
+create policy "Allow public read access to categories" on categories for select using (true);
+create policy "Allow write access to categories for admins" on categories for all using (
+  auth.uid() in (select id from public.profiles where role in ('super_admin', 'department_admin'))
+);
+
+-- Teams
+create policy "Allow authenticated users to read teams" on teams for select using (auth.role() = 'authenticated');
+create policy "Allow authenticated users to create teams" on teams for insert with check (auth.role() = 'authenticated');
+create policy "Allow captains or admins to update teams" on teams for update using (
+  auth.uid() = captain_id or 
+  auth.uid() in (select id from public.profiles where role in ('super_admin', 'tournament_admin'))
+);
+
+-- Team Members
+create policy "Allow authenticated users to read team members" on team_members for select using (auth.role() = 'authenticated');
+create policy "Allow authenticated users to join teams" on team_members for insert with check (auth.uid() = user_id);
+create policy "Allow captains or members to leave/remove" on team_members for delete using (
+  auth.uid() = user_id or 
+  auth.uid() in (select captain_id from public.teams where id = team_id) or
+  auth.uid() in (select id from public.profiles where role in ('super_admin', 'tournament_admin'))
+);
+
+-- Attendance
+create policy "Allow users to read own attendance" on attendance for select using (
+  student_id = auth.uid() or 
+  auth.uid() in (select id from public.profiles where role in ('super_admin', 'department_admin', 'club_admin'))
+);
+create policy "Allow organizers to log attendance" on attendance for insert with check (
+  auth.uid() in (select id from public.profiles where role in ('super_admin', 'department_admin', 'club_admin'))
+);
+
+-- Certificate Templates
+create policy "Allow public read access to certificate templates" on certificate_templates for select using (true);
+create policy "Allow write access to certificate templates for admins" on certificate_templates for all using (
+  auth.uid() in (select id from public.profiles where role in ('super_admin', 'department_admin'))
+);
+
+-- Certificates
+create policy "Allow users to read own certificates" on certificates for select using (
+  user_id = auth.uid() or 
+  auth.uid() in (select id from public.profiles where role in ('super_admin', 'department_admin'))
+);
+create policy "Allow users to claim own certificates" on certificates for insert with check (user_id = auth.uid());
+
+-- Sports & Esports Tournaments
+create policy "Allow public read access to sports tournaments" on sports_tournaments for select using (true);
+create policy "Allow write access to sports tournaments for admins" on sports_tournaments for all using (
+  auth.uid() in (select id from public.profiles where role in ('super_admin', 'tournament_admin'))
+);
+create policy "Allow public read access to esports tournaments" on esports_tournaments for select using (true);
+create policy "Allow write access to esports tournaments for admins" on esports_tournaments for all using (
+  auth.uid() in (select id from public.profiles where role in ('super_admin', 'tournament_admin'))
+);
+
+-- Matches
+create policy "Allow public read access to matches" on matches for select using (true);
+create policy "Allow write access to matches for admins" on matches for all using (
+  auth.uid() in (select id from public.profiles where role in ('super_admin', 'tournament_admin'))
+);
+
+-- Standings
+create policy "Allow public read access to standings" on standings for select using (true);
+create policy "Allow write access to standings for admins" on standings for all using (
+  auth.uid() in (select id from public.profiles where role in ('super_admin', 'tournament_admin'))
+);
+
+-- Notifications
+create policy "Allow users to read own notifications" on notifications for select using (user_id = auth.uid());
+create policy "Allow users to update own notifications" on notifications for update using (user_id = auth.uid());
+create policy "Allow system/admins to insert notifications" on notifications for insert with check (true);
+
+-- Settings
+create policy "Allow public read access to settings" on settings for select using (true);
+create policy "Allow super admin to update settings" on settings for all using (
+  auth.uid() in (select id from public.profiles where role = 'super_admin')
+);
+
+-- Audit Logs
+create policy "Allow super admin to view audit logs" on audit_logs for select using (
+  auth.uid() in (select id from public.profiles where role = 'super_admin')
+);
+create policy "Allow authenticated users to insert audit logs" on audit_logs for insert with check (auth.role() = 'authenticated');
+
 -- Indexes for performance
 create index idx_events_status on events(status);
 create index idx_events_date on events(event_date);

@@ -88,6 +88,14 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
                 name="template_file"
                 type="file"
                 accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (file) {
+                    setImageUrl(URL.createObjectURL(file))
+                  } else {
+                    setImageUrl("")
+                  }
+                }}
                 className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-white focus:border-primary focus:outline-none text-xs transition-all"
               />
               <p className="text-[10px] text-zinc-500 mt-1">Leave empty to use our premium gold-border default design template.</p>
@@ -196,15 +204,24 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
           <p className="absolute top-4 left-6 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Interactive Visualizer Map</p>
           
           {/* Certificate mock canvas layout */}
-          <div className="w-full max-w-[420px] aspect-[1.41] bg-zinc-900 rounded-xl border border-zinc-800 relative p-4 flex flex-col justify-between overflow-hidden shadow-2xl">
+          <div 
+            style={{
+              backgroundImage: imageUrl ? `url(${imageUrl})` : 'none',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }}
+            className="w-full max-w-[420px] aspect-[1.41] bg-zinc-900 rounded-xl border border-zinc-800 relative p-4 flex flex-col justify-between overflow-hidden shadow-2xl"
+          >
             {/* Gold borders */}
-            <div className="absolute inset-2 border border-yellow-600/30 rounded-lg pointer-events-none" />
+            {!imageUrl && <div className="absolute inset-2 border border-yellow-600/30 rounded-lg pointer-events-none" />}
             
-            <div className="text-center mt-6">
-              <h3 className="text-yellow-600 font-serif text-sm italic">Certificate of Completion</h3>
-              <p className="text-[6px] text-zinc-500 uppercase tracking-widest mt-1">Proudly Presented To</p>
-            </div>
-
+            {!imageUrl ? (
+              <div className="text-center mt-6">
+                <h3 className="text-yellow-600 font-serif text-sm italic">Certificate of Completion</h3>
+                <p className="text-[6px] text-zinc-500 uppercase tracking-widest mt-1">Proudly Presented To</p>
+              </div>
+            ) : <div />}
+            
             {/* Dynamic Student Name visual feedback */}
             <div
               style={{
@@ -212,14 +229,14 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
                 left: `${(nameX / 297) * 100}%`,
                 fontSize: `${(nameSize / 32) * 18}px`
               }}
-              className="absolute -translate-x-1/2 -translate-y-1/2 text-white font-serif font-bold whitespace-nowrap"
+              className="absolute -translate-x-1/2 -translate-y-1/2 text-white font-serif font-bold whitespace-nowrap drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
             >
               [ Student Name ]
             </div>
 
             <div className="text-center mb-8">
-              <p className="text-[6px] text-zinc-400">for participation in the campus event</p>
-              <p className="text-[8px] font-bold text-white mt-1">Tech Heist 2026</p>
+              {!imageUrl && <p className="text-[6px] text-zinc-400">for participation in the campus event</p>}
+              {!imageUrl && <p className="text-[8px] font-bold text-white mt-1">Tech Heist 2026</p>}
               
               {/* Dynamic Date Visualizer */}
               <p
@@ -227,17 +244,19 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
                   top: `${(dateY / 210) * 100}%`,
                   fontSize: `${(dateSize / 10) * 6}px`
                 }}
-                className="absolute left-1/2 -translate-x-1/2 text-zinc-500 font-medium"
+                className="absolute left-1/2 -translate-x-1/2 text-zinc-400 font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
               >
                 Date: 2026-07-15
               </p>
             </div>
 
             {/* Mock signatures */}
-            <div className="flex justify-between px-6 text-[5px] text-zinc-500 mb-2">
-              <div className="border-t border-zinc-800 w-12 pt-1 text-center">Coordinator</div>
-              <div className="border-t border-zinc-800 w-12 pt-1 text-center">Director</div>
-            </div>
+            {!imageUrl && (
+              <div className="flex justify-between px-6 text-[5px] text-zinc-500 mb-2">
+                <div className="border-t border-zinc-800 w-12 pt-1 text-center">Coordinator</div>
+                <div className="border-t border-zinc-800 w-12 pt-1 text-center">Director</div>
+              </div>
+            )}
           </div>
         </div>
       </div>

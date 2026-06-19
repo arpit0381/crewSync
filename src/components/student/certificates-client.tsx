@@ -13,6 +13,10 @@ interface Certificate {
   cert_type?: "participation" | "winner" | "runner_up"
   claimed: boolean
   attendance_verified: boolean
+  template_url?: string | null
+  title_coords?: { x: number; y: number; fontSize: number } | null
+  name_coords?: { x: number; y: number; fontSize: number } | null
+  date_coords?: { x: number; y: number; fontSize: number } | null
 }
 
 interface CertificatesClientProps {
@@ -49,7 +53,7 @@ export function CertificatesClient({ initialCertificates }: CertificatesClientPr
     setLoadingId(null)
   }
 
-  const generatePDFCertificate = (c: Certificate, studentName: string) => {
+  const generatePDFCertificate = async (c: Certificate, studentName: string) => {
     const doc = new jsPDF({
       orientation: "landscape",
       unit: "mm",
@@ -59,90 +63,143 @@ export function CertificatesClient({ initialCertificates }: CertificatesClientPr
     const w = 297
     const h = 210
 
-    // 1. Draw elegant border
-    // Dark outer frame
-    doc.setFillColor(15, 15, 17)
-    doc.rect(0, 0, w, h, "F")
+    if (c.template_url) {
+      // 1. Load custom background image template from Cloudinary
+      try {
+        const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+          const image = new Image()
+          image.crossOrigin = "anonymous" // Prevent CORS issues with Cloudinary CDN
+          image.onload = () => resolve(image)
+          image.onerror = (err) => reject(err)
+          image.src = c.template_url!
+        })
 
-    // Double thin gold borders
-    doc.setDrawColor(212, 175, 55) // Gold
-    doc.setLineWidth(1.5)
-    doc.rect(10, 10, w - 20, h - 20)
-    
-    doc.setLineWidth(0.5)
-    doc.rect(12, 12, w - 24, h - 24)
+        // Draw background template image
+        doc.addImage(img, "JPEG", 0, 0, w, h)
+      } catch (err) {
+        console.error("Error loading template image:", err)
+        throw new Error("Failed to load certificate template image")
+      }
 
-    // Corner decorative gold triangles
-    doc.setFillColor(212, 175, 55)
-    // Top-Left corner
-    doc.triangle(12, 12, 25, 12, 12, 25, "FD")
-    // Top-Right corner
-    doc.triangle(w - 12, 12, w - 25, 12, w - 12, 25, "FD")
-    // Bottom-Left corner
-    doc.triangle(12, h - 12, 25, h - 12, 12, h - 25, "FD")
-    // Bottom-Right corner
-    doc.triangle(w - 12, h - 12, w - 25, h - 12, w - 12, h - 25, "FD")
+      // 2. Overlay texts at configured coordinates
+      // Title
+      if (c.title_coords) {
+        doc.setFont("Times", "italic")
+        doc.setFontSize(c.title_coords.fontSize || 28)
+        doc.setTextColor(212, 175, 55) // Gold
+        doc.text("Certificate of Completion", c.title_coords.x, c.title_coords.y, { align: "center" })
+      }
 
-    // 2. Text layout
-    // Title
-    doc.setFont("Times", "italic")
-    doc.setFontSize(28)
-    doc.setTextColor(212, 175, 55) // Gold
-    doc.text("Certificate of Completion", w / 2, 45, { align: "center" })
+      // Student Name
+      if (c.name_coords) {
+        doc.setFont("Times", "bold")
+        doc.setFontSize(c.name_coords.fontSize || 32)
+        doc.setTextColor(255, 255, 255)
+        doc.text(studentName, c.name_coords.x, c.name_coords.y, { align: "center" })
+      }
 
-    // Subtitle
-    doc.setFont("Helvetica", "normal")
-    doc.setFontSize(10)
-    doc.setTextColor(180, 180, 180)
-    doc.text("THIS CERTIFICATE IS PROUDLY PRESENTED TO", w / 2, 65, { align: "center" })
+      // Date
+      if (c.date_coords) {
+        doc.setFont("Helvetica", "normal")
+        doc.setFontSize(c.date_coords.fontSize || 10)
+        doc.setTextColor(180, 180, 180)
+        doc.text(`Given on: ${c.event_date}`, w / 2, c.date_coords.y, { align: "center" })
+      }
 
-    // Student Name
-    doc.setFont("Times", "bold")
-    doc.setFontSize(32)
-    doc.setTextColor(255, 255, 255)
-    doc.text(studentName, w / 2, 85, { align: "center" })
+      // Fallbacks if some coordinates are missing
+      if (!c.title_coords && !c.name_coords && !c.date_coords) {
+        doc.setFont("Times", "bold")
+        doc.setFontSize(32)
+        doc.setTextColor(255, 255, 255)
+        doc.text(studentName, w / 2, h / 2, { align: "center" })
+      }
+    } else {
+      // 1. Draw elegant border
+      // Dark outer frame
+      doc.setFillColor(15, 15, 17)
+      doc.rect(0, 0, w, h, "F")
 
-    // Underline name
-    doc.setDrawColor(100, 100, 100)
-    doc.setLineWidth(0.5)
-    doc.line(70, 92, w - 70, 92)
+      // Double thin gold borders
+      doc.setDrawColor(212, 175, 55) // Gold
+      doc.setLineWidth(1.5)
+      doc.rect(10, 10, w - 20, h - 20)
+      
+      doc.setLineWidth(0.5)
+      doc.rect(12, 12, w - 24, h - 24)
 
-    // Purpose text
-    doc.setFont("Helvetica", "normal")
-    doc.setFontSize(12)
-    doc.setTextColor(180, 180, 180)
-    
-    const typeLabel = c.cert_type === "winner" ? "winner" : c.cert_type === "runner_up" ? "runner up" : "active participant"
-    doc.text(
-      `for outstanding performance and completion as a verified ${typeLabel}`,
-      w / 2,
-      105,
-      { align: "center" }
-    )
-    
-    doc.setFont("Helvetica", "bold")
-    doc.setTextColor(255, 255, 255)
-    doc.text(`"${c.event_title}"`, w / 2, 118, { align: "center" })
+      // Corner decorative gold triangles
+      doc.setFillColor(212, 175, 55)
+      // Top-Left corner
+      doc.triangle(12, 12, 25, 12, 12, 25, "FD")
+      // Top-Right corner
+      doc.triangle(w - 12, 12, w - 25, 12, w - 12, 25, "FD")
+      // Bottom-Left corner
+      doc.triangle(12, h - 12, 25, h - 12, 12, h - 25, "FD")
+      // Bottom-Right corner
+      doc.triangle(w - 12, h - 12, w - 25, h - 12, w - 12, h - 25, "FD")
 
-    // Date
-    doc.setFont("Helvetica", "normal")
-    doc.setFontSize(10)
-    doc.setTextColor(150, 150, 150)
-    doc.text(`Given on: ${c.event_date}`, w / 2, 138, { align: "center" })
+      // 2. Text layout
+      // Title
+      doc.setFont("Times", "italic")
+      doc.setFontSize(28)
+      doc.setTextColor(212, 175, 55) // Gold
+      doc.text("Certificate of Completion", w / 2, 45, { align: "center" })
 
-    // Signatures placeholders
-    doc.setDrawColor(100, 100, 100)
-    doc.line(45, 170, 105, 170)
-    doc.line(w - 105, 170, w - 45, 170)
+      // Subtitle
+      doc.setFont("Helvetica", "normal")
+      doc.setFontSize(10)
+      doc.setTextColor(180, 180, 180)
+      doc.text("THIS CERTIFICATE IS PROUDLY PRESENTED TO", w / 2, 65, { align: "center" })
 
-    doc.setFontSize(9)
-    doc.text("Event Coordinator", 75, 178, { align: "center" })
-    doc.text("Campus Director", w - 75, 178, { align: "center" })
+      // Student Name
+      doc.setFont("Times", "bold")
+      doc.setFontSize(32)
+      doc.setTextColor(255, 255, 255)
+      doc.text(studentName, w / 2, 85, { align: "center" })
+
+      // Underline name
+      doc.setDrawColor(100, 100, 100)
+      doc.setLineWidth(0.5)
+      doc.line(70, 92, w - 70, 92)
+
+      // Purpose text
+      doc.setFont("Helvetica", "normal")
+      doc.setFontSize(12)
+      doc.setTextColor(180, 180, 180)
+      
+      const typeLabel = c.cert_type === "winner" ? "winner" : c.cert_type === "runner_up" ? "runner up" : "active participant"
+      doc.text(
+        `for outstanding performance and completion as a verified ${typeLabel}`,
+        w / 2,
+        105,
+        { align: "center" }
+      )
+      
+      doc.setFont("Helvetica", "bold")
+      doc.setTextColor(255, 255, 255)
+      doc.text(`"${c.event_title}"`, w / 2, 118, { align: "center" })
+
+      // Date
+      doc.setFont("Helvetica", "normal")
+      doc.setFontSize(10)
+      doc.setTextColor(150, 150, 150)
+      doc.text(`Given on: ${c.event_date}`, w / 2, 138, { align: "center" })
+
+      // Signatures placeholders
+      doc.setDrawColor(100, 100, 100)
+      doc.line(45, 170, 105, 170)
+      doc.line(w - 105, 170, w - 45, 170)
+
+      doc.setFontSize(9)
+      doc.text("Event Coordinator", 75, 178, { align: "center" })
+      doc.text("Campus Director", w - 75, 178, { align: "center" })
+    }
 
     // Verification ID badge
+    doc.setFont("Helvetica", "normal")
     doc.setFontSize(7)
-    doc.setTextColor(80, 80, 80)
-    doc.text(`VERIFICATION ID: CA-CERT-${c.id?.substring(0, 8).toUpperCase()}`, w / 2, 195, { align: "center" })
+    doc.setTextColor(120, 120, 120)
+    doc.text(`VERIFICATION ID: CA-CERT-${c.id?.substring(0, 8).toUpperCase() || "MOCK-ID"}`, w / 2, 195, { align: "center" })
 
     doc.save(`Certificate-${c.event_title.replace(/\s+/g, "-")}.pdf`)
   }
@@ -214,10 +271,25 @@ export function CertificatesClient({ initialCertificates }: CertificatesClientPr
 
                   {c.claimed ? (
                     <button
-                      onClick={() => generatePDFCertificate(c, getStudentName())}
-                      className="inline-flex items-center gap-1.5 rounded-xl bg-zinc-950 border border-zinc-800 px-3.5 py-2 text-xs font-semibold text-white hover:bg-zinc-900 transition-all"
+                      onClick={async () => {
+                        setLoadingId(c.event_id + "-download")
+                        try {
+                          await generatePDFCertificate(c, getStudentName())
+                        } catch (err) {
+                          console.error("PDF generation failed:", err)
+                          setError("Failed to download template. Please check connection.")
+                        } finally {
+                          setLoadingId(null)
+                        }
+                      }}
+                      disabled={loadingId === c.event_id + "-download"}
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-zinc-950 border border-zinc-800 px-3.5 py-2 text-xs font-semibold text-white hover:bg-zinc-900 transition-all disabled:opacity-50"
                     >
-                      <Download className="h-3.5 w-3.5" />
+                      {loadingId === c.event_id + "-download" ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Download className="h-3.5 w-3.5" />
+                      )}
                       Download A4
                     </button>
                   ) : c.attendance_verified ? (

@@ -25,6 +25,7 @@ interface Event {
   id: string
   title: string
   description: string
+  banner_url?: string | null
   venue: string
   event_date: string
   event_time: string
@@ -87,6 +88,7 @@ export function EventManagerClient({
         id: result.event.id,
         title: result.event.title,
         description: result.event.description,
+        banner_url: result.event.banner_url,
         venue: result.event.venue,
         event_date: result.event.event_date,
         event_time: result.event.event_time,
@@ -163,8 +165,19 @@ export function EventManagerClient({
           {filteredEvents.map((event) => (
             <div
               key={event.id}
-              className="flex flex-col rounded-3xl border border-zinc-800 bg-zinc-900/20 backdrop-blur-sm overflow-hidden"
+              className="flex flex-col rounded-3xl border border-zinc-800 bg-zinc-900/20 backdrop-blur-sm overflow-hidden group"
             >
+              {/* Event Image Banner (Admin View) */}
+              <div className="h-32 w-full relative overflow-hidden bg-gradient-to-br from-zinc-850 to-zinc-950 flex items-center justify-center">
+                {event.banner_url ? (
+                  <img 
+                    src={event.banner_url} 
+                    alt={event.title} 
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                ) : null}
+                <div className="absolute inset-0 bg-zinc-950/40" />
+              </div>
               <div className="p-6 space-y-4 flex flex-col flex-1">
                 <div className="flex items-center justify-between">
                   <span className="inline-flex items-center rounded-full bg-zinc-800 px-2.5 py-0.5 text-xs font-semibold text-zinc-300">

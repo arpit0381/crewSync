@@ -9,21 +9,33 @@ const MOCK_CERTS = [
     event_date: "2026-06-18",
     cert_type: "participation" as const,
     claimed: true,
-    attendance_verified: true
+    attendance_verified: true,
+    template_url: null,
+    title_coords: null,
+    name_coords: null,
+    date_coords: null
   },
   {
     event_id: "evt-1",
     event_title: "Tech Heist Hackathon",
     event_date: "2026-07-15",
     claimed: false,
-    attendance_verified: true
+    attendance_verified: true,
+    template_url: null,
+    title_coords: null,
+    name_coords: null,
+    date_coords: null
   },
   {
     event_id: "evt-3",
     event_title: "Valorant Campus Arena",
     event_date: "2026-07-28",
     claimed: false,
-    attendance_verified: false
+    attendance_verified: false,
+    template_url: null,
+    title_coords: null,
+    name_coords: null,
+    date_coords: null
   }
 ]
 
@@ -35,14 +47,21 @@ export default async function StudentCertificatesPage() {
     const { data: { user } } = await supabase.auth.getUser()
 
     if (user) {
-      // Query attendance verified list
+      // Query attendance verified list with templates
       const { data: attendances } = await supabase
         .from("attendance")
         .select(`
           event_id,
           events (
             title,
-            event_date
+            event_date,
+            certificate_templates (
+              id,
+              template_url,
+              title_coords_json,
+              name_coords_json,
+              date_coords_json
+            )
           )
         `)
         .eq("student_id", user.id)
@@ -56,6 +75,9 @@ export default async function StudentCertificatesPage() {
 
         dbCerts = attendances.map((att: any) => {
           const claim = claims?.find((c) => c.event_id === att.event_id)
+          const templates = att.events?.certificate_templates
+          const template = Array.isArray(templates) ? templates[0] : templates
+          
           return {
             id: claim?.id,
             event_id: att.event_id,
@@ -63,7 +85,11 @@ export default async function StudentCertificatesPage() {
             event_date: att.events?.event_date || "-",
             cert_type: claim?.cert_type || undefined,
             claimed: !!claim,
-            attendance_verified: true
+            attendance_verified: true,
+            template_url: template?.template_url || null,
+            title_coords: template?.title_coords_json || null,
+            name_coords: template?.name_coords_json || null,
+            date_coords: template?.date_coords_json || null
           }
         })
       }

@@ -185,14 +185,20 @@ export default async function LandingPage() {
                   key={event.id}
                   className="flex flex-col rounded-3xl border border-zinc-900 bg-zinc-900/30 backdrop-blur-sm overflow-hidden hover:border-zinc-800/80 transition-all duration-300 group hover:scale-[1.01]"
                 >
-                  {/* Event Image Banner (Standard CSS fallback) */}
-                  <div className="h-48 w-full bg-gradient-to-br from-zinc-800 to-zinc-950 flex items-center justify-center p-6 relative">
-                    <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <span className="text-xs font-bold uppercase tracking-widest text-primary border border-primary/20 px-3 py-1.5 rounded-full bg-primary/5">
+                  {/* Event Image Banner */}
+                  <div className="h-48 w-full relative overflow-hidden bg-gradient-to-br from-zinc-800 to-zinc-950 flex items-center justify-center">
+                    {event.banner_url ? (
+                      <img 
+                        src={event.banner_url} 
+                        alt={event.title} 
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : null}
+                    <div className="absolute inset-0 bg-zinc-950/40" />
+                    <span className="relative z-10 text-xs font-bold uppercase tracking-widest text-primary border border-primary/20 px-3 py-1.5 rounded-full bg-zinc-950/80 backdrop-blur-sm">
                       {categoryName || "Campus Event"}
                     </span>
                   </div>
-
 
                 <div className="flex flex-1 flex-col p-6 space-y-4">
                   <div className="space-y-2">

@@ -111,3 +111,14 @@ export async function updatePasswordAction(formData: FormData) {
 
   redirect("/login?message=Password updated successfully")
 }
+
+export async function updateUserRoleAction(userId: string, role: string) {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from("profiles")
+    .update({ role, updated_at: new Date().toISOString() })
+    .eq("id", userId)
+
+  if (error) return { error: error.message }
+  return { success: "User role updated successfully" }
+}
