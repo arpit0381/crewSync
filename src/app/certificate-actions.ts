@@ -1,6 +1,6 @@
 "use server"
 
-import { createClient } from "@/lib/supabase/server"
+import { createClient, createAdminClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 
 // 1. Resend Email Dispatch Helper (Simulated logger if API Key missing)
@@ -85,6 +85,60 @@ export async function createCertificateTemplateAction(formData: FormData) {
   const nameCoords = JSON.parse(formData.get("name_coords") as string || "{}")
   const dateCoords = JSON.parse(formData.get("date_coords") as string || "{}")
 
+  let finalEventId = eventId
+  const isUuid = (val: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
+
+  if (!isUuid(eventId)) {
+    // Map mock event IDs to title
+    const mockEvents: { [key: string]: string } = {
+      "evt-1": "Tech Heist 2026",
+      "evt-2": "Guest Lecture: Future of Web Development",
+      "evt-mock-99": "Introduction to Edge Computing & AI"
+    }
+    const mockTitle = mockEvents[eventId] || "Tech Heist 2026"
+    
+    // Check if an event with this title exists
+    const { data: existingEvt } = await supabase
+      .from("events")
+      .select("id")
+      .eq("title", mockTitle)
+      .maybeSingle()
+
+    if (existingEvt) {
+      finalEventId = existingEvt.id
+    } else {
+      // Find or create category
+      const { data: cat } = await supabase.from("categories").select("id").limit(1).maybeSingle()
+      let catId = cat?.id
+      if (!catId) {
+        const adminSupabase = createAdminClient()
+        const { data: newCat } = await adminSupabase.from("categories").insert({ name: "General", type: "technical" }).select("id").single()
+        catId = newCat?.id
+      }
+      
+      const adminSupabase = createAdminClient()
+      const { data: newEvt, error: evtErr } = await adminSupabase
+        .from("events")
+        .insert({
+          title: mockTitle,
+          description: "Auto-generated placeholder for certificate templates seeding.",
+          venue: "Seminar Hall",
+          event_date: new Date().toISOString().split("T")[0],
+          event_time: "10:00:00",
+          capacity: 100,
+          category_id: catId,
+          status: "published"
+        })
+        .select("id")
+        .single()
+
+      if (evtErr || !newEvt) {
+        return { error: "Failed to seed event for template: " + (evtErr?.message || "") }
+      }
+      finalEventId = newEvt.id
+    }
+  }
+
   let templateUrl = "default-gold-border"
 
   if (templateFile && templateFile.size > 0) {
@@ -98,7 +152,7 @@ export async function createCertificateTemplateAction(formData: FormData) {
   const { data, error } = await supabase
     .from("certificate_templates")
     .insert({
-      event_id: eventId,
+      event_id: finalEventId,
       template_url: templateUrl,
       title_coords_json: titleCoords,
       name_coords_json: nameCoords,

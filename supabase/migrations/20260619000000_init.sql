@@ -286,7 +286,13 @@ create policy "Allow users to update own profile" on profiles for update using (
 
 -- Departments & Clubs
 create policy "Allow public read access to departments" on departments for select using (true);
+create policy "Allow write access to departments for super_admin" on departments for all using (
+  auth.uid() in (select id from profiles where role = 'super_admin')
+);
 create policy "Allow public read access to clubs" on clubs for select using (true);
+create policy "Allow write access to clubs for super_admin" on clubs for all using (
+  auth.uid() in (select id from profiles where role = 'super_admin')
+);
 
 -- Events
 create policy "Allow public read access to published events" on events for select using (status = 'published');

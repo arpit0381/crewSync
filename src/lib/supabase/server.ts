@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
+import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js"
 
 export async function createClient() {
   const cookieStore = await cookies()
@@ -28,15 +29,14 @@ export async function createClient() {
 
 // Admin client using service role key (bypasses RLS for backend tasks)
 export function createAdminClient() {
-  return createServerClient(
+  return createSupabaseAdminClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {
-      cookies: {
-        getAll() {
-          return []
-        },
-        setAll() {},
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false,
       },
     }
   )
