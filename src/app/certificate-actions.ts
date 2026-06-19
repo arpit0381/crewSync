@@ -73,21 +73,33 @@ export async function sendTicketEmailAction(email: string, studentName: string, 
   return await sendResendEmail({ to: email, subject, html })
 }
 
+import { uploadImageToCloudinary } from "@/lib/cloudinary"
+
 // Action to create certificate template
-export async function createCertificateTemplateAction(
-  eventId: string,
-  imageUrl: string,
-  titleCoords: any,
-  nameCoords: any,
-  dateCoords: any
-) {
+export async function createCertificateTemplateAction(formData: FormData) {
   const supabase = await createClient()
+
+  const eventId = formData.get("event_id") as string
+  const templateFile = formData.get("template_file") as File
+  const titleCoords = JSON.parse(formData.get("title_coords") as string || "{}")
+  const nameCoords = JSON.parse(formData.get("name_coords") as string || "{}")
+  const dateCoords = JSON.parse(formData.get("date_coords") as string || "{}")
+
+  let templateUrl = "default-gold-border"
+
+  if (templateFile && templateFile.size > 0) {
+    try {
+      templateUrl = await uploadImageToCloudinary(templateFile, "templates")
+    } catch (uploadErr: any) {
+      return { error: "Template upload failed: " + uploadErr.message }
+    }
+  }
 
   const { data, error } = await supabase
     .from("certificate_templates")
     .insert({
       event_id: eventId,
-      template_url: imageUrl,
+      template_url: templateUrl,
       title_coords_json: titleCoords,
       name_coords_json: nameCoords,
       date_coords_json: dateCoords
@@ -100,6 +112,7 @@ export async function createCertificateTemplateAction(
   revalidatePath("/admin/certificates")
   return { success: "Certificate template saved successfully!", template: data }
 }
+
 
 // Action to verify attendance and claim certificate
 export async function claimCertificateAction(eventId: string, certType: "participation" | "winner" | "runner_up") {

@@ -30,7 +30,7 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
   const [loading, setLoading] = React.useState(false)
   const [success, setSuccess] = React.useState<string | null>(null)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!selectedEventId) return
 
@@ -41,13 +41,13 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
     const nameCoords = { x: nameX, y: nameY, fontSize: nameSize }
     const dateCoords = { x: dateX, y: dateY, fontSize: dateSize }
 
-    const result = await createCertificateTemplateAction(
-      selectedEventId,
-      imageUrl || "default-gold-border",
-      titleCoords,
-      nameCoords,
-      dateCoords
-    )
+    const formData = new FormData(e.currentTarget)
+    formData.append("event_id", selectedEventId)
+    formData.append("title_coords", JSON.stringify(titleCoords))
+    formData.append("name_coords", JSON.stringify(nameCoords))
+    formData.append("date_coords", JSON.stringify(dateCoords))
+
+    const result = await createCertificateTemplateAction(formData)
 
     if (result.success) {
       setSuccess(result.success)
@@ -65,7 +65,7 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Left: Settings Panel */}
-        <form onSubmit={handleSubmit} className="rounded-3xl border border-zinc-800 bg-zinc-900/20 p-6 space-y-6 flex flex-col justify-between">
+        <form onSubmit={handleSubmit} encType="multipart/form-data" className="rounded-3xl border border-zinc-800 bg-zinc-900/20 p-6 space-y-6 flex flex-col justify-between">
           <div className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Select Event Link</label>
@@ -83,13 +83,12 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Template Image / URL (Optional)</label>
+              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Template File (Image)</label>
               <input
-                type="text"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white placeholder-zinc-700 focus:border-primary focus:outline-none text-sm transition-all"
-                placeholder="E.g. https://storage.supabase.co/certificates/template.png"
+                name="template_file"
+                type="file"
+                accept="image/*"
+                className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-white focus:border-primary focus:outline-none text-xs transition-all"
               />
               <p className="text-[10px] text-zinc-500 mt-1">Leave empty to use our premium gold-border default design template.</p>
             </div>

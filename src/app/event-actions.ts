@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
+import { uploadImageToCloudinary } from "@/lib/cloudinary"
 
 export async function createEventAction(formData: FormData) {
   const supabase = await createClient()
@@ -26,6 +27,18 @@ export async function createEventAction(formData: FormData) {
     return { error: "All required fields must be filled" }
   }
 
+  // Handle banner upload to Cloudinary
+  const bannerFile = formData.get("banner_file") as File
+  let bannerUrl = null
+
+  if (bannerFile && bannerFile.size > 0) {
+    try {
+      bannerUrl = await uploadImageToCloudinary(bannerFile, "banners")
+    } catch (uploadErr: any) {
+      return { error: "Banner upload failed: " + uploadErr.message }
+    }
+  }
+
   // Insert event
   const { data: event, error } = await supabase
     .from("events")
@@ -43,9 +56,11 @@ export async function createEventAction(formData: FormData) {
       department_id: departmentId || null,
       club_id: clubId || null,
       status,
-      created_by: user.id
+      created_by: user.id,
+      banner_url: bannerUrl
     })
     .select()
+
     .single()
 
   if (error) {

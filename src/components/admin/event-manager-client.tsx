@@ -226,7 +226,7 @@ export function EventManagerClient({
 
             <h2 className="text-xl font-bold text-white mb-6">Create New Event</h2>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-4">
               {error && (
                 <div className="p-4 rounded-xl bg-red-950/40 border border-red-900/50 text-red-400 text-sm">
                   {error}
@@ -254,6 +254,17 @@ export function EventManagerClient({
                   placeholder="Explain event details, guidelines, rules..."
                 />
               </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Event Banner Image</label>
+                <input
+                  name="banner_file"
+                  type="file"
+                  accept="image/*"
+                  className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-white focus:border-primary focus:outline-none text-xs transition-all"
+                />
+              </div>
+
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
