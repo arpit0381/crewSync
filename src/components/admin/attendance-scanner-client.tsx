@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Html5QrcodeScanner } from "html5-qrcode"
 import { verifyAndCheckInAction } from "@/app/attendance-actions"
-import { Camera, CheckCircle, AlertTriangle, AlertCircle, RefreshCw } from "lucide-react"
+import { Camera, CheckCircle, AlertTriangle, AlertCircle, RefreshCw, XCircle } from "lucide-react"
 
 interface Event {
   id: string
@@ -30,17 +30,31 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
   const [scannerActive, setScannerActive] = React.useState(false)
   const [scanLogs, setScanLogs] = React.useState<ScanLog[]>([])
   const [scanLock, setScanLock] = React.useState(false)
+  const scanLockRef = React.useRef(false)
+  const [cameraError, setCameraError] = React.useState<string | null>(null)
   
   // Stats
   const [successCount, setSuccessCount] = React.useState(0)
 
+  // Sync ref with state for scanner callback access without re-binding
+  React.useEffect(() => {
+    scanLockRef.current = scanLock
+  }, [scanLock])
+
   React.useEffect(() => {
     let scanner: Html5QrcodeScanner | null = null
+    let isMounted = true
 
     if (scannerActive) {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        setCameraError("Camera API not supported. Please use HTTPS or localhost.")
+        return
+      }
+      setCameraError(null)
+
       // Cooldown buffer function
       const onScanSuccess = async (decodedText: string) => {
-        if (scanLock) return
+        if (scanLockRef.current) return
         
         // Lock scanner during DB round-trip to prevent duplicate requests
         setScanLock(true)
@@ -55,8 +69,8 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
             message: result.error 
               ? result.error 
               : result.warning 
-                ? `${result.warning} already check-in for ${result.eventTitle}` 
-                : `Successfully checked in to ${result.eventTitle}`,
+                ? `${result.warning} already checked in` 
+                : `Successfully checked in`,
             student: result.studentName ? `${result.studentName} (${result.rollNumber})` : undefined
           }
 
@@ -72,39 +86,52 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
               time: new Date().toLocaleTimeString(),
               code: decodedText,
               status: "error",
-              message: "Network check-in error: " + err.message
+              message: "Network error: " + err.message
             },
             ...prev
           ])
         } finally {
           // Release lock after 2.5 seconds cooldown
           setTimeout(() => {
-            setScanLock(false)
+            if (isMounted) setScanLock(false)
           }, 2500)
         }
       }
 
-      scanner = new Html5QrcodeScanner(
-        "qr-reader",
-        { 
-          fps: 10, 
-          qrbox: { width: 250, height: 250 },
-          aspectRatio: 1.0 
-        },
-        /* verbose= */ false
-      )
+      // Delay slightly to ensure DOM element exists before injecting scanner
+      const initTimer = setTimeout(() => {
+        if (!isMounted) return;
+        try {
+          scanner = new Html5QrcodeScanner(
+            "qr-reader",
+            { 
+              fps: 10, 
+              qrbox: { width: 250, height: 250 },
+              aspectRatio: 1.0 
+            },
+            false
+          )
 
-      scanner.render(onScanSuccess, (error) => {
-        // Silent error logs on QR scanner scan cycles
-      })
-    }
+          scanner.render(onScanSuccess, () => {})
+        } catch (err: any) {
+          console.error("Scanner init error:", err)
+          setCameraError(err.message || "Failed to start camera.")
+        }
+      }, 100)
 
-    return () => {
-      if (scanner) {
-        scanner.clear().catch((err) => console.warn("Failed to clear scanner:", err))
+      return () => {
+        isMounted = false
+        clearTimeout(initTimer)
+        if (scanner) {
+          try {
+            scanner.clear().catch(console.warn)
+          } catch (e) {
+            console.warn("Scanner cleanup failed", e)
+          }
+        }
       }
     }
-  }, [scannerActive, scanLock])
+  }, [scannerActive])
 
   const toggleScanner = () => {
     setScannerActive(!scannerActive)
@@ -155,7 +182,19 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
 
           {/* Camera Frame */}
           <div className="flex-1 flex items-center justify-center min-h-[320px] bg-background border border-border rounded-2xl overflow-hidden mt-4 relative">
-            {scannerActive ? (
+            {cameraError ? (
+              <div className="text-center space-y-2 text-destructive p-6">
+                <XCircle className="h-12 w-12 mx-auto stroke-[1.5]" />
+                <p className="text-sm font-bold">Camera Access Denied</p>
+                <p className="text-xs text-muted-foreground">{cameraError}</p>
+                <button 
+                  onClick={() => setScannerActive(false)} 
+                  className="mt-4 rounded-lg bg-secondary px-4 py-2 text-xs font-bold text-secondary-foreground"
+                >
+                  Close
+                </button>
+              </div>
+            ) : scannerActive ? (
               <div id="qr-reader" className="w-full h-full max-w-[400px] border-none" />
             ) : (
               <div className="text-center space-y-2 text-muted-foreground p-6">
