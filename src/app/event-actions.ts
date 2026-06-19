@@ -1,0 +1,268 @@
+"use server"
+
+import { createClient } from "@/lib/supabase/server"
+import { revalidatePath } from "next/cache"
+
+export async function createEventAction(formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: "Unauthorized" }
+
+  const title = formData.get("title") as string
+  const description = formData.get("description") as string
+  const categoryId = formData.get("category_id") as string
+  const venue = formData.get("venue") as string
+  const date = formData.get("event_date") as string
+  const time = formData.get("event_time") as string
+  const capacity = parseInt(formData.get("capacity") as string) || 100
+  const regType = formData.get("reg_type") as "individual" | "team"
+  const minTeamSize = parseInt(formData.get("min_team_size") as string) || 1
+  const maxTeamSize = parseInt(formData.get("max_team_size") as string) || 1
+  const departmentId = formData.get("department_id") as string || null
+  const clubId = formData.get("club_id") as string || null
+  const status = (formData.get("status") as any) || "draft"
+
+  if (!title || !description || !categoryId || !venue || !date || !time) {
+    return { error: "All required fields must be filled" }
+  }
+
+  // Insert event
+  const { data: event, error } = await supabase
+    .from("events")
+    .insert({
+      title,
+      description,
+      category_id: categoryId,
+      venue,
+      event_date: date,
+      event_time: time,
+      capacity,
+      reg_type: regType,
+      min_team_size: regType === "team" ? minTeamSize : 1,
+      max_team_size: regType === "team" ? maxTeamSize : 1,
+      department_id: departmentId || null,
+      club_id: clubId || null,
+      status,
+      created_by: user.id
+    })
+    .select()
+    .single()
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath("/admin/events")
+  revalidatePath("/")
+  return { success: "Event created successfully", event }
+}
+
+export async function updateEventStatusAction(
+  eventId: string,
+  status: "draft" | "pending_approval" | "published" | "completed"
+) {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from("events")
+    .update({ status, updated_at: new Date().toISOString() })
+    .eq("id", eventId)
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath("/admin/events")
+  revalidatePath("/")
+  return { success: `Event status updated to ${status.replace("_", " ")}` }
+}
+
+export async function registerForEventAction(
+  eventId: string,
+  regType: "individual" | "team",
+  teamDetails?: { mode: "create" | "join"; teamName?: string; inviteCode?: string }
+) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: "You must be signed in to register." }
+
+  // 1. Fetch event config and current registrations count
+  const { data: event, error: eventErr } = await supabase
+    .from("events")
+    .select("*")
+    .eq("id", eventId)
+    .single()
+
+  if (eventErr || !event) {
+    return { error: "Event not found." }
+  }
+
+  if (event.status !== "published") {
+    return { error: "This event is not accepting registrations." }
+  }
+
+  // Check capacity
+  const { count: currentRegs } = await supabase
+    .from("registrations")
+    .select("*", { count: "exact", head: true })
+    .eq("event_id", eventId)
+
+  if (currentRegs && currentRegs >= event.capacity) {
+    return { error: "Registration full! Capacity limit reached." }
+  }
+
+  // Check duplicate registration
+  const { data: existingReg } = await supabase
+    .from("registrations")
+    .select("id")
+    .eq("event_id", eventId)
+    .eq("user_id", user.id)
+    .maybeSingle()
+
+  if (existingReg) {
+    return { error: "You are already registered for this event." }
+  }
+
+  // 2. Individual Registration logic
+  if (regType === "individual") {
+    // Insert registration
+    const { data: reg, error: regErr } = await supabase
+      .from("registrations")
+      .insert({
+        event_id: eventId,
+        user_id: user.id
+      })
+      .select()
+      .single()
+
+    if (regErr) return { error: regErr.message }
+
+    // Auto-generate a ticket for the user
+    const ticketCode = `CRA-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
+    await supabase.from("tickets").insert({
+      ticket_code: ticketCode,
+      registration_id: reg.id
+    })
+
+    revalidatePath("/student")
+    revalidatePath("/")
+    return { success: "Registered successfully! Ticket generated." }
+  }
+
+  // 3. Team Registration logic
+  if (regType === "team" && teamDetails) {
+    // Mode A: Create a new team
+    if (teamDetails.mode === "create") {
+      if (!teamDetails.teamName) return { error: "Team name is required." }
+
+      // Generate a random 6-character unique invite code
+      const inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase()
+
+      // Create team
+      const { data: team, error: teamErr } = await supabase
+        .from("teams")
+        .insert({
+          name: teamDetails.teamName,
+          event_id: eventId,
+          captain_id: user.id,
+          invite_code: inviteCode
+        })
+        .select()
+        .single()
+
+      if (teamErr) return { error: teamErr.message }
+
+      // Add captain to team_members
+      await supabase.from("team_members").insert({
+        team_id: team.id,
+        user_id: user.id
+      })
+
+      // Register the captain
+      const { data: reg, error: regErr } = await supabase
+        .from("registrations")
+        .insert({
+          event_id: eventId,
+          user_id: user.id,
+          team_id: team.id
+        })
+        .select()
+        .single()
+
+      if (regErr) return { error: regErr.message }
+
+      // Auto-generate ticket
+      const ticketCode = `CRA-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
+      await supabase.from("tickets").insert({
+        ticket_code: ticketCode,
+        registration_id: reg.id
+      })
+
+      revalidatePath("/student")
+      return { success: `Team created successfully! Invite code: ${inviteCode}`, inviteCode }
+    }
+
+    // Mode B: Join an existing team
+    if (teamDetails.mode === "join") {
+      if (!teamDetails.inviteCode) return { error: "Invite code is required." }
+
+      // Find the team
+      const { data: team, error: teamFindErr } = await supabase
+        .from("teams")
+        .select("id, max_members:event_id(max_team_size)")
+        .eq("invite_code", teamDetails.inviteCode)
+        .eq("event_id", eventId)
+        .single()
+
+      if (teamFindErr || !team) {
+        return { error: "Invalid invite code for this event." }
+      }
+
+      // Check current member size of the team
+      const { count: memberCount } = await supabase
+        .from("team_members")
+        .select("*", { count: "exact", head: true })
+        .eq("team_id", team.id)
+
+      const maxLimit = (team as any).max_members?.max_team_size || event.max_team_size
+
+      if (memberCount && memberCount >= maxLimit) {
+        return { error: "Team is already full! Cannot join." }
+      }
+
+      // Join team_members
+      const { error: joinErr } = await supabase
+        .from("team_members")
+        .insert({
+          team_id: team.id,
+          user_id: user.id
+        })
+
+      if (joinErr) return { error: "You are already a member of this team." }
+
+      // Create registration
+      const { data: reg, error: regErr } = await supabase
+        .from("registrations")
+        .insert({
+          event_id: eventId,
+          user_id: user.id,
+          team_id: team.id
+        })
+        .select()
+        .single()
+
+      if (regErr) return { error: regErr.message }
+
+      // Auto-generate ticket
+      const ticketCode = `CRA-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
+      await supabase.from("tickets").insert({
+        ticket_code: ticketCode,
+        registration_id: reg.id
+      })
+
+      revalidatePath("/student")
+      return { success: "Joined team and registered successfully!" }
+    }
+  }
+
+  return { error: "Invalid registration parameters." }
+}
