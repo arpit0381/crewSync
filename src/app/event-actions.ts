@@ -290,7 +290,8 @@ export async function registerForEventAction(
 
     // Auto-generate a ticket for the user
     const ticketCode = `CRA-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
-    await supabase.from("tickets").insert({
+    const adminSupabase = createAdminClient()
+    await adminSupabase.from("tickets").insert({
       ticket_code: ticketCode,
       registration_id: reg.id
     })
@@ -344,7 +345,8 @@ export async function registerForEventAction(
 
       // Auto-generate ticket
       const ticketCode = `CRA-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
-      await supabase.from("tickets").insert({
+      const adminSupabase = createAdminClient()
+      await adminSupabase.from("tickets").insert({
         ticket_code: ticketCode,
         registration_id: reg.id
       })
@@ -406,7 +408,8 @@ export async function registerForEventAction(
 
       // Auto-generate ticket
       const ticketCode = `CRA-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
-      await supabase.from("tickets").insert({
+      const adminSupabase = createAdminClient()
+      await adminSupabase.from("tickets").insert({
         ticket_code: ticketCode,
         registration_id: reg.id
       })

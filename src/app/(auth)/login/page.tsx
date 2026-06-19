@@ -45,7 +45,7 @@ function LoginForm() {
       )}
 
       <div>
-        <label htmlFor="email" className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+        <label htmlFor="email" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           Email address
         </label>
         <div className="mt-2">
@@ -55,7 +55,7 @@ function LoginForm() {
             type="email"
             autoComplete="email"
             required
-            className="block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 py-3 text-white placeholder-zinc-500 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
+            className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
             placeholder="name@college.edu"
           />
         </div>
@@ -63,7 +63,7 @@ function LoginForm() {
 
       <div>
         <div className="flex items-center justify-between">
-          <label htmlFor="password" className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+          <label htmlFor="password" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Password
           </label>
           <div className="text-sm">
@@ -82,7 +82,7 @@ function LoginForm() {
             type="password"
             autoComplete="current-password"
             required
-            className="block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 py-3 text-white placeholder-zinc-500 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
+            className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
             placeholder="••••••••"
           />
         </div>
@@ -107,7 +107,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-zinc-950 px-4 py-12 sm:px-6 lg:px-8 overflow-hidden select-none">
+    <div className="relative min-h-screen flex items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8 overflow-hidden select-none">
       {/* Background glow effects */}
       <div className="absolute inset-0 z-0">
         <div className="absolute -top-[30%] -left-[20%] w-[70%] h-[70%] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
@@ -117,18 +117,18 @@ export default function LoginPage() {
 
       <div className="relative z-10 w-full max-w-md space-y-8">
         <div className="text-center">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-900 border border-zinc-800 shadow-xl group hover:border-primary/50 transition-all duration-300">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-card border border-border shadow-xl group hover:border-primary/50 transition-all duration-300">
             <ShieldCheck className="h-7 w-7 text-primary transition-transform duration-300 group-hover:scale-110" />
           </div>
-          <h2 className="mt-6 text-3xl font-bold tracking-tight text-white">
+          <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
             Welcome back to Crew Arena
           </h2>
-          <p className="mt-2 text-sm text-zinc-400">
+          <p className="mt-2 text-sm text-muted-foreground">
             One Arena. Every Event.
           </p>
         </div>
 
-        <div className="mt-8 bg-zinc-900/60 backdrop-blur-xl border border-zinc-800/80 p-8 rounded-3xl shadow-2xl">
+        <div className="mt-8 bg-card/60 backdrop-blur-xl border border-border/80 p-8 rounded-3xl shadow-2xl">
           <React.Suspense fallback={
             <div className="flex justify-center py-6">
               <Loader2 className="animate-spin h-6 w-6 text-primary" />
@@ -138,7 +138,7 @@ export default function LoginPage() {
           </React.Suspense>
 
           <div className="mt-6 text-center text-xs">
-            <span className="text-zinc-500">Don't have an account? </span>
+            <span className="text-muted-foreground">Don't have an account? </span>
             <Link
               href="/register"
               className="font-semibold text-primary hover:text-primary/80 transition-colors"

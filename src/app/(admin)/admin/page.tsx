@@ -49,8 +49,8 @@ export default async function AdminDashboardPage() {
       {/* Top Banner & Quick Action */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">Admin Overview</h1>
-          <p className="text-sm text-zinc-400">Real-time statistics for college events and tournaments.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">Admin Overview</h1>
+          <p className="text-sm text-muted-foreground">Real-time statistics for college events and tournaments.</p>
         </div>
         <div>
           <Link
@@ -65,40 +65,40 @@ export default async function AdminDashboardPage() {
 
       {/* Analytics Summary Cards */}
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 flex items-center justify-between">
+        <div className="rounded-2xl border border-border bg-card/40 p-5 flex items-center justify-between">
           <div className="space-y-1">
-            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Total Events</p>
-            <p className="text-2xl font-bold text-white">{stats.eventsCount}</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Events</p>
+            <p className="text-2xl font-bold text-foreground">{stats.eventsCount}</p>
           </div>
           <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
             <Calendar className="h-5 w-5" />
           </div>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 flex items-center justify-between">
+        <div className="rounded-2xl border border-border bg-card/40 p-5 flex items-center justify-between">
           <div className="space-y-1">
-            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Total Signups</p>
-            <p className="text-2xl font-bold text-white">{stats.regCount}</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Signups</p>
+            <p className="text-2xl font-bold text-foreground">{stats.regCount}</p>
           </div>
           <div className="h-10 w-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
             <Users className="h-5 w-5" />
           </div>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 flex items-center justify-between">
+        <div className="rounded-2xl border border-border bg-card/40 p-5 flex items-center justify-between">
           <div className="space-y-1">
-            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Checked In</p>
-            <p className="text-2xl font-bold text-white">{stats.attCount}</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Checked In</p>
+            <p className="text-2xl font-bold text-foreground">{stats.attCount}</p>
           </div>
           <div className="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
             <CheckSquare className="h-5 w-5" />
           </div>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 flex items-center justify-between">
+        <div className="rounded-2xl border border-border bg-card/40 p-5 flex items-center justify-between">
           <div className="space-y-1">
-            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Attendance Rate</p>
-            <p className="text-2xl font-bold text-white">{attendanceRate}%</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Attendance Rate</p>
+            <p className="text-2xl font-bold text-foreground">{attendanceRate}%</p>
           </div>
           <div className="h-10 w-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400">
             <Trophy className="h-5 w-5" />
@@ -112,17 +112,17 @@ export default async function AdminDashboardPage() {
       {/* Main Grid split */}
       <div className="grid gap-6 md:grid-cols-3">
         {/* Left 2 cols: Recent Event Statuses */}
-        <div className="md:col-span-2 rounded-2xl border border-zinc-800 bg-zinc-900/20 p-6 space-y-4">
+        <div className="md:col-span-2 rounded-2xl border border-border bg-card/20 p-6 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-white">Live Event Statuses</h2>
+            <h2 className="text-lg font-bold text-foreground">Live Event Statuses</h2>
             <Link href="/admin/events" className="text-xs font-semibold text-primary hover:underline">
               Manage Events
             </Link>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-left text-sm text-zinc-400">
-              <thead className="border-b border-zinc-800 text-xs uppercase tracking-wider text-zinc-500">
+            <table className="w-full border-collapse text-left text-sm text-muted-foreground">
+              <thead className="border-b border-border text-xs uppercase tracking-wider text-muted-foreground">
                 <tr>
                   <th className="py-3 px-4">Event Name</th>
                   <th className="py-3 px-4">Category</th>
@@ -131,8 +131,8 @@ export default async function AdminDashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-800/60">
-                <tr className="hover:bg-zinc-900/40">
-                  <td className="py-3.5 px-4 font-semibold text-white">Tech Heist Hackathon</td>
+                <tr className="hover:bg-card/40">
+                  <td className="py-3.5 px-4 font-semibold text-foreground">Tech Heist Hackathon</td>
                   <td className="py-3.5 px-4">Technical</td>
                   <td className="py-3.5 px-4">124 / 250</td>
                   <td className="py-3.5 px-4">
@@ -141,8 +141,8 @@ export default async function AdminDashboardPage() {
                     </span>
                   </td>
                 </tr>
-                <tr className="hover:bg-zinc-900/40">
-                  <td className="py-3.5 px-4 font-semibold text-white">Guest Lecture: AI Trends</td>
+                <tr className="hover:bg-card/40">
+                  <td className="py-3.5 px-4 font-semibold text-foreground">Guest Lecture: AI Trends</td>
                   <td className="py-3.5 px-4">Academic</td>
                   <td className="py-3.5 px-4">98 / 100</td>
                   <td className="py-3.5 px-4">
@@ -151,12 +151,12 @@ export default async function AdminDashboardPage() {
                     </span>
                   </td>
                 </tr>
-                <tr className="hover:bg-zinc-900/40">
-                  <td className="py-3.5 px-4 font-semibold text-white">Logix Coding League</td>
+                <tr className="hover:bg-card/40">
+                  <td className="py-3.5 px-4 font-semibold text-foreground">Logix Coding League</td>
                   <td className="py-3.5 px-4">Technical</td>
                   <td className="py-3.5 px-4">80 / 80</td>
                   <td className="py-3.5 px-4">
-                    <span className="inline-flex items-center rounded-full bg-zinc-500/10 border border-zinc-500/20 px-2.5 py-0.5 text-xs font-medium text-zinc-400">
+                    <span className="inline-flex items-center rounded-full bg-zinc-500/10 border border-zinc-500/20 px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
                       Completed
                     </span>
                   </td>
@@ -167,29 +167,29 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Right col: Administrative Actions */}
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/20 p-6 space-y-4">
-          <h2 className="text-lg font-bold text-white">Administrative Actions</h2>
+        <div className="rounded-2xl border border-border bg-card/20 p-6 space-y-4">
+          <h2 className="text-lg font-bold text-foreground">Administrative Actions</h2>
           <div className="grid gap-2">
             <Link
               href="/admin/attendance"
-              className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900/40 p-4 hover:border-zinc-700 transition-all group"
+              className="flex items-center justify-between rounded-xl border border-border bg-card/40 p-4 hover:border-border transition-all group"
             >
               <div className="space-y-1">
-                <p className="text-sm font-semibold text-white group-hover:text-primary transition-colors">QR Scanner Portal</p>
-                <p className="text-xs text-zinc-500">Scan student tickets for entry.</p>
+                <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">QR Scanner Portal</p>
+                <p className="text-xs text-muted-foreground">Scan student tickets for entry.</p>
               </div>
-              <ArrowUpRight className="h-4 w-4 text-zinc-500 group-hover:text-primary transition-colors" />
+              <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
             </Link>
 
             <Link
               href="/admin/certificates"
-              className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900/40 p-4 hover:border-zinc-700 transition-all group"
+              className="flex items-center justify-between rounded-xl border border-border bg-card/40 p-4 hover:border-border transition-all group"
             >
               <div className="space-y-1">
-                <p className="text-sm font-semibold text-white group-hover:text-primary transition-colors">Certificate Engine</p>
-                <p className="text-xs text-zinc-500">Generate bulk verified PDFs.</p>
+                <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">Certificate Engine</p>
+                <p className="text-xs text-muted-foreground">Generate bulk verified PDFs.</p>
               </div>
-              <ArrowUpRight className="h-4 w-4 text-zinc-500 group-hover:text-primary transition-colors" />
+              <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
             </Link>
           </div>
         </div>

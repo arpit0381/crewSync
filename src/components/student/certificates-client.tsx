@@ -216,8 +216,8 @@ export function CertificatesClient({ initialCertificates }: CertificatesClientPr
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">My Certificates</h1>
-        <p className="text-sm text-zinc-400">Claim and download verified completion, winner, or volunteer certificates.</p>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">My Certificates</h1>
+        <p className="text-sm text-muted-foreground">Claim and download verified completion, winner, or volunteer certificates.</p>
       </div>
 
       {error && (
@@ -228,10 +228,10 @@ export function CertificatesClient({ initialCertificates }: CertificatesClientPr
       )}
 
       {certs.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-zinc-800 p-12 text-center text-zinc-500">
-          <Award className="h-12 w-12 mx-auto text-zinc-700 stroke-[1.5] mb-2" />
+        <div className="rounded-3xl border border-dashed border-border p-12 text-center text-muted-foreground">
+          <Award className="h-12 w-12 mx-auto text-muted-foreground stroke-[1.5] mb-2" />
           <p>No certificates available.</p>
-          <p className="text-xs text-zinc-600 mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             Certificates will become claimable after event organizers mark your attendance check-in.
           </p>
         </div>
@@ -242,10 +242,10 @@ export function CertificatesClient({ initialCertificates }: CertificatesClientPr
               key={c.event_id}
               className={`rounded-3xl border p-6 flex items-start gap-4 transition-all ${
                 c.claimed 
-                  ? "bg-zinc-900/40 border-zinc-800 hover:border-zinc-700" 
+                  ? "bg-card/40 border-border hover:border-border" 
                   : c.attendance_verified 
-                    ? "bg-zinc-900/20 border-zinc-800 border-dashed" 
-                    : "bg-zinc-950/50 border-zinc-900 opacity-60"
+                    ? "bg-card/20 border-border border-dashed" 
+                    : "bg-background/50 border-border opacity-60"
               }`}
             >
               <div className={`h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 border ${
@@ -253,19 +253,19 @@ export function CertificatesClient({ initialCertificates }: CertificatesClientPr
                   ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" 
                   : c.attendance_verified 
                     ? "bg-primary/10 border-primary/20 text-primary" 
-                    : "bg-zinc-950 border-zinc-850 text-zinc-600"
+                    : "bg-background border-border text-muted-foreground"
               }`}>
                 <Award className="h-6 w-6" />
               </div>
 
               <div className="space-y-3 flex-1 overflow-hidden">
                 <div className="space-y-1">
-                  <h3 className="text-base font-bold text-white leading-tight truncate">{c.event_title}</h3>
-                  <p className="text-xs text-zinc-500">Attended on: {c.event_date}</p>
+                  <h3 className="text-base font-bold text-foreground leading-tight truncate">{c.event_title}</h3>
+                  <p className="text-xs text-muted-foreground">Attended on: {c.event_date}</p>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-zinc-850">
-                  <span className="text-[10px] uppercase font-bold text-zinc-500">
+                <div className="flex items-center justify-between pt-2 border-t border-border">
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground">
                     {c.claimed ? "Verified Certificate" : c.attendance_verified ? "Unclaimed" : "Attendance Pending"}
                   </span>
 
@@ -283,7 +283,7 @@ export function CertificatesClient({ initialCertificates }: CertificatesClientPr
                         }
                       }}
                       disabled={loadingId === c.event_id + "-download"}
-                      className="inline-flex items-center gap-1.5 rounded-xl bg-zinc-950 border border-zinc-800 px-3.5 py-2 text-xs font-semibold text-white hover:bg-zinc-900 transition-all disabled:opacity-50"
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-background border border-border px-3.5 py-2 text-xs font-semibold text-foreground hover:bg-card transition-all disabled:opacity-50"
                     >
                       {loadingId === c.event_id + "-download" ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -306,7 +306,7 @@ export function CertificatesClient({ initialCertificates }: CertificatesClientPr
                       Claim Certificate
                     </button>
                   ) : (
-                    <div className="flex items-center gap-1 text-xs text-zinc-600">
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Lock className="h-3.5 w-3.5 shrink-0" />
                       <span>Locked</span>
                     </div>

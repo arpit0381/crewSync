@@ -83,15 +83,15 @@ export function EventBrowserClient({ events, userRegistrations = [] }: EventBrow
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">Upcoming Campus Events</h1>
-        <p className="text-sm text-zinc-400">Discover and register for workshops, sports, esports, and hackathons.</p>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">Upcoming Campus Events</h1>
+        <p className="text-sm text-muted-foreground">Discover and register for workshops, sports, esports, and hackathons.</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {events.map((event) => (
           <div
             key={event.id}
-            className="flex flex-col rounded-3xl border border-zinc-800 bg-zinc-900/20 backdrop-blur-sm overflow-hidden hover:border-zinc-700 transition-all group"
+            className="flex flex-col rounded-3xl border border-border bg-card/20 backdrop-blur-sm overflow-hidden hover:border-border transition-all group"
           >
             {/* Event Image Banner (Student View) */}
             <div className="h-40 w-full relative overflow-hidden bg-gradient-to-br from-zinc-850 to-zinc-950 flex items-center justify-center">
@@ -102,28 +102,28 @@ export function EventBrowserClient({ events, userRegistrations = [] }: EventBrow
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               ) : null}
-              <div className="absolute inset-0 bg-zinc-950/40" />
+              <div className="absolute inset-0 bg-background/40" />
             </div>
             <div className="p-6 flex flex-col flex-1 space-y-4">
               <div className="flex items-center justify-between">
                 <span className="inline-flex items-center rounded-full bg-primary/10 border border-primary/20 px-2.5 py-0.5 text-xs font-semibold text-primary">
                   {event.categories?.name || "Campus Event"}
                 </span>
-                <span className="text-[10px] uppercase font-bold text-zinc-500">
+                <span className="text-[10px] uppercase font-bold text-muted-foreground">
                   {event.reg_type}
                 </span>
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors leading-tight">
+                <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors leading-tight">
                   {event.title}
                 </h3>
-                <p className="text-xs text-zinc-400 line-clamp-3 leading-relaxed">
+                <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed">
                   {event.description}
                 </p>
               </div>
 
-              <div className="mt-auto pt-4 border-t border-zinc-800 space-y-2 text-xs text-zinc-500">
+              <div className="mt-auto pt-4 border-t border-border space-y-2 text-xs text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-3.5 w-3.5 text-primary shrink-0" />
                   <span>{event.event_date} at {event.event_time}</span>
@@ -144,7 +144,7 @@ export function EventBrowserClient({ events, userRegistrations = [] }: EventBrow
               ) : (
                 <button
                   onClick={() => setSelectedEvent(event)}
-                  className="w-full mt-2 flex items-center justify-center rounded-xl bg-zinc-900 border border-zinc-800 text-white hover:bg-primary hover:text-primary-foreground hover:border-primary py-2.5 text-sm font-semibold transition-all"
+                  className="w-full mt-2 flex items-center justify-center rounded-xl bg-card border border-border text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary py-2.5 text-sm font-semibold transition-all"
                 >
                   Register
                 </button>
@@ -156,17 +156,17 @@ export function EventBrowserClient({ events, userRegistrations = [] }: EventBrow
 
       {/* Registration Overlay Modal */}
       {selectedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 p-4 backdrop-blur-sm select-none">
-          <div className="relative w-full max-w-md rounded-3xl border border-zinc-800 bg-zinc-900 p-6 md:p-8 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm select-none">
+          <div className="relative w-full max-w-md rounded-3xl border border-border bg-card p-6 md:p-8 shadow-2xl">
             <button
               onClick={handleClose}
-              className="absolute top-4 right-4 rounded-lg p-1.5 hover:bg-zinc-800 text-zinc-400"
+              className="absolute top-4 right-4 rounded-lg p-1.5 hover:bg-muted text-muted-foreground"
             >
               <X className="h-5 w-5" />
             </button>
 
-            <h2 className="text-xl font-bold text-white pr-6">{selectedEvent.title}</h2>
-            <p className="text-xs text-zinc-400 mt-1 leading-relaxed">{selectedEvent.description}</p>
+            <h2 className="text-xl font-bold text-foreground pr-6">{selectedEvent.title}</h2>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{selectedEvent.description}</p>
 
             <form onSubmit={handleRegister} className="mt-6 space-y-4">
               {error && (
@@ -184,10 +184,10 @@ export function EventBrowserClient({ events, userRegistrations = [] }: EventBrow
                   <span className="text-center text-xs">{success}</span>
 
                   {inviteCodeResult && (
-                    <div className="mt-3 bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-center w-full">
-                      <p className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Share Invite Code</p>
+                    <div className="mt-3 bg-background border border-border rounded-xl p-3 text-center w-full">
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Share Invite Code</p>
                       <p className="text-lg font-black tracking-widest text-primary select-all mt-1">{inviteCodeResult}</p>
-                      <p className="text-[10px] text-zinc-500 mt-1">Teammates can enter this code to join your team.</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">Teammates can enter this code to join your team.</p>
                     </div>
                   )}
                 </div>
@@ -198,12 +198,12 @@ export function EventBrowserClient({ events, userRegistrations = [] }: EventBrow
                   {/* Team Fields Selection */}
                   {selectedEvent.reg_type === "team" && (
                     <div className="space-y-4">
-                      <div className="flex rounded-xl border border-zinc-800 bg-zinc-950 p-1">
+                      <div className="flex rounded-xl border border-border bg-background p-1">
                         <button
                           type="button"
                           onClick={() => setTeamMode("create")}
                           className={`flex-1 rounded-lg py-2 text-xs font-semibold transition-all ${
-                            teamMode === "create" ? "bg-primary text-primary-foreground shadow" : "text-zinc-500"
+                            teamMode === "create" ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground"
                           }`}
                         >
                           Create Team
@@ -212,7 +212,7 @@ export function EventBrowserClient({ events, userRegistrations = [] }: EventBrow
                           type="button"
                           onClick={() => setTeamMode("join")}
                           className={`flex-1 rounded-lg py-2 text-xs font-semibold transition-all ${
-                            teamMode === "join" ? "bg-primary text-primary-foreground shadow" : "text-zinc-500"
+                            teamMode === "join" ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground"
                           }`}
                         >
                           Join Team
@@ -221,28 +221,28 @@ export function EventBrowserClient({ events, userRegistrations = [] }: EventBrow
 
                       {teamMode === "create" ? (
                         <div className="animate-in fade-in duration-200">
-                          <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Team Name</label>
+                          <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Team Name</label>
                           <input
                             type="text"
                             required
                             value={teamName}
                             onChange={(e) => setTeamName(e.target.value)}
-                            className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white placeholder-zinc-505 focus:border-primary focus:outline-none text-sm transition-all"
+                            className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none text-sm transition-all"
                             placeholder="E.g. Code Commandos"
                           />
-                          <p className="text-[10px] text-zinc-500 mt-1">
+                          <p className="text-[10px] text-muted-foreground mt-1">
                             Team size limit: {selectedEvent.min_team_size} to {selectedEvent.max_team_size} members.
                           </p>
                         </div>
                       ) : (
                         <div className="animate-in fade-in duration-200">
-                          <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Invite Code</label>
+                          <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Invite Code</label>
                           <input
                             type="text"
                             required
                             value={inviteCode}
                             onChange={(e) => setInviteCode(e.target.value)}
-                            className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white placeholder-zinc-505 focus:border-primary focus:outline-none text-sm transition-all tracking-wider font-semibold uppercase"
+                            className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none text-sm transition-all tracking-wider font-semibold uppercase"
                             placeholder="E.g. A4D8F3"
                           />
                         </div>
@@ -251,16 +251,16 @@ export function EventBrowserClient({ events, userRegistrations = [] }: EventBrow
                   )}
 
                   {selectedEvent.reg_type === "individual" && (
-                    <p className="text-sm text-zinc-300 py-2">
+                    <p className="text-sm text-foreground py-2">
                       Confirming your individual entry to this event. A ticket QR will be generated.
                     </p>
                   )}
 
-                  <div className="flex justify-end gap-3 pt-4 border-t border-zinc-800/85">
+                  <div className="flex justify-end gap-3 pt-4 border-t border-border/85">
                     <button
                       type="button"
                       onClick={handleClose}
-                      className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-zinc-850 transition-all"
+                      className="rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-muted transition-all"
                     >
                       Cancel
                     </button>

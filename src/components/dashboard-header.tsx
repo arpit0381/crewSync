@@ -113,7 +113,7 @@ export function DashboardHeader({ userEmail, userName, userRole, toggleSidebar }
           ) : resolvedTheme === "dark" ? (
             <Sun className="h-4 w-4 text-amber-400" />
           ) : (
-            <Moon className="h-4 w-4 text-zinc-600" />
+            <Moon className="h-4 w-4 text-muted-foreground" />
           )}
         </button>
 

@@ -88,7 +88,7 @@ export function BracketsView({ initialMatches, isAdmin = false }: BracketsViewPr
     <div className="space-y-6 select-none">
       <div className="flex items-center gap-2">
         <Trophy className="h-5 w-5 text-primary" />
-        <h2 className="text-lg font-bold text-white">Knockout Brackets</h2>
+        <h2 className="text-lg font-bold text-foreground">Knockout Brackets</h2>
       </div>
 
       {/* Horizontal scrolling tree */}
@@ -99,7 +99,7 @@ export function BracketsView({ initialMatches, isAdmin = false }: BracketsViewPr
 
           return (
             <div key={roundKey} className="flex flex-col gap-6 min-w-[240px] justify-around">
-              <div className="text-center py-1.5 px-3 bg-zinc-900 border border-zinc-800 rounded-xl text-xs font-bold uppercase tracking-wider text-zinc-400">
+              <div className="text-center py-1.5 px-3 bg-card border border-border rounded-xl text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 {getRoundName(roundNum, totalRounds)}
               </div>
 
@@ -113,7 +113,7 @@ export function BracketsView({ initialMatches, isAdmin = false }: BracketsViewPr
                     <div
                       key={match.id}
                       onClick={() => handleOpenScoreModal(match)}
-                      className={`rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4 space-y-3 transition-all ${
+                      className={`rounded-2xl border border-border bg-card/40 p-4 space-y-3 transition-all ${
                         isAdmin ? "cursor-pointer hover:border-primary/60 hover:scale-[1.01]" : ""
                       }`}
                     >
@@ -121,12 +121,12 @@ export function BracketsView({ initialMatches, isAdmin = false }: BracketsViewPr
                       <div className="flex items-center justify-between gap-4">
                         <span
                           className={`text-sm font-semibold truncate ${
-                            isCompleted && match.winner_id === t1?.id ? "text-primary font-bold" : "text-zinc-400"
+                            isCompleted && match.winner_id === t1?.id ? "text-primary font-bold" : "text-muted-foreground"
                           }`}
                         >
                           {t1?.name || "TBD"}
                         </span>
-                        <span className="text-xs font-bold text-white px-2 py-0.5 bg-zinc-950 rounded-md">
+                        <span className="text-xs font-bold text-foreground px-2 py-0.5 bg-background rounded-md">
                           {match.team1_score !== null ? match.team1_score : "-"}
                         </span>
                       </div>
@@ -135,17 +135,17 @@ export function BracketsView({ initialMatches, isAdmin = false }: BracketsViewPr
                       <div className="flex items-center justify-between gap-4">
                         <span
                           className={`text-sm font-semibold truncate ${
-                            isCompleted && match.winner_id === t2?.id ? "text-primary font-bold" : "text-zinc-400"
+                            isCompleted && match.winner_id === t2?.id ? "text-primary font-bold" : "text-muted-foreground"
                           }`}
                         >
                           {t2?.name || "TBD"}
                         </span>
-                        <span className="text-xs font-bold text-white px-2 py-0.5 bg-zinc-950 rounded-md">
+                        <span className="text-xs font-bold text-foreground px-2 py-0.5 bg-background rounded-md">
                           {match.team2_score !== null ? match.team2_score : "-"}
                         </span>
                       </div>
 
-                      <div className="flex justify-between items-center text-[10px] text-zinc-500 pt-2 border-t border-zinc-800/80">
+                      <div className="flex justify-between items-center text-[10px] text-muted-foreground pt-2 border-t border-border/80">
                         <span>Match #{match.match_number}</span>
                         <span className="capitalize">{match.status.replace("_", " ")}</span>
                       </div>
@@ -160,21 +160,21 @@ export function BracketsView({ initialMatches, isAdmin = false }: BracketsViewPr
 
       {/* Admin Score submission overlay */}
       {selectedMatch && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 p-4 backdrop-blur-sm">
-          <div className="relative w-full max-w-sm rounded-3xl border border-zinc-800 bg-zinc-900 p-6 md:p-8 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm">
+          <div className="relative w-full max-w-sm rounded-3xl border border-border bg-card p-6 md:p-8 shadow-2xl">
             <button
               onClick={() => setSelectedMatch(null)}
-              className="absolute top-4 right-4 rounded-lg p-1.5 hover:bg-zinc-800 text-zinc-400"
+              className="absolute top-4 right-4 rounded-lg p-1.5 hover:bg-muted text-muted-foreground"
             >
               <X className="h-5 w-5" />
             </button>
 
-            <h3 className="text-lg font-bold text-white mb-4">Submit Match Score</h3>
+            <h3 className="text-lg font-bold text-foreground mb-4">Submit Match Score</h3>
 
             <form onSubmit={handleSaveScore} className="space-y-4">
               <div className="space-y-3">
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-sm font-semibold text-zinc-300 truncate max-w-[180px]">
+                  <span className="text-sm font-semibold text-foreground truncate max-w-[180px]">
                     {selectedMatch.team1?.name || "Team 1"}
                   </span>
                   <input
@@ -182,12 +182,12 @@ export function BracketsView({ initialMatches, isAdmin = false }: BracketsViewPr
                     required
                     value={score1}
                     onChange={(e) => setScore1(e.target.value)}
-                    className="w-20 rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-center text-white focus:outline-none focus:border-primary text-sm font-semibold"
+                    className="w-20 rounded-xl border border-border bg-background px-3 py-2 text-center text-foreground focus:outline-none focus:border-primary text-sm font-semibold"
                   />
                 </div>
 
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-sm font-semibold text-zinc-300 truncate max-w-[180px]">
+                  <span className="text-sm font-semibold text-foreground truncate max-w-[180px]">
                     {selectedMatch.team2?.name || "Team 2"}
                   </span>
                   <input
@@ -195,17 +195,17 @@ export function BracketsView({ initialMatches, isAdmin = false }: BracketsViewPr
                     required
                     value={score2}
                     onChange={(e) => setScore2(e.target.value)}
-                    className="w-20 rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-center text-white focus:outline-none focus:border-primary text-sm font-semibold"
+                    className="w-20 rounded-xl border border-border bg-background px-3 py-2 text-center text-foreground focus:outline-none focus:border-primary text-sm font-semibold"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">Declare Winner</label>
+                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Declare Winner</label>
                 <select
                   value={winnerId}
                   onChange={(e) => setWinnerId(e.target.value)}
-                  className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white focus:border-primary focus:outline-none text-sm transition-all font-semibold"
+                  className="w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all font-semibold"
                 >
                   <option value="">Choose Winner</option>
                   {selectedMatch.team1 && (
@@ -218,11 +218,11 @@ export function BracketsView({ initialMatches, isAdmin = false }: BracketsViewPr
                 </select>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-zinc-800/80">
+              <div className="flex justify-end gap-3 pt-4 border-t border-border/80">
                 <button
                   type="button"
                   onClick={() => setSelectedMatch(null)}
-                  className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-850"
+                  className="rounded-xl border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted"
                 >
                   Cancel
                 </button>

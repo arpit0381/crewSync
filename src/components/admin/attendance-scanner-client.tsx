@@ -114,20 +114,20 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">QR Attendance Scanner</h1>
-        <p className="text-sm text-zinc-400">Scan student ticket QR codes to record entry attendance.</p>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">QR Attendance Scanner</h1>
+        <p className="text-sm text-muted-foreground">Scan student ticket QR codes to record entry attendance.</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
         {/* Left: Scan Controls & Camera View */}
-        <div className="md:col-span-2 rounded-3xl border border-zinc-800 bg-zinc-900/20 p-6 space-y-4 flex flex-col justify-between">
+        <div className="md:col-span-2 rounded-3xl border border-border bg-card/20 p-6 space-y-4 flex flex-col justify-between">
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Select Event</label>
+              <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Select Event</label>
               <select
                 value={selectedEventId}
                 onChange={(e) => setSelectedEventId(e.target.value)}
-                className="mt-2 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white focus:border-primary focus:outline-none text-sm transition-all"
+                className="mt-2 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
               >
                 {events.map((e) => (
                   <option key={e.id} value={e.id}>
@@ -138,12 +138,12 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-zinc-300">Scanner Status</span>
+              <span className="text-sm font-semibold text-foreground">Scanner Status</span>
               <button
                 onClick={toggleScanner}
                 className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all shadow-md ${
                   scannerActive 
-                    ? "bg-red-500 hover:bg-red-600 text-white" 
+                    ? "bg-red-500 hover:bg-red-600 text-foreground" 
                     : "bg-primary text-primary-foreground hover:bg-primary/95 shadow-primary/20"
                 }`}
               >
@@ -154,11 +154,11 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
           </div>
 
           {/* Camera Frame */}
-          <div className="flex-1 flex items-center justify-center min-h-[320px] bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden mt-4 relative">
+          <div className="flex-1 flex items-center justify-center min-h-[320px] bg-background border border-border rounded-2xl overflow-hidden mt-4 relative">
             {scannerActive ? (
               <div id="qr-reader" className="w-full h-full max-w-[400px] border-none" />
             ) : (
-              <div className="text-center space-y-2 text-zinc-600 p-6">
+              <div className="text-center space-y-2 text-muted-foreground p-6">
                 <Camera className="h-12 w-12 mx-auto stroke-[1.5]" />
                 <p className="text-sm font-medium">Camera is disabled</p>
                 <p className="text-xs">Click Start Camera Scan to enable scanner.</p>
@@ -166,33 +166,33 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
             )}
             
             {scanLock && (
-              <div className="absolute inset-0 bg-zinc-950/70 flex flex-col items-center justify-center gap-2 animate-fade-in z-20">
+              <div className="absolute inset-0 bg-background/70 flex flex-col items-center justify-center gap-2 animate-fade-in z-20">
                 <RefreshCw className="h-8 w-8 text-primary animate-spin" />
-                <span className="text-xs text-zinc-300 font-bold">Verifying Ticket...</span>
+                <span className="text-xs text-foreground font-bold">Verifying Ticket...</span>
               </div>
             )}
           </div>
         </div>
 
         {/* Right: Real-time Stats & logs */}
-        <div className="rounded-3xl border border-zinc-800 bg-zinc-900/20 p-6 flex flex-col justify-between h-[520px]">
+        <div className="rounded-3xl border border-border bg-card/20 p-6 flex flex-col justify-between h-[520px]">
           <div className="space-y-4 overflow-hidden flex flex-col flex-1">
-            <h2 className="text-lg font-bold text-white">Live Scan Logger</h2>
+            <h2 className="text-lg font-bold text-foreground">Live Scan Logger</h2>
             
-            <div className="flex gap-4 border-b border-zinc-800 pb-3 shrink-0">
-              <div className="flex-1 text-center bg-zinc-950 rounded-xl py-2.5 border border-zinc-800">
-                <p className="text-[10px] text-zinc-500 uppercase font-semibold">Total Scans</p>
-                <p className="text-xl font-bold text-white mt-0.5">{scanLogs.length}</p>
+            <div className="flex gap-4 border-b border-border pb-3 shrink-0">
+              <div className="flex-1 text-center bg-background rounded-xl py-2.5 border border-border">
+                <p className="text-[10px] text-muted-foreground uppercase font-semibold">Total Scans</p>
+                <p className="text-xl font-bold text-foreground mt-0.5">{scanLogs.length}</p>
               </div>
-              <div className="flex-1 text-center bg-zinc-950 rounded-xl py-2.5 border border-zinc-800">
-                <p className="text-[10px] text-zinc-500 uppercase font-semibold">Checked In</p>
+              <div className="flex-1 text-center bg-background rounded-xl py-2.5 border border-border">
+                <p className="text-[10px] text-muted-foreground uppercase font-semibold">Checked In</p>
                 <p className="text-xl font-bold text-primary mt-0.5">{successCount}</p>
               </div>
             </div>
 
             <div className="flex-1 overflow-y-auto space-y-2.5 pr-1">
               {scanLogs.length === 0 ? (
-                <div className="text-center text-zinc-600 text-xs py-12">
+                <div className="text-center text-muted-foreground text-xs py-12">
                   No tickets scanned in this session.
                 </div>
               ) : (
@@ -213,8 +213,8 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
                     
                     <div className="space-y-1 overflow-hidden">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="font-mono text-[10px] font-bold text-zinc-500">{log.code}</span>
-                        <span className="text-[9px] text-zinc-500">{log.time}</span>
+                        <span className="font-mono text-[10px] font-bold text-muted-foreground">{log.code}</span>
+                        <span className="text-[9px] text-muted-foreground">{log.time}</span>
                       </div>
                       {log.student && <p className="font-semibold">{log.student}</p>}
                       <p className="text-[11px] leading-snug">{log.message}</p>

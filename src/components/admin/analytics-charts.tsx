@@ -41,7 +41,7 @@ export function AnalyticsCharts() {
 
   if (!mounted) {
     return (
-      <div className="h-72 w-full bg-zinc-900/10 rounded-2xl border border-zinc-800 animate-pulse flex items-center justify-center text-xs text-zinc-500">
+      <div className="h-72 w-full bg-card/10 rounded-2xl border border-border animate-pulse flex items-center justify-center text-xs text-muted-foreground">
         Loading analytics charts...
       </div>
     )
@@ -50,10 +50,10 @@ export function AnalyticsCharts() {
   return (
     <div className="grid gap-6 md:grid-cols-2">
       {/* 1. Area Chart: Registrations vs Check-Ins */}
-      <div className="rounded-3xl border border-zinc-800 bg-zinc-900/20 p-6 space-y-4">
+      <div className="rounded-3xl border border-border bg-card/20 p-6 space-y-4">
         <div className="space-y-1">
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider">Registration vs Attendance Trends</h3>
-          <p className="text-xs text-zinc-500">Cumulative metrics count recorded this week.</p>
+          <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">Registration vs Attendance Trends</h3>
+          <p className="text-xs text-muted-foreground">Cumulative metrics count recorded this week.</p>
         </div>
         <div className="h-72 w-full">
           <ResponsiveContainer width="100%" height="100%">
@@ -105,10 +105,10 @@ export function AnalyticsCharts() {
       </div>
 
       {/* 2. Bar Chart: Department-wise split */}
-      <div className="rounded-3xl border border-zinc-800 bg-zinc-900/20 p-6 space-y-4">
+      <div className="rounded-3xl border border-border bg-card/20 p-6 space-y-4">
         <div className="space-y-1">
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider">Department Participation</h3>
-          <p className="text-xs text-zinc-500">Distribution of registered students across courses.</p>
+          <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">Department Participation</h3>
+          <p className="text-xs text-muted-foreground">Distribution of registered students across courses.</p>
         </div>
         <div className="h-72 w-full">
           <ResponsiveContainer width="100%" height="100%">

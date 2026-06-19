@@ -38,19 +38,19 @@ export default async function TournamentResultsPage() {
   return (
     <div className="space-y-6 select-none">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">Standings & Results</h1>
-        <p className="text-sm text-zinc-400">View real-time league rankings and points leaderboards.</p>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">Standings & Results</h1>
+        <p className="text-sm text-muted-foreground">View real-time league rankings and points leaderboards.</p>
       </div>
 
-      <div className="rounded-3xl border border-zinc-800 bg-zinc-900/20 p-6 space-y-4">
+      <div className="rounded-3xl border border-border bg-card/20 p-6 space-y-4">
         <div className="flex items-center gap-2">
           <Trophy className="h-5 w-5 text-primary" />
-          <h2 className="text-lg font-bold text-white">Points Table (Round Robin League)</h2>
+          <h2 className="text-lg font-bold text-foreground">Points Table (Round Robin League)</h2>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-left text-sm text-zinc-400">
-            <thead className="border-b border-zinc-800 text-xs uppercase tracking-wider text-zinc-500">
+          <table className="w-full border-collapse text-left text-sm text-muted-foreground">
+            <thead className="border-b border-border text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
                 <th className="py-3 px-4">Rank</th>
                 <th className="py-3 px-4">Team</th>
@@ -63,9 +63,9 @@ export default async function TournamentResultsPage() {
             </thead>
             <tbody className="divide-y divide-zinc-800/60">
               {standings.map((team, idx) => (
-                <tr key={team.team_name} className="hover:bg-zinc-900/40">
-                  <td className="py-3.5 px-4 font-bold text-zinc-500">#{idx + 1}</td>
-                  <td className="py-3.5 px-4 font-semibold text-white">{team.team_name}</td>
+                <tr key={team.team_name} className="hover:bg-card/40">
+                  <td className="py-3.5 px-4 font-bold text-muted-foreground">#{idx + 1}</td>
+                  <td className="py-3.5 px-4 font-semibold text-foreground">{team.team_name}</td>
                   <td className="py-3.5 px-4 text-center">{team.played}</td>
                   <td className="py-3.5 px-4 text-center text-emerald-400">{team.won}</td>
                   <td className="py-3.5 px-4 text-center text-rose-400">{team.lost}</td>

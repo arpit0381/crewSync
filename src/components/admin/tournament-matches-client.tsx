@@ -83,13 +83,13 @@ export function TournamentMatchesClient({ events, initialMatches }: TournamentMa
   return (
     <div className="space-y-6">
       {/* Selector and Actions */}
-      <div className="rounded-3xl border border-zinc-800 bg-zinc-900/20 p-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="rounded-3xl border border-border bg-card/20 p-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="flex-1">
-          <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Choose Event / Tournament</label>
+          <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Choose Event / Tournament</label>
           <select
             value={selectedEventId}
             onChange={(e) => setSelectedEventId(e.target.value)}
-            className="mt-2 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white focus:border-primary focus:outline-none text-sm transition-all font-semibold"
+            className="mt-2 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all font-semibold"
           >
             {events.map((e) => (
               <option key={e.id} value={e.id}>
@@ -129,7 +129,7 @@ export function TournamentMatchesClient({ events, initialMatches }: TournamentMa
       )}
 
       {/* Render Brackets view with Admin scoring controls enabled */}
-      <div className="rounded-3xl border border-zinc-800 bg-zinc-900/10 p-6 md:p-8">
+      <div className="rounded-3xl border border-border bg-card/10 p-6 md:p-8">
         <BracketsView initialMatches={matches} isAdmin={true} />
       </div>
     </div>

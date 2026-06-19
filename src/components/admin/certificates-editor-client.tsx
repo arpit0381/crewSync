@@ -59,20 +59,20 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">Certificate Engine</h1>
-        <p className="text-sm text-zinc-400">Design template text coordinates and configure bulk dispatch requirements.</p>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">Certificate Engine</h1>
+        <p className="text-sm text-muted-foreground">Design template text coordinates and configure bulk dispatch requirements.</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Left: Settings Panel */}
-        <form onSubmit={handleSubmit} encType="multipart/form-data" className="rounded-3xl border border-zinc-800 bg-zinc-900/20 p-6 space-y-6 flex flex-col justify-between">
+        <form onSubmit={handleSubmit} encType="multipart/form-data" className="rounded-3xl border border-border bg-card/20 p-6 space-y-6 flex flex-col justify-between">
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Select Event Link</label>
+              <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Select Event Link</label>
               <select
                 value={selectedEventId}
                 onChange={(e) => setSelectedEventId(e.target.value)}
-                className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white focus:border-primary focus:outline-none text-sm font-semibold transition-all"
+                className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm font-semibold transition-all"
               >
                 {events.map((e) => (
                   <option key={e.id} value={e.id}>
@@ -83,7 +83,7 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Template File (Image)</label>
+              <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Template File (Image)</label>
               <input
                 name="template_file"
                 type="file"
@@ -96,20 +96,20 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
                     setImageUrl("")
                   }
                 }}
-                className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-white focus:border-primary focus:outline-none text-xs transition-all"
+                className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-2.5 text-foreground focus:border-primary focus:outline-none text-xs transition-all"
               />
-              <p className="text-[10px] text-zinc-500 mt-1">Leave empty to use our premium gold-border default design template.</p>
+              <p className="text-[10px] text-muted-foreground mt-1">Leave empty to use our premium gold-border default design template.</p>
             </div>
 
             {/* Sliders for Student Name coordinates */}
-            <div className="border-t border-zinc-850 pt-4 space-y-3">
+            <div className="border-t border-border pt-4 space-y-3">
               <div className="flex items-center gap-1.5 text-xs font-bold text-primary uppercase tracking-wider">
                 <Sliders className="h-4 w-4" />
                 <span>Student Name Placement Coordinates</span>
               </div>
               
               <div className="space-y-2">
-                <div className="flex justify-between text-xs text-zinc-400">
+                <div className="flex justify-between text-xs text-muted-foreground">
                   <span>Horizontal (X Coordinate): {nameX}mm</span>
                 </div>
                 <input
@@ -118,12 +118,12 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
                   max="280"
                   value={nameX}
                   onChange={(e) => setNameX(Number(e.target.value))}
-                  className="w-full accent-primary h-1.5 bg-zinc-800 rounded-lg appearance-none"
+                  className="w-full accent-primary h-1.5 bg-muted rounded-lg appearance-none"
                 />
               </div>
 
               <div className="space-y-2">
-                <div className="flex justify-between text-xs text-zinc-400">
+                <div className="flex justify-between text-xs text-muted-foreground">
                   <span>Vertical (Y Coordinate): {nameY}mm</span>
                 </div>
                 <input
@@ -132,12 +132,12 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
                   max="190"
                   value={nameY}
                   onChange={(e) => setNameY(Number(e.target.value))}
-                  className="w-full accent-primary h-1.5 bg-zinc-800 rounded-lg appearance-none"
+                  className="w-full accent-primary h-1.5 bg-muted rounded-lg appearance-none"
                 />
               </div>
 
               <div className="space-y-2">
-                <div className="flex justify-between text-xs text-zinc-400">
+                <div className="flex justify-between text-xs text-muted-foreground">
                   <span>Font Size: {nameSize}pt</span>
                 </div>
                 <input
@@ -146,13 +146,13 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
                   max="48"
                   value={nameSize}
                   onChange={(e) => setNameSize(Number(e.target.value))}
-                  className="w-full accent-primary h-1.5 bg-zinc-800 rounded-lg appearance-none"
+                  className="w-full accent-primary h-1.5 bg-muted rounded-lg appearance-none"
                 />
               </div>
             </div>
 
             {/* Date coordinates */}
-            <div className="border-t border-zinc-850 pt-4 space-y-3">
+            <div className="border-t border-border pt-4 space-y-3">
               <div className="flex items-center gap-1.5 text-xs font-bold text-primary uppercase tracking-wider">
                 <Sliders className="h-4 w-4" />
                 <span>Issue Date Placement Coordinates</span>
@@ -160,21 +160,21 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] text-zinc-500 uppercase">Vertical (Y)</label>
+                  <label className="block text-[10px] text-muted-foreground uppercase">Vertical (Y)</label>
                   <input
                     type="number"
                     value={dateY}
                     onChange={(e) => setDateY(Number(e.target.value))}
-                    className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-white focus:border-primary text-xs"
+                    className="mt-1 block w-full rounded-xl border border-border bg-background px-3 py-2 text-foreground focus:border-primary text-xs"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-zinc-500 uppercase">Font Size</label>
+                  <label className="block text-[10px] text-muted-foreground uppercase">Font Size</label>
                   <input
                     type="number"
                     value={dateSize}
                     onChange={(e) => setDateSize(Number(e.target.value))}
-                    className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-white focus:border-primary text-xs"
+                    className="mt-1 block w-full rounded-xl border border-border bg-background px-3 py-2 text-foreground focus:border-primary text-xs"
                   />
                 </div>
               </div>
@@ -187,7 +187,7 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
             </div>
           )}
 
-          <div className="flex justify-end pt-4 border-t border-zinc-850">
+          <div className="flex justify-end pt-4 border-t border-border">
             <button
               type="submit"
               disabled={loading}
@@ -200,8 +200,8 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
         </form>
 
         {/* Right: Layout Visualizer Box */}
-        <div className="rounded-3xl border border-zinc-800 bg-zinc-950/80 p-6 flex flex-col items-center justify-center relative min-h-[400px]">
-          <p className="absolute top-4 left-6 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Interactive Visualizer Map</p>
+        <div className="rounded-3xl border border-border bg-background/80 p-6 flex flex-col items-center justify-center relative min-h-[400px]">
+          <p className="absolute top-4 left-6 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Interactive Visualizer Map</p>
           
           {/* Certificate mock canvas layout */}
           <div 
@@ -210,7 +210,7 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
               backgroundSize: 'cover',
               backgroundPosition: 'center'
             }}
-            className="w-full max-w-[420px] aspect-[1.41] bg-zinc-900 rounded-xl border border-zinc-800 relative p-4 flex flex-col justify-between overflow-hidden shadow-2xl"
+            className="w-full max-w-[420px] aspect-[1.41] bg-card rounded-xl border border-border relative p-4 flex flex-col justify-between overflow-hidden shadow-2xl"
           >
             {/* Gold borders */}
             {!imageUrl && <div className="absolute inset-2 border border-yellow-600/30 rounded-lg pointer-events-none" />}
@@ -218,7 +218,7 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
             {!imageUrl ? (
               <div className="text-center mt-6">
                 <h3 className="text-yellow-600 font-serif text-sm italic">Certificate of Completion</h3>
-                <p className="text-[6px] text-zinc-500 uppercase tracking-widest mt-1">Proudly Presented To</p>
+                <p className="text-[6px] text-muted-foreground uppercase tracking-widest mt-1">Proudly Presented To</p>
               </div>
             ) : <div />}
             
@@ -229,14 +229,14 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
                 left: `${(nameX / 297) * 100}%`,
                 fontSize: `${(nameSize / 32) * 18}px`
               }}
-              className="absolute -translate-x-1/2 -translate-y-1/2 text-white font-serif font-bold whitespace-nowrap drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
+              className="absolute -translate-x-1/2 -translate-y-1/2 text-foreground font-serif font-bold whitespace-nowrap drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
             >
               [ Student Name ]
             </div>
 
             <div className="text-center mb-8">
-              {!imageUrl && <p className="text-[6px] text-zinc-400">for participation in the campus event</p>}
-              {!imageUrl && <p className="text-[8px] font-bold text-white mt-1">Tech Heist 2026</p>}
+              {!imageUrl && <p className="text-[6px] text-muted-foreground">for participation in the campus event</p>}
+              {!imageUrl && <p className="text-[8px] font-bold text-foreground mt-1">Tech Heist 2026</p>}
               
               {/* Dynamic Date Visualizer */}
               <p
@@ -244,7 +244,7 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
                   top: `${(dateY / 210) * 100}%`,
                   fontSize: `${(dateSize / 10) * 6}px`
                 }}
-                className="absolute left-1/2 -translate-x-1/2 text-zinc-400 font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
+                className="absolute left-1/2 -translate-x-1/2 text-muted-foreground font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
               >
                 Date: 2026-07-15
               </p>
@@ -252,9 +252,9 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
 
             {/* Mock signatures */}
             {!imageUrl && (
-              <div className="flex justify-between px-6 text-[5px] text-zinc-500 mb-2">
-                <div className="border-t border-zinc-800 w-12 pt-1 text-center">Coordinator</div>
-                <div className="border-t border-zinc-800 w-12 pt-1 text-center">Director</div>
+              <div className="flex justify-between px-6 text-[5px] text-muted-foreground mb-2">
+                <div className="border-t border-border w-12 pt-1 text-center">Coordinator</div>
+                <div className="border-t border-border w-12 pt-1 text-center">Director</div>
               </div>
             )}
           </div>

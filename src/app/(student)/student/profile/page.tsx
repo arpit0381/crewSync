@@ -82,20 +82,20 @@ export default async function StudentProfilePage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">My Campus Profile</h1>
-        <p className="text-sm text-zinc-400">View college identity records, roll allocations, and activity statistics.</p>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">My Campus Profile</h1>
+        <p className="text-sm text-muted-foreground">View college identity records, roll allocations, and activity statistics.</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
         {/* Left Card: Basic Profile */}
-        <div className="md:col-span-2 rounded-3xl border border-zinc-800 bg-zinc-900/20 backdrop-blur-sm p-6 space-y-6">
-          <div className="flex items-center gap-4 border-b border-zinc-850 pb-6">
+        <div className="md:col-span-2 rounded-3xl border border-border bg-card/20 backdrop-blur-sm p-6 space-y-6">
+          <div className="flex items-center gap-4 border-b border-border pb-6">
             <div className="h-16 w-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
               <User className="h-8 w-8" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white leading-tight">{profile.name}</h2>
-              <span className="inline-flex items-center rounded-full bg-zinc-800 px-2.5 py-0.5 text-xs font-semibold text-zinc-400 mt-1 capitalize">
+              <h2 className="text-xl font-bold text-foreground leading-tight">{profile.name}</h2>
+              <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground mt-1 capitalize">
                 {profile.role.replace("_", " ")}
               </span>
             </div>
@@ -105,78 +105,78 @@ export default async function StudentProfilePage() {
             <div className="flex gap-3">
               <Shield className="h-5 w-5 text-primary shrink-0 mt-0.5" />
               <div>
-                <p className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold">University Roll No</p>
-                <p className="text-sm font-semibold text-white font-mono mt-0.5">{profile.roll_number}</p>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">University Roll No</p>
+                <p className="text-sm font-semibold text-foreground font-mono mt-0.5">{profile.roll_number}</p>
               </div>
             </div>
 
             <div className="flex gap-3">
               <Mail className="h-5 w-5 text-primary shrink-0 mt-0.5" />
               <div>
-                <p className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold">Email Address</p>
-                <p className="text-sm font-semibold text-white mt-0.5 truncate max-w-[220px]">{profile.email}</p>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Email Address</p>
+                <p className="text-sm font-semibold text-foreground mt-0.5 truncate max-w-[220px]">{profile.email}</p>
               </div>
             </div>
 
             <div className="flex gap-3">
               <Phone className="h-5 w-5 text-primary shrink-0 mt-0.5" />
               <div>
-                <p className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold">Mobile Contact</p>
-                <p className="text-sm font-semibold text-white mt-0.5">{profile.phone}</p>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Mobile Contact</p>
+                <p className="text-sm font-semibold text-foreground mt-0.5">{profile.phone}</p>
               </div>
             </div>
 
             <div className="flex gap-3">
               <Building2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
               <div>
-                <p className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold">Academic Department</p>
-                <p className="text-sm font-semibold text-white mt-0.5 leading-tight">{profile.department_name}</p>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Academic Department</p>
+                <p className="text-sm font-semibold text-foreground mt-0.5 leading-tight">{profile.department_name}</p>
               </div>
             </div>
 
             <div className="flex gap-3 sm:col-span-2">
               <BookOpen className="h-5 w-5 text-primary shrink-0 mt-0.5" />
               <div>
-                <p className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold">Primary Student Club Affiliation</p>
-                <p className="text-sm font-semibold text-white mt-0.5 leading-tight">{profile.club_name}</p>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Primary Student Club Affiliation</p>
+                <p className="text-sm font-semibold text-foreground mt-0.5 leading-tight">{profile.club_name}</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Right Card: Statistics Summary */}
-        <div className="rounded-3xl border border-zinc-800 bg-zinc-900/20 backdrop-blur-sm p-6 flex flex-col justify-between">
+        <div className="rounded-3xl border border-border bg-card/20 backdrop-blur-sm p-6 flex flex-col justify-between">
           <div className="space-y-4">
-            <h2 className="text-lg font-bold text-white border-b border-zinc-850 pb-3">Campus Statistics</h2>
+            <h2 className="text-lg font-bold text-foreground border-b border-border pb-3">Campus Statistics</h2>
             
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Ticket className="h-4 w-4 text-zinc-400" />
-                  <span className="text-sm text-zinc-400">Events Registered</span>
+                  <Ticket className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Events Registered</span>
                 </div>
-                <span className="text-lg font-bold text-white">{profile.stats.registered}</span>
+                <span className="text-lg font-bold text-foreground">{profile.stats.registered}</span>
               </div>
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Award className="h-4 w-4 text-zinc-400" />
-                  <span className="text-sm text-zinc-400">Certificates Earned</span>
+                  <Award className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Certificates Earned</span>
                 </div>
-                <span className="text-lg font-bold text-white">{profile.stats.certificates}</span>
+                <span className="text-lg font-bold text-foreground">{profile.stats.certificates}</span>
               </div>
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Trophy className="h-4 w-4 text-zinc-400" />
-                  <span className="text-sm text-zinc-400">Teams Joined</span>
+                  <Trophy className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Teams Joined</span>
                 </div>
-                <span className="text-lg font-bold text-white">{profile.stats.teams}</span>
+                <span className="text-lg font-bold text-foreground">{profile.stats.teams}</span>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-zinc-850 pt-4 mt-6 text-[10px] text-zinc-500 text-center leading-relaxed">
+          <div className="border-t border-border pt-4 mt-6 text-[10px] text-muted-foreground text-center leading-relaxed">
             Information linked directly with college administrative systems. Contact campus registrar to update roll allocations.
           </div>
         </div>

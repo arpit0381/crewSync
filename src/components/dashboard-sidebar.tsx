@@ -87,7 +87,7 @@ export function DashboardSidebar({ role, isOpen, onClose }: DashboardSidebarProp
       {/* Mobile Sidebar Overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 z-40 bg-zinc-950/60 backdrop-blur-sm md:hidden" 
+          className="fixed inset-0 z-40 bg-background/60 backdrop-blur-sm md:hidden" 
           onClick={onClose}
         />
       )}

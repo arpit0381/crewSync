@@ -68,36 +68,36 @@ export default async function AdminSettingsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">System Configurations</h1>
-        <p className="text-sm text-zinc-400">Configure mail delivery settings, media assets storage path keys, and maintenance states.</p>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">System Configurations</h1>
+        <p className="text-sm text-muted-foreground">Configure mail delivery settings, media assets storage path keys, and maintenance states.</p>
       </div>
 
       <form action={updateSettings} className="grid gap-6 md:grid-cols-3">
         {/* Left Card: General Config */}
-        <div className="md:col-span-2 rounded-3xl border border-zinc-800 bg-zinc-900/20 backdrop-blur-sm p-6 space-y-6">
-          <div className="flex items-center gap-2 border-b border-zinc-850 pb-4">
+        <div className="md:col-span-2 rounded-3xl border border-border bg-card/20 backdrop-blur-sm p-6 space-y-6">
+          <div className="flex items-center gap-2 border-b border-border pb-4">
             <Building className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-bold text-white">General & Branding</h2>
+            <h2 className="text-lg font-bold text-foreground">General & Branding</h2>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Campus Institution Name</label>
+              <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Campus Institution Name</label>
               <input
                 name="college_name"
                 type="text"
                 defaultValue={settings.college_name}
                 required
-                className="mt-1.5 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white focus:border-primary focus:outline-none text-sm transition-all"
+                className="mt-1.5 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Maintenance Mode</label>
+              <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Maintenance Mode</label>
               <select
                 name="maintenance_mode"
                 defaultValue={settings.maintenance_mode}
-                className="mt-1.5 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white focus:border-primary focus:outline-none text-sm transition-all"
+                className="mt-1.5 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
               >
                 <option value="false">Live (Accept Registrations)</option>
                 <option value="true">Under Maintenance (Read-Only)</option>
@@ -105,64 +105,64 @@ export default async function AdminSettingsPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 border-b border-zinc-850 pb-4 pt-4">
+          <div className="flex items-center gap-2 border-b border-border pb-4 pt-4">
             <Cloud className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-bold text-white">Cloudinary Folders Config</h2>
+            <h2 className="text-lg font-bold text-foreground">Cloudinary Folders Config</h2>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Event Banner Directory Folder</label>
+              <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Event Banner Directory Folder</label>
               <input
                 name="cloudinary_event_folder"
                 type="text"
                 defaultValue={settings.cloudinary_event_folder}
                 required
-                className="mt-1.5 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white focus:border-primary focus:outline-none text-sm transition-all font-mono"
+                className="mt-1.5 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all font-mono"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Certificates Template Folder</label>
+              <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Certificates Template Folder</label>
               <input
                 name="cloudinary_template_folder"
                 type="text"
                 defaultValue={settings.cloudinary_template_folder}
                 required
-                className="mt-1.5 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white focus:border-primary focus:outline-none text-sm transition-all font-mono"
+                className="mt-1.5 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all font-mono"
               />
             </div>
           </div>
 
-          <div className="flex items-center gap-2 border-b border-zinc-850 pb-4 pt-4">
+          <div className="flex items-center gap-2 border-b border-border pb-4 pt-4">
             <Mail className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-bold text-white">Resend SMTP Mailing</h2>
+            <h2 className="text-lg font-bold text-foreground">Resend SMTP Mailing</h2>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Sender Verification Address</label>
+            <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Sender Verification Address</label>
             <input
               name="smtp_sender"
               type="email"
               defaultValue={settings.smtp_sender}
               required
-              className="mt-1.5 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white focus:border-primary focus:outline-none text-sm transition-all"
+              className="mt-1.5 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
             />
           </div>
         </div>
 
         {/* Right Card: Control Center Info */}
-        <div className="rounded-3xl border border-zinc-800 bg-zinc-900/20 backdrop-blur-sm p-6 flex flex-col justify-between">
+        <div className="rounded-3xl border border-border bg-card/20 backdrop-blur-sm p-6 flex flex-col justify-between">
           <div className="space-y-4">
-            <h2 className="text-lg font-bold text-white border-b border-zinc-850 pb-3">Actions Console</h2>
+            <h2 className="text-lg font-bold text-foreground border-b border-border pb-3">Actions Console</h2>
             
-            <div className="text-xs text-zinc-400 leading-relaxed space-y-2">
+            <div className="text-xs text-muted-foreground leading-relaxed space-y-2">
               <p>Verify that SMTP credentials and Cloudinary tokens match the workspace configurations in the [.env.local](file:///e:/my%20stuf/crewarena/.env.local) file.</p>
               <p>Maintenance mode will disable registrations across all published technical and sports events for students, keeping dashboard modules in display-only state.</p>
             </div>
           </div>
 
-          <div className="space-y-3 pt-6 border-t border-zinc-850">
+          <div className="space-y-3 pt-6 border-t border-border">
             <button
               type="submit"
               className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-xs font-bold text-primary-foreground hover:bg-primary/95 transition-all shadow-md shadow-primary/20 cursor-pointer"

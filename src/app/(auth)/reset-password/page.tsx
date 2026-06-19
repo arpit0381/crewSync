@@ -23,7 +23,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-zinc-950 px-4 py-12 sm:px-6 lg:px-8 overflow-hidden select-none">
+    <div className="relative min-h-screen flex items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8 overflow-hidden select-none">
       {/* Background glow effects */}
       <div className="absolute inset-0 z-0">
         <div className="absolute -top-[30%] -left-[20%] w-[70%] h-[70%] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
@@ -33,18 +33,18 @@ export default function ResetPasswordPage() {
 
       <div className="relative z-10 w-full max-w-md space-y-8">
         <div className="text-center">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-900 border border-zinc-800 shadow-xl">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-card border border-border shadow-xl">
             <ShieldCheck className="h-7 w-7 text-primary" />
           </div>
-          <h2 className="mt-6 text-3xl font-bold tracking-tight text-white">
+          <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
             Set new password
           </h2>
-          <p className="mt-2 text-sm text-zinc-400">
+          <p className="mt-2 text-sm text-muted-foreground">
             Please enter your new password below
           </p>
         </div>
 
-        <div className="mt-8 bg-zinc-900/60 backdrop-blur-xl border border-zinc-800/80 p-8 rounded-3xl shadow-2xl">
+        <div className="mt-8 bg-card/60 backdrop-blur-xl border border-border/80 p-8 rounded-3xl shadow-2xl">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
               <div className="p-4 rounded-xl bg-red-950/40 border border-red-900/50 text-red-400 text-sm text-center">
@@ -53,7 +53,7 @@ export default function ResetPasswordPage() {
             )}
 
             <div>
-              <label htmlFor="password" className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+              <label htmlFor="password" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 New Password
               </label>
               <div className="mt-2">
@@ -62,7 +62,7 @@ export default function ResetPasswordPage() {
                   name="password"
                   type="password"
                   required
-                  className="block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 py-3 text-white placeholder-zinc-500 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
+                  className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
                   placeholder="••••••••"
                 />
               </div>

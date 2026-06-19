@@ -12,26 +12,23 @@ envContent.split('\n').forEach(line => {
 })
 
 const { createClient } = require('@supabase/supabase-js')
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY) // Use SERVICE ROLE to see everything
 
 async function test() {
-  const { data: data2, error: error2 } = await supabase
-    .from("tickets")
-    .select(`
-      id,
-      ticket_code,
-      registration:registration_id!inner (
-        id,
-        created_at,
-        user_id,
-        events:event_id (
-          id,
-          title
-        )
-      )
-    `)
-  console.log("Error with 'registration_id':", error2?.message || "No error")
-  console.log("Data2 length:", data2?.length)
+  const { data: regs, error: err1 } = await supabase.from('registrations').select('*')
+  console.log("All Registrations:", regs?.length)
+  console.log("Reg Error:", err1)
+
+  const { data: tickets, error: err2 } = await supabase.from('tickets').select('*')
+  console.log("All Tickets:", tickets?.length)
+  console.log("Ticket Error:", err2)
+  
+  if (regs && regs.length > 0) {
+    console.log("Sample Reg:", regs[0])
+  }
+  if (tickets && tickets.length > 0) {
+    console.log("Sample Ticket:", tickets[0])
+  }
 }
 
 test()

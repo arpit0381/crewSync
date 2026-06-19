@@ -64,36 +64,36 @@ export default async function StudentAttendancePage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">My Attendance Tracker</h1>
-        <p className="text-sm text-zinc-400">Review scan logs and check-in confirmation statuses for claimed certificates eligibility.</p>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">My Attendance Tracker</h1>
+        <p className="text-sm text-muted-foreground">Review scan logs and check-in confirmation statuses for claimed certificates eligibility.</p>
       </div>
 
       {/* Stats Panel */}
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 flex items-center justify-between">
+        <div className="rounded-2xl border border-border bg-card/40 p-5 flex items-center justify-between">
           <div className="space-y-1">
-            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Registered Events</p>
-            <p className="text-2xl font-bold text-white">{totalRegistered}</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Registered Events</p>
+            <p className="text-2xl font-bold text-foreground">{totalRegistered}</p>
           </div>
-          <div className="h-10 w-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400">
+          <div className="h-10 w-10 rounded-xl bg-card border border-border flex items-center justify-center text-muted-foreground">
             <Calendar className="h-5 w-5" />
           </div>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 flex items-center justify-between">
+        <div className="rounded-2xl border border-border bg-card/40 p-5 flex items-center justify-between">
           <div className="space-y-1">
-            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Checked In</p>
-            <p className="text-2xl font-bold text-white">{totalCheckedIn}</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Checked In</p>
+            <p className="text-2xl font-bold text-foreground">{totalCheckedIn}</p>
           </div>
           <div className="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
             <ShieldCheck className="h-5 w-5" />
           </div>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 flex items-center justify-between">
+        <div className="rounded-2xl border border-border bg-card/40 p-5 flex items-center justify-between">
           <div className="space-y-1">
-            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Attendance Rate</p>
-            <p className="text-2xl font-bold text-white">{attendanceRate}%</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Attendance Rate</p>
+            <p className="text-2xl font-bold text-foreground">{attendanceRate}%</p>
           </div>
           <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
             <CheckSquare className="h-5 w-5" />
@@ -102,17 +102,17 @@ export default async function StudentAttendancePage() {
       </div>
 
       {/* Logs Table Card */}
-      <div className="rounded-3xl border border-zinc-800 bg-zinc-900/20 backdrop-blur-sm p-6 overflow-hidden">
-        <h2 className="text-lg font-bold text-white mb-4">Event Check-In History</h2>
+      <div className="rounded-3xl border border-border bg-card/20 backdrop-blur-sm p-6 overflow-hidden">
+        <h2 className="text-lg font-bold text-foreground mb-4">Event Check-In History</h2>
         
         {logs.length === 0 ? (
-          <div className="p-8 text-center text-zinc-500">
+          <div className="p-8 text-center text-muted-foreground">
             No attendance entries logged. Register for an event and present your ticket to organizers.
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-zinc-300">
-              <thead className="bg-zinc-950/40 text-xs font-bold uppercase text-zinc-400 border-b border-zinc-800">
+            <table className="w-full text-left text-sm text-foreground">
+              <thead className="bg-background/40 text-xs font-bold uppercase text-muted-foreground border-b border-border">
                 <tr>
                   <th className="px-6 py-4 rounded-tl-2xl">Event</th>
                   <th className="px-6 py-4">Venue</th>
@@ -123,19 +123,19 @@ export default async function StudentAttendancePage() {
               </thead>
               <tbody className="divide-y divide-zinc-850/50">
                 {logs.map((log: any) => (
-                  <tr key={log.id} className="hover:bg-zinc-900/10 transition-colors">
-                    <td className="px-6 py-4 font-semibold text-white truncate max-w-[200px]">{log.event_title}</td>
-                    <td className="px-6 py-4 text-zinc-400">
+                  <tr key={log.id} className="hover:bg-card/10 transition-colors">
+                    <td className="px-6 py-4 font-semibold text-foreground truncate max-w-[200px]">{log.event_title}</td>
+                    <td className="px-6 py-4 text-muted-foreground">
                       <div className="flex items-center gap-1.5">
-                        <MapPin className="h-3.5 w-3.5 text-zinc-500 shrink-0" />
+                        <MapPin className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                         <span className="truncate">{log.venue}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-zinc-400">{log.event_date}</td>
-                    <td className="px-6 py-4 text-zinc-400">
+                    <td className="px-6 py-4 text-muted-foreground">{log.event_date}</td>
+                    <td className="px-6 py-4 text-muted-foreground">
                       {log.scanned_at ? (
                         <div className="flex items-center gap-1.5">
-                          <Clock className="h-3.5 w-3.5 text-zinc-500 shrink-0" />
+                          <Clock className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                           <span>
                             {new Date(log.scanned_at).toLocaleTimeString("en-US", {
                               hour: "2-digit",
@@ -144,14 +144,14 @@ export default async function StudentAttendancePage() {
                           </span>
                         </div>
                       ) : (
-                        <span className="text-zinc-600">—</span>
+                        <span className="text-muted-foreground">—</span>
                       )}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                         log.status === "verified"
                           ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"
-                          : "bg-zinc-950 border border-zinc-800 text-zinc-500"
+                          : "bg-background border border-border text-muted-foreground"
                       }`}>
                         {log.status === "verified" ? "Checked In" : "Pending Check-In"}
                       </span>

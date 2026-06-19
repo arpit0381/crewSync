@@ -126,8 +126,8 @@ export function EventManagerClient({
       {/* Header Panel */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">Manage Events</h1>
-          <p className="text-sm text-zinc-400">Configure registrations, parameters, and statuses.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">Manage Events</h1>
+          <p className="text-sm text-muted-foreground">Configure registrations, parameters, and statuses.</p>
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
@@ -139,7 +139,7 @@ export function EventManagerClient({
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 border-b border-zinc-800 pb-px overflow-x-auto">
+      <div className="flex items-center gap-2 border-b border-border pb-px overflow-x-auto">
         {["all", "draft", "pending_approval", "published", "completed"].map((filter) => (
           <button
             key={filter}
@@ -147,7 +147,7 @@ export function EventManagerClient({
             className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider border-b-2 transition-all shrink-0 ${
               activeFilter === filter
                 ? "border-primary text-primary"
-                : "border-transparent text-zinc-500 hover:text-zinc-300"
+                : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
             {filter.replace("_", " ")}
@@ -157,7 +157,7 @@ export function EventManagerClient({
 
       {/* Events List Grid */}
       {filteredEvents.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-zinc-800 p-12 text-center text-zinc-500">
+        <div className="rounded-3xl border border-dashed border-border p-12 text-center text-muted-foreground">
           No events found for this filter.
         </div>
       ) : (
@@ -165,7 +165,7 @@ export function EventManagerClient({
           {filteredEvents.map((event) => (
             <div
               key={event.id}
-              className="flex flex-col rounded-3xl border border-zinc-800 bg-zinc-900/20 backdrop-blur-sm overflow-hidden group"
+              className="flex flex-col rounded-3xl border border-border bg-card/20 backdrop-blur-sm overflow-hidden group"
             >
               {/* Event Image Banner (Admin View) */}
               <div className="h-32 w-full relative overflow-hidden bg-gradient-to-br from-zinc-850 to-zinc-950 flex items-center justify-center">
@@ -176,11 +176,11 @@ export function EventManagerClient({
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 ) : null}
-                <div className="absolute inset-0 bg-zinc-950/40" />
+                <div className="absolute inset-0 bg-background/40" />
               </div>
               <div className="p-6 space-y-4 flex flex-col flex-1">
                 <div className="flex items-center justify-between">
-                  <span className="inline-flex items-center rounded-full bg-zinc-800 px-2.5 py-0.5 text-xs font-semibold text-zinc-300">
+                  <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold text-foreground">
                     {event.categories?.name || "Event"}
                   </span>
                   
@@ -188,7 +188,7 @@ export function EventManagerClient({
                   <select
                     value={event.status}
                     onChange={(e) => handleStatusChange(event.id, e.target.value as any)}
-                    className="bg-zinc-950 text-xs font-semibold border border-zinc-800 rounded-lg px-2.5 py-1 focus:outline-none focus:border-primary text-zinc-300"
+                    className="bg-background text-xs font-semibold border border-border rounded-lg px-2.5 py-1 focus:outline-none focus:border-primary text-foreground"
                   >
                     <option value="draft">Draft</option>
                     <option value="pending_approval">Pending Approval</option>
@@ -198,11 +198,11 @@ export function EventManagerClient({
                 </div>
 
                 <div className="space-y-2">
-                  <h3 className="text-lg font-bold text-white leading-tight">{event.title}</h3>
-                  <p className="text-xs text-zinc-400 line-clamp-3 leading-relaxed">{event.description}</p>
+                  <h3 className="text-lg font-bold text-foreground leading-tight">{event.title}</h3>
+                  <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed">{event.description}</p>
                 </div>
 
-                <div className="mt-auto pt-4 border-t border-zinc-800/80 space-y-2 text-xs text-zinc-400">
+                <div className="mt-auto pt-4 border-t border-border/80 space-y-2 text-xs text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <Calendar className="h-3.5 w-3.5 text-primary shrink-0" />
                     <span>{event.event_date} at {event.event_time}</span>
@@ -228,16 +228,16 @@ export function EventManagerClient({
 
       {/* Creation Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 p-4 backdrop-blur-sm select-none">
-          <div className="relative w-full max-w-2xl rounded-3xl border border-zinc-800 bg-zinc-900 p-6 md:p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm select-none">
+          <div className="relative w-full max-w-2xl rounded-3xl border border-border bg-card p-6 md:p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 rounded-lg p-1.5 hover:bg-zinc-800 text-zinc-400"
+              className="absolute top-4 right-4 rounded-lg p-1.5 hover:bg-muted text-muted-foreground"
             >
               <X className="h-5 w-5" />
             </button>
 
-            <h2 className="text-xl font-bold text-white mb-6">Create New Event</h2>
+            <h2 className="text-xl font-bold text-foreground mb-6">Create New Event</h2>
 
             <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-4">
               {error && (
@@ -247,45 +247,45 @@ export function EventManagerClient({
               )}
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Event Title</label>
+                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Event Title</label>
                 <input
                   name="title"
                   type="text"
                   required
-                  className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white placeholder-zinc-500 focus:border-primary focus:outline-none text-sm transition-all"
+                  className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none text-sm transition-all"
                   placeholder="E.g. Code Gladiators 2026"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Description</label>
+                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Description</label>
                 <textarea
                   name="description"
                   required
                   rows={3}
-                  className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white placeholder-zinc-500 focus:border-primary focus:outline-none text-sm transition-all"
+                  className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none text-sm transition-all"
                   placeholder="Explain event details, guidelines, rules..."
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Event Banner Image</label>
+                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Event Banner Image</label>
                 <input
                   name="banner_file"
                   type="file"
                   accept="image/*"
-                  className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-white focus:border-primary focus:outline-none text-xs transition-all"
+                  className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-2.5 text-foreground focus:border-primary focus:outline-none text-xs transition-all"
                 />
               </div>
 
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Category</label>
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Category</label>
                   <select
                     name="category_id"
                     required
-                    className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white focus:border-primary focus:outline-none text-sm transition-all"
+                    className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
                   >
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>
@@ -295,12 +295,12 @@ export function EventManagerClient({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Venue</label>
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Venue</label>
                   <input
                     name="venue"
                     type="text"
                     required
-                    className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white placeholder-zinc-500 focus:border-primary focus:outline-none text-sm transition-all"
+                    className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none text-sm transition-all"
                     placeholder="E.g. Seminar Hall 2"
                   />
                 </div>
@@ -308,41 +308,41 @@ export function EventManagerClient({
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Date</label>
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Date</label>
                   <input
                     name="event_date"
                     type="date"
                     required
-                    className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white focus:border-primary focus:outline-none text-sm transition-all"
+                    className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Time</label>
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Time</label>
                   <input
                     name="event_time"
                     type="time"
                     required
-                    className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white focus:border-primary focus:outline-none text-sm transition-all"
+                    className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Capacity Limit</label>
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Capacity Limit</label>
                   <input
                     name="capacity"
                     type="number"
                     defaultValue={100}
                     required
-                    className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white focus:border-primary focus:outline-none text-sm transition-all"
+                    className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 border-t border-zinc-800/80 pt-4">
+              <div className="grid grid-cols-2 gap-4 border-t border-border/80 pt-4">
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Department (Optional)</label>
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Department (Optional)</label>
                   <select
                     name="department_id"
-                    className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white focus:border-primary focus:outline-none text-sm transition-all"
+                    className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
                   >
                     <option value="">None (Platform-wide)</option>
                     {departments.map((d) => (
@@ -351,10 +351,10 @@ export function EventManagerClient({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Club Hosting (Optional)</label>
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Club Hosting (Optional)</label>
                   <select
                     name="club_id"
-                    className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white focus:border-primary focus:outline-none text-sm transition-all"
+                    className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
                   >
                     <option value="">None (Departmental)</option>
                     {clubs.map((c) => (
@@ -364,18 +364,18 @@ export function EventManagerClient({
                 </div>
               </div>
 
-              <div className="border-t border-zinc-800/80 pt-4 space-y-4">
+              <div className="border-t border-border/80 pt-4 space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <label className="block text-sm font-bold text-white">Registration Type</label>
-                    <p className="text-xs text-zinc-500">Decide if students register as individuals or teams.</p>
+                    <label className="block text-sm font-bold text-foreground">Registration Type</label>
+                    <p className="text-xs text-muted-foreground">Decide if students register as individuals or teams.</p>
                   </div>
-                  <div className="flex rounded-xl border border-zinc-800 bg-zinc-950 p-1">
+                  <div className="flex rounded-xl border border-border bg-background p-1">
                     <button
                       type="button"
                       onClick={() => setRegType("individual")}
                       className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
-                        regType === "individual" ? "bg-primary text-primary-foreground shadow" : "text-zinc-500"
+                        regType === "individual" ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground"
                       }`}
                     >
                       Individual
@@ -384,7 +384,7 @@ export function EventManagerClient({
                       type="button"
                       onClick={() => setRegType("team")}
                       className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
-                        regType === "team" ? "bg-primary text-primary-foreground shadow" : "text-zinc-500"
+                        regType === "team" ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground"
                       }`}
                     >
                       Team
@@ -396,23 +396,23 @@ export function EventManagerClient({
                 {regType === "team" && (
                   <div className="grid grid-cols-2 gap-4 animate-in fade-in duration-200">
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Min Team Size</label>
+                      <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Min Team Size</label>
                       <input
                         name="min_team_size"
                         type="number"
                         defaultValue={2}
                         required
-                        className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white focus:border-primary focus:outline-none text-sm transition-all"
+                        className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Max Team Size</label>
+                      <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Max Team Size</label>
                       <input
                         name="max_team_size"
                         type="number"
                         defaultValue={4}
                         required
-                        className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white focus:border-primary focus:outline-none text-sm transition-all"
+                        className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
                       />
                     </div>
                   </div>
@@ -420,11 +420,11 @@ export function EventManagerClient({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Status Draft / Publish</label>
+                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status Draft / Publish</label>
                 <select
                   name="status"
                   defaultValue="published"
-                  className="mt-1 block w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white focus:border-primary focus:outline-none text-sm transition-all"
+                  className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
                 >
                   <option value="draft">Save as Draft</option>
                   <option value="pending_approval">Pending Approval</option>
@@ -432,11 +432,11 @@ export function EventManagerClient({
                 </select>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-zinc-800/80">
+              <div className="flex justify-end gap-3 pt-4 border-t border-border/80">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-zinc-850 transition-all"
+                  className="rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-muted transition-all"
                 >
                   Cancel
                 </button>

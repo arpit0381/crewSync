@@ -33,7 +33,7 @@ export default async function TournamentBracketsPage() {
   const matches = dbMatches
 
   return (
-    <div className="rounded-3xl border border-zinc-800 bg-zinc-900/10 p-6 md:p-8">
+    <div className="rounded-3xl border border-border bg-card/10 p-6 md:p-8">
       <BracketsView initialMatches={matches} isAdmin={false} />
     </div>
   )
