@@ -3,29 +3,11 @@ import { CheckSquare, Calendar, MapPin, Clock, Award, ShieldCheck } from "lucide
 
 export const dynamic = "force-dynamic"
 
-const MOCK_LOGS = [
-  {
-    id: "att-mock-1",
-    event_title: "Introduction to Edge Computing & AI",
-    event_date: "2026-06-18",
-    venue: "MBA Block Auditorium",
-    scanned_at: "2026-06-18T10:04:32Z",
-    status: "verified"
-  },
-  {
-    id: "att-mock-2",
-    event_title: "Valorant Campus Arena",
-    event_date: "2026-07-28",
-    venue: "Logix Club Esports Lab",
-    scanned_at: null,
-    status: "pending"
-  }
-]
 
 export default async function StudentAttendancePage() {
   let dbLogs: any[] = []
-  let totalRegistered = 3
-  let totalCheckedIn = 1
+  let totalRegistered = 0
+  let totalCheckedIn = 0
 
   try {
     const supabase = await createClient()
@@ -75,7 +57,7 @@ export default async function StudentAttendancePage() {
     console.warn("Using mock attendance due to DB connection:", err)
   }
 
-  const logs = dbLogs.length > 0 ? dbLogs : MOCK_LOGS
+  const logs = dbLogs
   const attendanceRate = totalRegistered > 0 ? Math.round((totalCheckedIn / totalRegistered) * 100) : 0
 
   return (

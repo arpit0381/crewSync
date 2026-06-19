@@ -3,26 +3,6 @@ import { Users, Shield, Copy, Calendar, Award } from "lucide-react"
 
 export const dynamic = "force-dynamic"
 
-const MOCK_TEAMS = [
-  {
-    id: "team-mock-1",
-    name: "Code Commandos",
-    invite_code: "CCD8F9",
-    captain_name: "Arpit Bajpai",
-    is_captain: true,
-    event_title: "Tech Heist 2026",
-    members: ["Arpit Bajpai", "John Doe", "Jane Smith"]
-  },
-  {
-    id: "team-mock-2",
-    name: "Logix Esports",
-    invite_code: "LGE7A2",
-    captain_name: "Sarah Connor",
-    is_captain: false,
-    event_title: "Valorant Campus Arena",
-    members: ["Sarah Connor", "Arpit Bajpai", "T-800", "Kyle Reese"]
-  }
-]
 
 export default async function StudentTeamsPage() {
   let dbTeams: any[] = []
@@ -87,7 +67,7 @@ export default async function StudentTeamsPage() {
     console.warn("Using mock student teams data due to DB connection:", err)
   }
 
-  const teams = dbTeams.length > 0 ? dbTeams : MOCK_TEAMS
+  const teams = dbTeams
 
   return (
     <div className="space-y-6">

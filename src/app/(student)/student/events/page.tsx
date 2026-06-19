@@ -1,59 +1,26 @@
 import { createClient } from "@/lib/supabase/server"
 import { EventBrowserClient } from "@/components/student/event-browser-client"
 
-const MOCK_EVENTS = [
-  {
-    id: "evt-1",
-    title: "Tech Heist 2026",
-    description: "The biggest annual 24-hour campus hackathon. Solve real-world industrial and college problems to win cash prizes.",
-    banner_url: null,
-    venue: "Lab 4 & Central Seminar Hall",
-    event_date: "2026-07-15",
-    event_time: "09:00:00",
-    capacity: 250,
-    reg_type: "team" as const,
-    min_team_size: 2,
-    max_team_size: 4,
-    status: "published",
-    categories: { name: "Hackathon", type: "technical" }
-  },
-  {
-    id: "evt-3",
-    title: "Valorant Campus Arena",
-    description: "Tactical 5v5 shooter challenge. Bring your crew, claim the spike, and rule the campus leaderboard.",
-    banner_url: null,
-    venue: "Logix Club Esports Lab",
-    event_date: "2026-07-28",
-    event_time: "14:00:00",
-    capacity: 100,
-    reg_type: "team" as const,
-    min_team_size: 5,
-    max_team_size: 6,
-    status: "published",
-    categories: { name: "Valorant", type: "esports" }
-  },
-  {
-    id: "evt-4",
-    title: "Guest Lecture: AI Trends",
-    description: "Guest lecture describing AI agents, edge computing models, and LLM orchestration strategies.",
-    banner_url: null,
-    venue: "Central Seminar Hall",
-    event_date: "2026-07-02",
-    event_time: "11:00:00",
-    capacity: 150,
-    reg_type: "individual" as const,
-    min_team_size: 1,
-    max_team_size: 1,
-    status: "published",
-    categories: { name: "Guest Lecture", type: "academic" }
-  }
-]
 
 export default async function StudentEventsPage() {
   let dbEvents: any[] = []
+  let userRegistrations: string[] = []
 
   try {
     const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (user) {
+      const { data: regs } = await supabase
+        .from("registrations")
+        .select("event_id")
+        .eq("user_id", user.id)
+
+      if (regs) {
+        userRegistrations = regs.map((r: any) => r.event_id)
+      }
+    }
+
     const { data: events } = await supabase
       .from("events")
       .select(`
@@ -81,7 +48,7 @@ export default async function StudentEventsPage() {
     console.warn("Using mock data inside StudentEventsPage due to DB connection:", err)
   }
 
-  const events = dbEvents.length > 0 ? dbEvents : MOCK_EVENTS
+  const events = dbEvents
 
-  return <EventBrowserClient events={events} />
+  return <EventBrowserClient events={events} userRegistrations={userRegistrations} />
 }

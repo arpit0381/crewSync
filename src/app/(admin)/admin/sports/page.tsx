@@ -4,26 +4,6 @@ import { Trophy, Calendar, Users, ArrowUpRight, Plus, Activity } from "lucide-re
 
 export const dynamic = "force-dynamic"
 
-const MOCK_SPORTS = [
-  {
-    id: "sports-mock-1",
-    game_name: "Cricket (Inter-Dept Cup)",
-    type: "knockout",
-    status: "ongoing",
-    event_title: "Inter-Department Cricket League",
-    teams_count: 8,
-    matches_count: 7
-  },
-  {
-    id: "sports-mock-2",
-    game_name: "Football Championship",
-    type: "round_robin",
-    status: "scheduled",
-    event_title: "Monsoon Football Cup",
-    teams_count: 6,
-    matches_count: 15
-  }
-]
 
 export default async function AdminSportsTourneysPage() {
   let dbSports: any[] = []
@@ -73,7 +53,7 @@ export default async function AdminSportsTourneysPage() {
     console.warn("Using mock sports tourneys due to DB connection:", err)
   }
 
-  const sports = dbSports.length > 0 ? dbSports : MOCK_SPORTS
+  const sports = dbSports
 
   return (
     <div className="space-y-6">

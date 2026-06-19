@@ -4,28 +4,6 @@ import { Gamepad, Key, ShieldAlert, ArrowUpRight, Plus, Eye, Monitor } from "luc
 
 export const dynamic = "force-dynamic"
 
-const MOCK_ESPORTS = [
-  {
-    id: "esports-mock-1",
-    game_name: "Valorant (Campus Arena)",
-    type: "knockout",
-    status: "ongoing",
-    event_title: "Campus Valorant Championship",
-    room_id: "VAL-ROOM-55",
-    room_password: "secret_spike",
-    teams_count: 8
-  },
-  {
-    id: "esports-mock-2",
-    game_name: "BGMI Mobile Battle",
-    type: "league",
-    status: "scheduled",
-    event_title: "Logix Esports BGMI Cup",
-    room_id: "BGMI-ROOM-202",
-    room_password: "drop_pochinki",
-    teams_count: 18
-  }
-]
 
 export default async function AdminEsportsTourneysPage() {
   let dbEsports: any[] = []
@@ -72,7 +50,7 @@ export default async function AdminEsportsTourneysPage() {
     console.warn("Using mock esports tourneys due to DB connection:", err)
   }
 
-  const esports = dbEsports.length > 0 ? dbEsports : MOCK_ESPORTS
+  const esports = dbEsports
 
   return (
     <div className="space-y-6">

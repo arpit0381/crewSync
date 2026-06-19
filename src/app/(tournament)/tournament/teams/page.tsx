@@ -1,24 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { Users, Clipboard, Mail, Phone } from "lucide-react"
 
-const MOCK_TEAMS = [
-  {
-    id: "team-1",
-    name: "BCA Techies",
-    invite_code: "BCA882",
-    captain: { name: "Arpit Bajpai", email: "arpit@college.edu", mobile: "9876543210" },
-    member_count: 4,
-    event_title: "Tech Heist Hackathon"
-  },
-  {
-    id: "team-2",
-    name: "MBA Giants",
-    invite_code: "MBA003",
-    captain: { name: "Sarah Khan", email: "sarah@college.edu", mobile: "9812345678" },
-    member_count: 3,
-    event_title: "Tech Heist Hackathon"
-  }
-]
 
 export default async function TournamentTeamsPage() {
   let dbTeams: any[] = []
@@ -54,7 +36,7 @@ export default async function TournamentTeamsPage() {
     console.warn("Using mock teams in teams manager:", err)
   }
 
-  const teams = dbTeams.length > 0 ? dbTeams : MOCK_TEAMS
+  const teams = dbTeams
 
   return (
     <div className="space-y-6 select-none">

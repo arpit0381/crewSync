@@ -4,11 +4,6 @@ import { Flag, Plus, Users, Calendar, ShieldCheck, Award } from "lucide-react"
 
 export const dynamic = "force-dynamic"
 
-const MOCK_CLUBS = [
-  { id: "club-mock-1", name: "Logix Coding Club", total_events: 5, total_members: 42 },
-  { id: "club-mock-2", name: "Energy Sports Club", total_events: 3, total_members: 68 },
-  { id: "club-mock-3", name: "Cultural Arts Club", total_events: 1, total_members: 30 }
-]
 
 async function addClub(formData: FormData) {
   "use server"
@@ -69,7 +64,7 @@ export default async function AdminClubsPage() {
     console.warn("Using mock clubs due to DB connection:", err)
   }
 
-  const clubs = dbClubs.length > 0 ? dbClubs : MOCK_CLUBS
+  const clubs = dbClubs
 
   return (
     <div className="space-y-6">

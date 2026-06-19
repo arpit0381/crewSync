@@ -25,6 +25,11 @@ export function DashboardHeader({ userEmail, userName, userRole, toggleSidebar }
   const { setTheme, resolvedTheme } = useNextTheme()
   const { themePack, setThemePack } = useTheme()
   const [dropdownOpen, setDropdownOpen] = React.useState(false)
+  const [mounted, setMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const packs: { name: ThemePack; color: string; label: string }[] = [
     { name: "blue", color: "bg-blue-600", label: "Blue Default" },
@@ -103,7 +108,9 @@ export function DashboardHeader({ userEmail, userName, userRole, toggleSidebar }
           className="rounded-lg p-2 hover:bg-muted text-foreground transition-colors border border-border"
           aria-label="Toggle theme mode"
         >
-          {resolvedTheme === "dark" ? (
+          {!mounted ? (
+            <div className="h-4 w-4" />
+          ) : resolvedTheme === "dark" ? (
             <Sun className="h-4 w-4 text-amber-400" />
           ) : (
             <Moon className="h-4 w-4 text-zinc-600" />

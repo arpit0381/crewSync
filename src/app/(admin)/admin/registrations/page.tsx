@@ -3,35 +3,6 @@ import { Ticket, Users, Calendar, Download, Search, RefreshCw } from "lucide-rea
 
 export const dynamic = "force-dynamic"
 
-const MOCK_REGS = [
-  {
-    id: "reg-mock-1",
-    created_at: "2026-06-19T10:15:00Z",
-    event_title: "Tech Heist 2026",
-    reg_type: "team",
-    student_name: "Arpit Bajpai",
-    roll_number: "CRA-2026-00125",
-    team_name: "Code Commandos"
-  },
-  {
-    id: "reg-mock-2",
-    created_at: "2026-06-19T09:40:00Z",
-    event_title: "Introduction to Edge Computing & AI",
-    reg_type: "individual",
-    student_name: "Jane Doe",
-    roll_number: "CRA-2026-00344",
-    team_name: null
-  },
-  {
-    id: "reg-mock-3",
-    created_at: "2026-06-18T14:22:00Z",
-    event_title: "Valorant Campus Arena",
-    reg_type: "team",
-    student_name: "Sarah Connor",
-    roll_number: "CRA-2026-00561",
-    team_name: "Logix Esports"
-  }
-]
 
 export default async function AdminRegistrationsPage() {
   let dbRegs: any[] = []
@@ -72,7 +43,7 @@ export default async function AdminRegistrationsPage() {
     console.warn("Using mock registrations due to DB connection:", err)
   }
 
-  const regs = dbRegs.length > 0 ? dbRegs : MOCK_REGS
+  const regs = dbRegs
 
   return (
     <div className="space-y-6">

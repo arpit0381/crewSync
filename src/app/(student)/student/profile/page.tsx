@@ -3,20 +3,6 @@ import { User, Mail, Phone, BookOpen, Shield, Ticket, Trophy, Award, Building2 }
 
 export const dynamic = "force-dynamic"
 
-const MOCK_PROFILE = {
-  name: "Arpit Bajpai",
-  roll_number: "CRA-2026-00125",
-  email: "arpit.bajpai@campus.edu",
-  phone: "+91 9876543210",
-  role: "student",
-  department_name: "Bachelor of Computer Applications (BCA)",
-  club_name: "Logix Coding Club",
-  stats: {
-    registered: 3,
-    certificates: 1,
-    teams: 2
-  }
-}
 
 export default async function StudentProfilePage() {
   let dbProfile: any = null
@@ -77,7 +63,20 @@ export default async function StudentProfilePage() {
     console.warn("Using mock student profile due to DB connection:", err)
   }
 
-  const profile = dbProfile || MOCK_PROFILE
+  const profile = dbProfile || {
+    name: "Guest Student",
+    roll_number: "Not Assigned",
+    email: "Not Set",
+    phone: "Not Set",
+    role: "student",
+    department_name: "None",
+    club_name: "None",
+    stats: {
+      registered: 0,
+      certificates: 0,
+      teams: 0
+    }
+  }
 
   return (
     <div className="space-y-6">

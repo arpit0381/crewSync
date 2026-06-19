@@ -4,11 +4,6 @@ import { Building, Plus, Award, Users, ShieldAlert, Sparkles } from "lucide-reac
 
 export const dynamic = "force-dynamic"
 
-const MOCK_DEPTS = [
-  { id: "dept-mock-1", name: "Bachelor of Computer Applications", code: "BCA", total_students: 120, total_events: 4 },
-  { id: "dept-mock-2", name: "Master of Computer Applications", code: "MCA", total_students: 84, total_events: 3 },
-  { id: "dept-mock-3", name: "Bachelor of Business Administration", code: "BBA", total_students: 110, total_events: 1 }
-]
 
 // Server Action inside the same page file
 async function addDepartment(formData: FormData) {
@@ -77,7 +72,7 @@ export default async function AdminDepartmentsPage() {
     console.warn("Using mock departments due to DB connection:", err)
   }
 
-  const depts = dbDepts.length > 0 ? dbDepts : MOCK_DEPTS
+  const depts = dbDepts
 
   return (
     <div className="space-y-6">

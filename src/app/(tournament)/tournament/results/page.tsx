@@ -1,12 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { Trophy, Award } from "lucide-react"
 
-const MOCK_STANDINGS = [
-  { team_name: "BCA Techies", played: 3, won: 3, lost: 0, drawn: 0, points: 9 },
-  { team_name: "MBA Giants", played: 3, won: 2, lost: 1, drawn: 0, points: 6 },
-  { team_name: "MCA Coders", played: 3, won: 1, lost: 2, drawn: 0, points: 3 },
-  { team_name: "BBA Titans", played: 3, won: 0, lost: 3, drawn: 0, points: 0 }
-]
 
 export default async function TournamentResultsPage() {
   let dbStandings: any[] = []
@@ -39,7 +33,7 @@ export default async function TournamentResultsPage() {
     console.warn("Using mock standings inside results page:", err)
   }
 
-  const standings = dbStandings.length > 0 ? dbStandings : MOCK_STANDINGS
+  const standings = dbStandings
 
   return (
     <div className="space-y-6 select-none">

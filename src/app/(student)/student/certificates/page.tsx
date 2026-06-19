@@ -1,43 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { CertificatesClient } from "@/components/student/certificates-client"
 
-const MOCK_CERTS = [
-  {
-    id: "cert-mock-1234",
-    event_id: "evt-99",
-    event_title: "Introduction to Edge Computing & AI",
-    event_date: "2026-06-18",
-    cert_type: "participation" as const,
-    claimed: true,
-    attendance_verified: true,
-    template_url: null,
-    title_coords: null,
-    name_coords: null,
-    date_coords: null
-  },
-  {
-    event_id: "evt-1",
-    event_title: "Tech Heist Hackathon",
-    event_date: "2026-07-15",
-    claimed: false,
-    attendance_verified: true,
-    template_url: null,
-    title_coords: null,
-    name_coords: null,
-    date_coords: null
-  },
-  {
-    event_id: "evt-3",
-    event_title: "Valorant Campus Arena",
-    event_date: "2026-07-28",
-    claimed: false,
-    attendance_verified: false,
-    template_url: null,
-    title_coords: null,
-    name_coords: null,
-    date_coords: null
-  }
-]
 
 export default async function StudentCertificatesPage() {
   let dbCerts: any[] = []
@@ -98,7 +61,7 @@ export default async function StudentCertificatesPage() {
     console.warn("Using mock certificates due to DB connection:", err)
   }
 
-  const certificates = dbCerts.length > 0 ? dbCerts : MOCK_CERTS
+  const certificates = dbCerts
 
   return <CertificatesClient initialCertificates={certificates} />
 }

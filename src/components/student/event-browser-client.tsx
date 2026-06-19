@@ -22,9 +22,10 @@ interface Event {
 
 interface EventBrowserClientProps {
   events: Event[]
+  userRegistrations?: string[]
 }
 
-export function EventBrowserClient({ events }: EventBrowserClientProps) {
+export function EventBrowserClient({ events, userRegistrations = [] }: EventBrowserClientProps) {
   const [selectedEvent, setSelectedEvent] = React.useState<Event | null>(null)
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
@@ -133,12 +134,21 @@ export function EventBrowserClient({ events }: EventBrowserClientProps) {
                 </div>
               </div>
 
-              <button
-                onClick={() => setSelectedEvent(event)}
-                className="w-full mt-2 flex items-center justify-center rounded-xl bg-zinc-900 border border-zinc-800 text-white hover:bg-primary hover:text-primary-foreground hover:border-primary py-2.5 text-sm font-semibold transition-all"
-              >
-                Register
-              </button>
+              {userRegistrations.includes(event.id) ? (
+                <button
+                  disabled
+                  className="w-full mt-2 flex items-center justify-center rounded-xl bg-primary/20 border border-primary/50 text-primary py-2.5 text-sm font-bold opacity-80 cursor-not-allowed"
+                >
+                  <ClipboardCheck className="mr-2 h-4 w-4" /> Registered
+                </button>
+              ) : (
+                <button
+                  onClick={() => setSelectedEvent(event)}
+                  className="w-full mt-2 flex items-center justify-center rounded-xl bg-zinc-900 border border-zinc-800 text-white hover:bg-primary hover:text-primary-foreground hover:border-primary py-2.5 text-sm font-semibold transition-all"
+                >
+                  Register
+                </button>
+              )}
             </div>
           </div>
         ))}
