@@ -1,4 +1,4 @@
-# 🎪 Crew Arena
+# 🎪 Crew Arena.....
 ### The Ultimate Campus Event & Tournament Management Platform
 
 <div align="center">
