@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { createClient } from "@/lib/supabase/server"
 import { AnalyticsCharts } from "@/components/dynamic-imports"
 import { Calendar, Users, CheckSquare, Trophy, Plus, ArrowUpRight } from "lucide-react"
 
