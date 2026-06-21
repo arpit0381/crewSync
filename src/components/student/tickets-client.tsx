@@ -57,7 +57,8 @@ export function TicketsClient({ initialTickets }: TicketsClientProps) {
       format: "a5", // Elegant A5 card format
     })
 
-    const event = t.registration.events
+    const event = t.registration?.events
+    if (!event) return
 
     // Background color styling
     doc.setFillColor(15, 15, 17) // Dark color background
@@ -165,30 +166,30 @@ export function TicketsClient({ initialTickets }: TicketsClientProps) {
                 <div className="flex-1 p-6 space-y-4">
                   <div className="space-y-1">
                     <span className="inline-flex items-center rounded-full bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
-                      {event.categories?.name || "Event"}
+                      {event?.categories?.name || "Event"}
                     </span>
-                    <h3 className="text-lg font-bold text-foreground leading-tight">{event.title}</h3>
+                    <h3 className="text-lg font-bold text-foreground leading-tight">{event?.title || "Unknown Event"}</h3>
                   </div>
 
                   <div className="space-y-2 text-xs text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-primary shrink-0" />
-                      <span>{event.event_date}</span>
+                      <span>{event?.event_date || "TBD"}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4 text-primary shrink-0" />
-                      <span>{event.event_time}</span>
+                      <span>{event?.event_time || "TBD"}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <MapPin className="h-4 w-4 text-primary shrink-0" />
-                      <span>{event.venue}</span>
+                      <span>{event?.venue || "TBD"}</span>
                     </div>
                   </div>
 
                   <div className="pt-2">
                     <button
-                      onClick={() => qrUrl && downloadPDF(t, qrUrl)}
-                      disabled={!qrUrl}
+                      onClick={() => qrUrl && event && downloadPDF(t, qrUrl)}
+                      disabled={!qrUrl || !event}
                       className="inline-flex items-center gap-1.5 rounded-xl bg-background border border-border px-4 py-2.5 text-xs font-semibold text-foreground hover:bg-card hover:border-border transition-all disabled:opacity-50"
                     >
                       <Download className="h-3.5 w-3.5" />

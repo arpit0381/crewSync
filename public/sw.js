@@ -1,8 +1,7 @@
-const CACHE_NAME = "crew-arena-v1";
+const CACHE_NAME = "crew-arena-v2";
 const OFFLINE_URL = "/offline";
 
 const ASSETS_TO_CACHE = [
-  "/",
   "/manifest.json",
   "/icons/icon-192x192.png",
   "/icons/icon-512x512.png",
@@ -40,6 +39,16 @@ self.addEventListener("fetch", (event) => {
 
   // Skip caching browser extensions or external APIs like Supabase auth
   if (url.origin !== self.location.origin) return;
+
+  // Skip Next.js internal requests, HMR, and API routes to prevent infinite reload loops
+  if (url.pathname.startsWith("/_next/") || url.pathname.startsWith("/api/")) {
+    return;
+  }
+
+  // Skip HTML navigation requests to prevent serving stale Next.js chunk hashes
+  if (event.request.mode === "navigate") {
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {

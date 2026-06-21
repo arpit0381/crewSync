@@ -1,6 +1,6 @@
 "use server"
 
-import { createClient } from "@/lib/supabase/server"
+import { createClient, createAdminClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 
 export async function signInAction(formData: FormData) {
@@ -113,8 +113,16 @@ export async function updatePasswordAction(formData: FormData) {
 }
 
 export async function updateUserRoleAction(userId: string, role: string) {
-  const supabase = await createClient()
-  const { error } = await supabase
+  const adminClient = createAdminClient()
+  
+  // 1. Update auth metadata so middleware RBAC works
+  const { error: authError } = await adminClient.auth.admin.updateUserById(userId, {
+    user_metadata: { role }
+  })
+  if (authError) return { error: authError.message }
+
+  // 2. Update profiles table (bypasses RLS)
+  const { error } = await adminClient
     .from("profiles")
     .update({ role, updated_at: new Date().toISOString() })
     .eq("id", userId)

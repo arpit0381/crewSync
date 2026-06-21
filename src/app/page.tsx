@@ -3,7 +3,7 @@ import Image from "next/image"
 import { createClient } from "@/lib/supabase/server"
 import { Calendar, MapPin, Users, Award, ShieldCheck, ArrowRight } from "lucide-react"
 
-export const revalidate = 60
+
 
 
 async function getPublishedEvents() {

@@ -9,13 +9,17 @@ export default async function AdminUsersPage() {
 
   try {
     const supabase = await createClient()
-    const { data: profiles } = await supabase
+    const { data: profiles, error } = await supabase
       .from("profiles")
-      .select("id, name, roll_number, email, phone, role")
+      .select("id, name, roll_number, email, mobile, role")
       .order("name", { ascending: true })
 
+    if (error) {
+      console.error("Error fetching profiles:", error)
+    }
+
     if (profiles && profiles.length > 0) {
-      dbUsers = profiles
+      dbUsers = profiles.map(p => ({ ...p, phone: p.mobile }))
     }
   } catch (err) {
     console.warn("Using mock users database inside AdminUsersPage:", err)

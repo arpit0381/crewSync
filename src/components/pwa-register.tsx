@@ -5,6 +5,7 @@ import { useEffect } from "react"
 export function PWARegister() {
   useEffect(() => {
     if (
+      process.env.NODE_ENV !== "development" &&
       typeof window !== "undefined" &&
       "serviceWorker" in navigator &&
       (window as any).workbox === undefined
