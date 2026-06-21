@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 import { createEventAction, updateEventStatusAction } from "@/app/event-actions"
 import { Calendar, MapPin, Users, Plus, X, Loader2, Check, ArrowRight } from "lucide-react"
 
@@ -63,10 +64,12 @@ export function EventManagerClient({
   // Registration type state for conditional fields
   const [regType, setRegType] = React.useState<"individual" | "team">("individual")
 
-  const filteredEvents = events.filter((e) => {
-    if (activeFilter === "all") return true
-    return e.status === activeFilter
-  })
+  const filteredEvents = React.useMemo(() => {
+    return events.filter((e) => {
+      if (activeFilter === "all") return true
+      return e.status === activeFilter
+    })
+  }, [events, activeFilter])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -144,7 +147,7 @@ export function EventManagerClient({
           <button
             key={filter}
             onClick={() => setActiveFilter(filter)}
-            className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider border-b-2 transition-all shrink-0 ${
+            className={`px-4 py-3 min-h-[44px] text-xs font-semibold uppercase tracking-wider border-b-2 transition-all shrink-0 ${
               activeFilter === filter
                 ? "border-primary text-primary"
                 : "border-transparent text-muted-foreground hover:text-foreground"
@@ -170,10 +173,12 @@ export function EventManagerClient({
               {/* Event Image Banner (Admin View) */}
               <div className="h-32 w-full relative overflow-hidden bg-gradient-to-br from-zinc-850 to-zinc-950 flex items-center justify-center">
                 {event.banner_url ? (
-                  <img 
-                    src={event.banner_url} 
-                    alt={event.title} 
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  <Image
+                    src={event.banner_url}
+                    alt={event.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 ) : null}
                 <div className="absolute inset-0 bg-background/40" />
@@ -279,7 +284,7 @@ export function EventManagerClient({
               </div>
 
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Category</label>
                   <select
@@ -306,7 +311,7 @@ export function EventManagerClient({
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Date</label>
                   <input
@@ -330,6 +335,7 @@ export function EventManagerClient({
                   <input
                     name="capacity"
                     type="number"
+                    inputMode="numeric"
                     defaultValue={100}
                     required
                     className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
@@ -337,7 +343,7 @@ export function EventManagerClient({
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 border-t border-border/80 pt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-border/80 pt-4">
                 <div>
                   <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Department (Optional)</label>
                   <select
@@ -394,12 +400,13 @@ export function EventManagerClient({
                 </div>
 
                 {regType === "team" && (
-                  <div className="grid grid-cols-2 gap-4 animate-in fade-in duration-200">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in duration-200">
                     <div>
                       <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Min Team Size</label>
                       <input
                         name="min_team_size"
                         type="number"
+                        inputMode="numeric"
                         defaultValue={2}
                         required
                         className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
@@ -410,6 +417,7 @@ export function EventManagerClient({
                       <input
                         name="max_team_size"
                         type="number"
+                        inputMode="numeric"
                         defaultValue={4}
                         required
                         className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"

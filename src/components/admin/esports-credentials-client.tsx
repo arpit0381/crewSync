@@ -18,21 +18,22 @@ interface EsportsCredentialsProps {
   tournaments: EsportsTournament[]
 }
 
-export function EsportsCredentialsClient({ tournaments }: EsportsCredentialsProps) {
-  const [selectedTourneyId, setSelectedTourneyId] = React.useState(tournaments[0]?.id || "")
+export function EsportsCredentialsClient({ tournaments: initialTournaments }: EsportsCredentialsProps) {
+  const [localTournaments, setLocalTournaments] = React.useState<EsportsTournament[]>(initialTournaments)
+  const [selectedTourneyId, setSelectedTourneyId] = React.useState(localTournaments[0]?.id || "")
   const [roomId, setRoomId] = React.useState("")
   const [roomPassword, setRoomPassword] = React.useState("")
   const [loading, setLoading] = React.useState(false)
   const [success, setSuccess] = React.useState<string | null>(null)
 
-  const activeTourney = tournaments.find((t) => t.id === selectedTourneyId)
+  const activeTourney = localTournaments.find((t) => t.id === selectedTourneyId)
 
   React.useEffect(() => {
     if (activeTourney) {
       setRoomId(activeTourney.room_id || "")
       setRoomPassword(activeTourney.room_password || "")
     }
-  }, [selectedTourneyId, tournaments])
+  }, [selectedTourneyId, localTournaments])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -45,12 +46,10 @@ export function EsportsCredentialsClient({ tournaments }: EsportsCredentialsProp
 
     if (result.success) {
       setSuccess(result.success)
-      // Update local state
-      const idx = tournaments.findIndex((t) => t.id === selectedTourneyId)
-      if (idx !== -1) {
-        tournaments[idx].room_id = roomId
-        tournaments[idx].room_password = roomPassword
-      }
+      // Update local state immutably
+      setLocalTournaments(prev => prev.map(t => 
+        t.id === selectedTourneyId ? { ...t, room_id: roomId, room_password: roomPassword } : t
+      ))
     }
     setLoading(false)
   }
@@ -65,7 +64,7 @@ export function EsportsCredentialsClient({ tournaments }: EsportsCredentialsProp
         Disseminate custom Room IDs and passwords. Registered squad members will receive these details instantly.
       </p>
 
-      {tournaments.length === 0 ? (
+      {localTournaments.length === 0 ? (
         <p className="text-sm text-muted-foreground text-center py-6">No esports events configured.</p>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -76,7 +75,7 @@ export function EsportsCredentialsClient({ tournaments }: EsportsCredentialsProp
               onChange={(e) => setSelectedTourneyId(e.target.value)}
               className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all font-semibold"
             >
-              {tournaments.map((t) => (
+              {localTournaments.map((t) => (
                 <option key={t.id} value={t.id}>
                   {t.game_name} - {t.events.title}
                 </option>
@@ -84,7 +83,7 @@ export function EsportsCredentialsClient({ tournaments }: EsportsCredentialsProp
             </select>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Room ID</label>
               <input

@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 import { registerForEventAction } from "@/app/event-actions"
 import { Calendar, MapPin, Users, X, Loader2, Award, ClipboardCheck } from "lucide-react"
 
@@ -96,10 +97,12 @@ export function EventBrowserClient({ events, userRegistrations = [] }: EventBrow
             {/* Event Image Banner (Student View) */}
             <div className="h-40 w-full relative overflow-hidden bg-gradient-to-br from-zinc-850 to-zinc-950 flex items-center justify-center">
               {event.banner_url ? (
-                <img 
-                  src={event.banner_url} 
-                  alt={event.title} 
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                <Image
+                  src={event.banner_url}
+                  alt={event.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               ) : null}
               <div className="absolute inset-0 bg-background/40" />

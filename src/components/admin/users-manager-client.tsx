@@ -20,21 +20,29 @@ interface UsersManagerClientProps {
 export function UsersManagerClient({ initialUsers }: UsersManagerClientProps) {
   const [users, setUsers] = React.useState<UserProfile[]>(initialUsers)
   const [search, setSearch] = React.useState("")
+  const [debouncedSearch, setDebouncedSearch] = React.useState("")
   const [roleFilter, setRoleFilter] = React.useState("all")
   const [updatingId, setUpdatingId] = React.useState<string | null>(null)
   const [successMessage, setSuccessMessage] = React.useState<string | null>(null)
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null)
 
-  const filteredUsers = users.filter((u) => {
-    const matchesSearch = 
-      u.name.toLowerCase().includes(search.toLowerCase()) || 
-      (u.roll_number?.toLowerCase().includes(search.toLowerCase()) ?? false) ||
-      (u.email?.toLowerCase().includes(search.toLowerCase()) ?? false)
-    
-    const matchesRole = roleFilter === "all" || u.role === roleFilter
+  React.useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 150)
+    return () => clearTimeout(timer)
+  }, [search])
 
-    return matchesSearch && matchesRole
-  })
+  const filteredUsers = React.useMemo(() => {
+    return users.filter((u) => {
+      const matchesSearch = 
+        u.name.toLowerCase().includes(debouncedSearch.toLowerCase()) || 
+        (u.roll_number?.toLowerCase().includes(debouncedSearch.toLowerCase()) ?? false) ||
+        (u.email?.toLowerCase().includes(debouncedSearch.toLowerCase()) ?? false)
+      
+      const matchesRole = roleFilter === "all" || u.role === roleFilter
+
+      return matchesSearch && matchesRole
+    })
+  }, [users, debouncedSearch, roleFilter])
 
   const handleRoleChange = async (userId: string, newRole: string) => {
     setUpdatingId(userId)
@@ -115,7 +123,7 @@ export function UsersManagerClient({ initialUsers }: UsersManagerClientProps) {
             No users match the search queries.
           </div>
         ) : (
-          <div className="overflow-x-auto border border-border/50 rounded-2xl">
+          <div className="overflow-x-auto border border-border/50 rounded-2xl hidden md:block">
             <table className="w-full text-left text-sm text-foreground">
               <thead className="bg-background/40 text-xs font-bold uppercase text-muted-foreground border-b border-border">
                 <tr>
@@ -188,6 +196,66 @@ export function UsersManagerClient({ initialUsers }: UsersManagerClientProps) {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile card layout */}
+          <div className="md:hidden space-y-3">
+            {filteredUsers.map((user) => (
+              <div key={user.id} className="rounded-2xl border border-border bg-card/40 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 rounded-lg bg-background border border-border flex items-center justify-center text-primary font-bold text-xs uppercase shrink-0">
+                      {user.name.substring(0, 2)}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm text-foreground">{user.name}</p>
+                      <p className="text-xs text-muted-foreground font-mono">{user.roll_number || "No Roll No"}</p>
+                    </div>
+                  </div>
+                  <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                    user.role === "super_admin"
+                      ? "bg-red-500/10 border border-red-500/20 text-red-400"
+                      : user.role === "tournament_admin"
+                        ? "bg-purple-500/10 border border-purple-500/20 text-purple-400"
+                        : user.role === "student"
+                          ? "bg-background border border-border text-muted-foreground"
+                          : "bg-primary/10 border border-primary/20 text-primary"
+                  }`}>
+                    <Shield className="h-3 w-3 shrink-0" />
+                    {user.role.replace("_", " ")}
+                  </span>
+                </div>
+                <div className="space-y-1 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1.5">
+                    <Mail className="h-3 w-3 shrink-0" />
+                    <span className="truncate">{user.email || "—"}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Phone className="h-3 w-3 shrink-0" />
+                    <span>{user.phone || "—"}</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between pt-2 border-t border-border">
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground">Update Role</span>
+                  {updatingId === user.id ? (
+                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                  ) : (
+                    <select
+                      value={user.role}
+                      disabled={updatingId !== null}
+                      onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                      className="bg-background text-xs font-semibold border border-border rounded-lg px-2 py-1.5 focus:outline-none focus:border-primary text-foreground min-h-[44px] disabled:opacity-50"
+                    >
+                      <option value="student">Student</option>
+                      <option value="club_admin">Club Admin</option>
+                      <option value="department_admin">Dept Admin</option>
+                      <option value="tournament_admin">Tourney Admin</option>
+                      <option value="super_admin">Super Admin</option>
+                    </select>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

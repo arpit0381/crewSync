@@ -1,5 +1,17 @@
 import { createClient } from "@/lib/supabase/server"
-import { AttendanceScannerClient } from "@/components/admin/attendance-scanner-client"
+import dynamic from "next/dynamic"
+
+const AttendanceScannerClient = dynamic(
+  () => import("@/components/admin/attendance-scanner-client").then(mod => ({ default: mod.AttendanceScannerClient })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-64 w-full bg-card/10 rounded-2xl border border-border animate-pulse flex items-center justify-center text-xs text-muted-foreground">
+        Loading QR scanner...
+      </div>
+    ),
+  }
+)
 
 
 export default async function AdminAttendancePage() {

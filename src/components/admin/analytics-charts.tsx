@@ -73,11 +73,11 @@ export function AnalyticsCharts() {
               <YAxis stroke="#71717a" fontSize={10} tickLine={false} axisLine={false} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#09090b",
-                  borderColor: "#27272a",
+                  backgroundColor: "var(--color-background)",
+                  borderColor: "var(--color-border)",
                   borderRadius: "12px",
                   fontSize: "12px",
-                  color: "#ffffff"
+                  color: "var(--color-foreground)"
                 }}
               />
               <Legend verticalAlign="top" height={36} iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px" }} />
@@ -118,11 +118,11 @@ export function AnalyticsCharts() {
               <YAxis stroke="#71717a" fontSize={10} tickLine={false} axisLine={false} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#09090b",
-                  borderColor: "#27272a",
+                  backgroundColor: "var(--color-background)",
+                  borderColor: "var(--color-border)",
                   borderRadius: "12px",
                   fontSize: "12px",
-                  color: "#ffffff"
+                  color: "var(--color-foreground)"
                 }}
               />
               <Bar

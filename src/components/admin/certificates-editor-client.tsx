@@ -30,6 +30,13 @@ export function CertificatesEditorClient({ events }: CertificatesEditorProps) {
   const [loading, setLoading] = React.useState(false)
   const [success, setSuccess] = React.useState<string | null>(null)
 
+  // Cleanup object URLs to prevent memory leaks
+  React.useEffect(() => {
+    return () => {
+      if (imageUrl) URL.revokeObjectURL(imageUrl)
+    }
+  }, [imageUrl])
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!selectedEventId) return

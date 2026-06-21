@@ -9,35 +9,19 @@ async function getStudentData() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return null
 
-    // Fetch registrations count
-    const { count: regCount } = await supabase
-      .from("registrations")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id)
-
-    // Fetch attendance count
-    const { count: attCount } = await supabase
-      .from("attendance")
-      .select("*", { count: "exact", head: true })
-      .eq("student_id", user.id)
-
-    // Fetch certificates count
-    const { count: certCount } = await supabase
-      .from("certificates")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id)
-
-    // Fetch teams count
-    const { count: teamCount } = await supabase
-      .from("team_members")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id)
+    // Run all count queries in parallel
+    const [regResult, attResult, certResult, teamResult] = await Promise.all([
+      supabase.from("registrations").select("*", { count: "exact", head: true }).eq("user_id", user.id),
+      supabase.from("attendance").select("*", { count: "exact", head: true }).eq("student_id", user.id),
+      supabase.from("certificates").select("*", { count: "exact", head: true }).eq("user_id", user.id),
+      supabase.from("team_members").select("*", { count: "exact", head: true }).eq("user_id", user.id),
+    ])
 
     return {
-      regCount: regCount || 0,
-      attCount: attCount || 0,
-      certCount: certCount || 0,
-      teamCount: teamCount || 0
+      regCount: regResult.count || 0,
+      attCount: attResult.count || 0,
+      certCount: certResult.count || 0,
+      teamCount: teamResult.count || 0
     }
   } catch {
     return null

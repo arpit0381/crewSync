@@ -35,6 +35,16 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({ role, isOpen, onClose }: DashboardSidebarProps) {
   const pathname = usePathname()
 
+  // Close sidebar on Escape key
+  React.useEffect(() => {
+    if (!isOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose()
+    }
+    document.addEventListener("keydown", handleKeyDown)
+    return () => document.removeEventListener("keydown", handleKeyDown)
+  }, [isOpen, onClose])
+
   const studentItems: SidebarItem[] = [
     { label: "Home", href: "/student", icon: Home },
     { label: "Upcoming Events", href: "/student/events", icon: Calendar },

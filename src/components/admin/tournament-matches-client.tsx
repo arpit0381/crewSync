@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useRouter } from "next/navigation"
 import { generateFixturesAction } from "@/app/tournament-actions"
 import { BracketsView } from "@/components/shared/brackets-view"
 import { Calendar, Play, RefreshCw, Trophy, AlertCircle, Loader2 } from "lucide-react"
@@ -41,6 +42,7 @@ export function TournamentMatchesClient({ events, initialMatches }: TournamentMa
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const [success, setSuccess] = React.useState<string | null>(null)
+  const router = useRouter()
 
   const activeEvent = events.find((e) => e.id === selectedEventId)
   
@@ -74,8 +76,8 @@ export function TournamentMatchesClient({ events, initialMatches }: TournamentMa
       setError(result.error)
     } else if (result.success) {
       setSuccess(result.success)
-      // Force page refresh or reload matches
-      window.location.reload()
+      // Smoothly refresh server data
+      router.refresh()
     }
     setLoading(false)
   }

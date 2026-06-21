@@ -31,6 +31,16 @@ export function DashboardHeader({ userEmail, userName, userRole, toggleSidebar }
     setMounted(true)
   }, [])
 
+  // Close dropdown on Escape key
+  React.useEffect(() => {
+    if (!dropdownOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setDropdownOpen(false)
+    }
+    document.addEventListener("keydown", handleKeyDown)
+    return () => document.removeEventListener("keydown", handleKeyDown)
+  }, [dropdownOpen])
+
   const packs: { name: ThemePack; color: string; label: string }[] = [
     { name: "blue", color: "bg-blue-600", label: "Blue Default" },
     { name: "emerald", color: "bg-emerald-600", label: "Emerald" },

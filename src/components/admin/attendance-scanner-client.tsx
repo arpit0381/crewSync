@@ -214,7 +214,7 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
         </div>
 
         {/* Right: Real-time Stats & logs */}
-        <div className="rounded-3xl border border-border bg-card/20 p-6 flex flex-col justify-between h-[520px]">
+        <div className="rounded-3xl border border-border bg-card/20 p-6 flex flex-col justify-between min-h-[400px] max-h-[calc(100vh-200px)]">
           <div className="space-y-4 overflow-hidden flex flex-col flex-1">
             <h2 className="text-lg font-bold text-foreground">Live Scan Logger</h2>
             

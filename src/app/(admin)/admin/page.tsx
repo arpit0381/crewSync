@@ -1,37 +1,36 @@
 import Link from "next/link"
+import dynamic from "next/dynamic"
 import { createClient } from "@/lib/supabase/server"
-import { AnalyticsCharts } from "@/components/admin/analytics-charts"
+const AnalyticsCharts = dynamic(
+  () => import("@/components/admin/analytics-charts").then(mod => ({ default: mod.AnalyticsCharts })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-72 w-full bg-card/10 rounded-2xl border border-border animate-pulse flex items-center justify-center text-xs text-muted-foreground">
+        Loading analytics charts...
+      </div>
+    ),
+  }
+)
 import { Calendar, Users, CheckSquare, Trophy, Plus, ArrowUpRight } from "lucide-react"
 
 async function getAdminData() {
   try {
     const supabase = await createClient()
 
-    // Fetch total events
-    const { count: eventsCount } = await supabase
-      .from("events")
-      .select("*", { count: "exact", head: true })
-
-    // Fetch total registrations
-    const { count: regCount } = await supabase
-      .from("registrations")
-      .select("*", { count: "exact", head: true })
-
-    // Fetch total attendance
-    const { count: attCount } = await supabase
-      .from("attendance")
-      .select("*", { count: "exact", head: true })
-
-    // Fetch total users
-    const { count: usersCount } = await supabase
-      .from("profiles")
-      .select("*", { count: "exact", head: true })
+    // Run all count queries in parallel
+    const [eventsResult, regResult, attResult, usersResult] = await Promise.all([
+      supabase.from("events").select("*", { count: "exact", head: true }),
+      supabase.from("registrations").select("*", { count: "exact", head: true }),
+      supabase.from("attendance").select("*", { count: "exact", head: true }),
+      supabase.from("profiles").select("*", { count: "exact", head: true }),
+    ])
 
     return {
-      eventsCount: eventsCount || 0,
-      regCount: regCount || 0,
-      attCount: attCount || 0,
-      usersCount: usersCount || 0
+      eventsCount: eventsResult.count || 0,
+      regCount: regResult.count || 0,
+      attCount: attResult.count || 0,
+      usersCount: usersResult.count || 0
     }
   } catch {
     return null
