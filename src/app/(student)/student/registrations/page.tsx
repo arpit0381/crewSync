@@ -1,17 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
-import dynamic from "next/dynamic"
-
-const TicketsClient = dynamic(
-  () => import("@/components/student/tickets-client").then(mod => ({ default: mod.TicketsClient })),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="h-64 w-full bg-card/10 rounded-2xl border border-border animate-pulse flex items-center justify-center text-xs text-muted-foreground">
-        Loading tickets...
-      </div>
-    ),
-  }
-)
+import { TicketsClient } from "@/components/dynamic-imports"
 
 
 export default async function StudentRegistrationsPage() {

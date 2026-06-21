@@ -1,17 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
-import dynamic from "next/dynamic"
-
-const CertificatesClient = dynamic(
-  () => import("@/components/student/certificates-client").then(mod => ({ default: mod.CertificatesClient })),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="h-64 w-full bg-card/10 rounded-2xl border border-border animate-pulse flex items-center justify-center text-xs text-muted-foreground">
-        Loading certificates...
-      </div>
-    ),
-  }
-)
+import { CertificatesClient } from "@/components/dynamic-imports"
 
 
 export default async function StudentCertificatesPage() {

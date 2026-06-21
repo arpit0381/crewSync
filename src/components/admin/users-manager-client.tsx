@@ -123,7 +123,8 @@ export function UsersManagerClient({ initialUsers }: UsersManagerClientProps) {
             No users match the search queries.
           </div>
         ) : (
-          <div className="overflow-x-auto border border-border/50 rounded-2xl hidden md:block">
+          <>
+            <div className="overflow-x-auto border border-border/50 rounded-2xl hidden md:block">
             <table className="w-full text-left text-sm text-foreground">
               <thead className="bg-background/40 text-xs font-bold uppercase text-muted-foreground border-b border-border">
                 <tr>
@@ -257,6 +258,7 @@ export function UsersManagerClient({ initialUsers }: UsersManagerClientProps) {
               </div>
             ))}
           </div>
+          </>
         )}
       </div>
     </div>

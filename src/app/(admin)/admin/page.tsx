@@ -1,17 +1,5 @@
 import Link from "next/link"
-import dynamic from "next/dynamic"
-import { createClient } from "@/lib/supabase/server"
-const AnalyticsCharts = dynamic(
-  () => import("@/components/admin/analytics-charts").then(mod => ({ default: mod.AnalyticsCharts })),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="h-72 w-full bg-card/10 rounded-2xl border border-border animate-pulse flex items-center justify-center text-xs text-muted-foreground">
-        Loading analytics charts...
-      </div>
-    ),
-  }
-)
+import { AnalyticsCharts } from "@/components/dynamic-imports"
 import { Calendar, Users, CheckSquare, Trophy, Plus, ArrowUpRight } from "lucide-react"
 
 async function getAdminData() {
