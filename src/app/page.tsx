@@ -1,8 +1,9 @@
 import Link from "next/link"
+import Image from "next/image"
 import { createClient } from "@/lib/supabase/server"
 import { Calendar, MapPin, Users, Award, ShieldCheck, ArrowRight } from "lucide-react"
 
-export const dynamic = "force-dynamic"
+export const revalidate = 60
 
 
 async function getPublishedEvents() {
@@ -153,10 +154,12 @@ export default async function LandingPage() {
                     {/* Event Image Banner */}
                     <div className="h-48 w-full relative overflow-hidden bg-gradient-to-br from-zinc-800 to-zinc-950 flex items-center justify-center">
                       {event.banner_url ? (
-                        <img 
-                          src={event.banner_url} 
-                          alt={event.title} 
-                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        <Image
+                          src={event.banner_url}
+                          alt={event.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : null}
                       <div className="absolute inset-0 bg-background/40" />
