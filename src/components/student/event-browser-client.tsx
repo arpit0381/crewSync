@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { registerForEventAction } from "@/app/event-actions"
+import Link from "next/link"
 import { Calendar, MapPin, Users, X, Loader2, Award, ClipboardCheck } from "lucide-react"
 
 interface Event {
@@ -27,53 +27,6 @@ interface EventBrowserClientProps {
 }
 
 export function EventBrowserClient({ events, userRegistrations = [] }: EventBrowserClientProps) {
-  const [selectedEvent, setSelectedEvent] = React.useState<Event | null>(null)
-  const [loading, setLoading] = React.useState(false)
-  const [error, setError] = React.useState<string | null>(null)
-  const [success, setSuccess] = React.useState<string | null>(null)
-  const [inviteCodeResult, setInviteCodeResult] = React.useState<string | null>(null)
-
-  // Team registration variables
-  const [teamMode, setTeamMode] = React.useState<"create" | "join">("create")
-  const [teamName, setTeamName] = React.useState("")
-  const [inviteCode, setInviteCode] = React.useState("")
-
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!selectedEvent) return
-
-    setLoading(true)
-    setError(null)
-    setSuccess(null)
-    setInviteCodeResult(null)
-
-    const result = await registerForEventAction(
-      selectedEvent.id,
-      selectedEvent.reg_type,
-      selectedEvent.reg_type === "team"
-        ? {
-            mode: teamMode,
-            teamName: teamMode === "create" ? teamName : undefined,
-            inviteCode: teamMode === "join" ? inviteCode : undefined,
-          }
-        : undefined
-    )
-
-    if (result.error) {
-      setError(result.error)
-      setLoading(false)
-    } else if (result.success) {
-      setSuccess(result.success)
-      if (result.inviteCode) {
-        setInviteCodeResult(result.inviteCode)
-      }
-      setLoading(false)
-      // Reset inputs
-      setTeamName("")
-      setInviteCode("")
-    }
-  }
-
   const handleClose = () => {
     setSelectedEvent(null)
     setError(null)
@@ -138,162 +91,33 @@ export function EventBrowserClient({ events, userRegistrations = [] }: EventBrow
               </div>
 
               {userRegistrations.includes(event.id) ? (
-                <button
-                  disabled
-                  className="w-full mt-2 flex items-center justify-center rounded-xl bg-primary/20 border border-primary/50 text-primary py-2.5 text-sm font-bold opacity-80 cursor-not-allowed"
-                >
-                  <ClipboardCheck className="mr-2 h-4 w-4" /> Registered
-                </button>
+                <div className="flex gap-2 w-full mt-2">
+                  <button
+                    disabled
+                    className="flex-1 flex items-center justify-center rounded-xl bg-primary/20 border border-primary/50 text-primary py-2.5 text-sm font-bold opacity-80 cursor-not-allowed"
+                  >
+                    <ClipboardCheck className="mr-2 h-4 w-4" /> Registered
+                  </button>
+                  <Link
+                    href={`/events/${event.id}`}
+                    className="flex-1 flex items-center justify-center rounded-xl bg-card border border-border text-foreground hover:bg-muted py-2.5 text-sm font-semibold transition-all"
+                  >
+                    Details
+                  </Link>
+                </div>
               ) : (
-                <button
-                  onClick={() => setSelectedEvent(event)}
+                <Link
+                  href={`/events/${event.id}`}
                   className="w-full mt-2 flex items-center justify-center rounded-xl bg-card border border-border text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary py-2.5 text-sm font-semibold transition-all"
                 >
-                  Register
-                </button>
+                  View Details & Register
+                </Link>
               )}
             </div>
           </div>
         ))}
       </div>
 
-      {/* Registration Overlay Modal */}
-      {selectedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm select-none">
-          <div className="relative w-full max-w-md rounded-3xl border border-border bg-card p-6 md:p-8 shadow-2xl">
-            <button
-              onClick={handleClose}
-              className="absolute top-4 right-4 rounded-lg p-1.5 hover:bg-muted text-muted-foreground"
-            >
-              <X className="h-5 w-5" />
-            </button>
-
-            <h2 className="text-xl font-bold text-foreground pr-6">{selectedEvent.title}</h2>
-            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{selectedEvent.description}</p>
-
-            <form onSubmit={handleRegister} className="mt-6 space-y-4">
-              {error && (
-                <div className="p-4 rounded-xl bg-red-950/40 border border-red-900/50 text-red-400 text-sm">
-                  {error}
-                </div>
-              )}
-
-              {success && (
-                <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-900/50 text-emerald-400 text-sm flex flex-col items-center gap-2">
-                  <div className="flex items-center gap-1.5 font-semibold">
-                    <ClipboardCheck className="h-4 w-4 shrink-0" />
-                    <span>Registration Complete!</span>
-                  </div>
-                  <span className="text-center text-xs">{success}</span>
-
-                  {inviteCodeResult && (
-                    <div className="mt-3 bg-background border border-border rounded-xl p-3 text-center w-full">
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Share Invite Code</p>
-                      <p className="text-lg font-black tracking-widest text-primary select-all mt-1">{inviteCodeResult}</p>
-                      <p className="text-[10px] text-muted-foreground mt-1">Teammates can enter this code to join your team.</p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {!success && (
-                <>
-                  {/* Team Fields Selection */}
-                  {selectedEvent.reg_type === "team" && (
-                    <div className="space-y-4">
-                      <div className="flex rounded-xl border border-border bg-background p-1">
-                        <button
-                          type="button"
-                          onClick={() => setTeamMode("create")}
-                          className={`flex-1 rounded-lg py-2 text-xs font-semibold transition-all ${
-                            teamMode === "create" ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground"
-                          }`}
-                        >
-                          Create Team
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setTeamMode("join")}
-                          className={`flex-1 rounded-lg py-2 text-xs font-semibold transition-all ${
-                            teamMode === "join" ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground"
-                          }`}
-                        >
-                          Join Team
-                        </button>
-                      </div>
-
-                      {teamMode === "create" ? (
-                        <div className="animate-in fade-in duration-200">
-                          <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Team Name</label>
-                          <input
-                            type="text"
-                            required
-                            value={teamName}
-                            onChange={(e) => setTeamName(e.target.value)}
-                            className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none text-sm transition-all"
-                            placeholder="E.g. Code Commandos"
-                          />
-                          <p className="text-[10px] text-muted-foreground mt-1">
-                            Team size limit: {selectedEvent.min_team_size} to {selectedEvent.max_team_size} members.
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="animate-in fade-in duration-200">
-                          <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Invite Code</label>
-                          <input
-                            type="text"
-                            required
-                            value={inviteCode}
-                            onChange={(e) => setInviteCode(e.target.value)}
-                            className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none text-sm transition-all tracking-wider font-semibold uppercase"
-                            placeholder="E.g. A4D8F3"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {selectedEvent.reg_type === "individual" && (
-                    <p className="text-sm text-foreground py-2">
-                      Confirming your individual entry to this event. A ticket QR will be generated.
-                    </p>
-                  )}
-
-                  <div className="flex justify-end gap-3 pt-4 border-t border-border/85">
-                    <button
-                      type="button"
-                      onClick={handleClose}
-                      className="rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-muted transition-all"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow hover:bg-primary/95 transition-all disabled:opacity-50"
-                    >
-                      {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-                      {selectedEvent.reg_type === "team" && teamMode === "create" ? "Create & Register" : "Confirm Entry"}
-                    </button>
-                  </div>
-                </>
-              )}
-
-              {success && (
-                <div className="flex justify-end pt-2">
-                  <button
-                    type="button"
-                    onClick={handleClose}
-                    className="rounded-xl bg-primary text-primary-foreground px-5 py-2 text-sm font-semibold hover:bg-primary/90"
-                  >
-                    Close
-                  </button>
-                </div>
-              )}
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

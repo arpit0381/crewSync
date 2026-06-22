@@ -205,10 +205,10 @@ export default async function LandingPage() {
                       </div>
 
                       <Link
-                        href={`/register?event=${event.id}`}
+                        href={`/events/${event.id}`}
                         className="w-full mt-4 flex items-center justify-center rounded-xl bg-card hover:bg-primary hover:text-primary-foreground py-2.5 text-sm font-semibold transition-all border border-border hover:border-primary text-foreground"
                       >
-                        Register Now
+                        View Event Details
                       </Link>
                     </div>
                   </div>
