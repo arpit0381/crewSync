@@ -46,9 +46,8 @@ export function TournamentMatchesClient({ events, initialMatches }: TournamentMa
 
   const activeEvent = events.find((e) => e.id === selectedEventId)
   
-  // Filter matches for the selected event
-  // In our mock/db structure, matches are linked to event_id
-  const activeMatches = matches.filter((m) => m.id !== "mock-stub") // We can filter or map
+  // Filter matches for the selected event (if needed in the future)
+  const activeMatches = matches
 
   const handleGenerateFixtures = async () => {
     if (!activeEvent) return

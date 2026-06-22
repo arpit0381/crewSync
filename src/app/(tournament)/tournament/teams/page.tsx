@@ -33,7 +33,7 @@ export default async function TournamentTeamsPage() {
       }))
     }
   } catch (err) {
-    console.warn("Using mock teams in teams manager:", err)
+    console.warn("Database connection failed when fetching teams:", err)
   }
 
   const teams = dbTeams

@@ -8,26 +8,70 @@ async function getAdminData() {
     const supabase = await createClient()
 
     // Run all count queries in parallel
-    const [eventsResult, regResult, attResult, usersResult] = await Promise.all([
+    const [eventsResult, regResult, attResult, usersResult, recentEventsResult] = await Promise.all([
       supabase.from("events").select("*", { count: "exact", head: true }),
       supabase.from("registrations").select("*", { count: "exact", head: true }),
       supabase.from("attendance").select("*", { count: "exact", head: true }),
       supabase.from("profiles").select("*", { count: "exact", head: true }),
+      supabase.from("events").select("id, title, capacity, status, categories(name), registrations(count)").order('created_at', { ascending: false }).limit(5)
     ])
+
+    // Fetch data for charts
+    const [profiles, registrations, attendance] = await Promise.all([
+      supabase.from("profiles").select("departments(name)"),
+      supabase.from("registrations").select("created_at"),
+      supabase.from("attendance").select("checked_in_at")
+    ])
+
+    // Grouping logic for deptData
+    const deptCounts: Record<string, number> = {}
+    if (profiles.data) {
+      profiles.data.forEach(p => {
+        const dName = (p.departments as any)?.name || "Unknown"
+        deptCounts[dName] = (deptCounts[dName] || 0) + 1
+      })
+    }
+    const deptData = Object.entries(deptCounts).map(([name, students]) => ({ name: name.substring(0, 10), students }))
+
+    // Grouping logic for trendData (Days of week)
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    const trendMap: Record<string, { registrations: number, checkins: number }> = {}
+    days.forEach(d => trendMap[d] = { registrations: 0, checkins: 0 })
+    
+    if (registrations.data) {
+      registrations.data.forEach(r => {
+        const d = new Date(r.created_at).getDay()
+        trendMap[days[d]].registrations += 1
+      })
+    }
+    if (attendance.data) {
+      attendance.data.forEach(a => {
+        const d = new Date(a.checked_in_at).getDay()
+        trendMap[days[d]].checkins += 1
+      })
+    }
+    const trendData = days.map(d => ({ name: d, ...trendMap[d] }))
 
     return {
       eventsCount: eventsResult.count || 0,
       regCount: regResult.count || 0,
       attCount: attResult.count || 0,
-      usersCount: usersResult.count || 0
+      usersCount: usersResult.count || 0,
+      recentEvents: recentEventsResult.data || [],
+      deptData,
+      trendData
     }
-  } catch {
+  } catch (err) {
+    console.error("Failed to fetch admin data", err)
     return null
   }
 }
 
 export default async function AdminDashboardPage() {
-  const stats = await getAdminData() || { eventsCount: 8, regCount: 412, attCount: 305, usersCount: 350 }
+  const stats = await getAdminData() || { 
+    eventsCount: 0, regCount: 0, attCount: 0, usersCount: 0, 
+    recentEvents: [], deptData: [], trendData: [] 
+  }
   
   // Calculate attendance rate
   const attendanceRate = stats.regCount > 0 ? Math.round((stats.attCount / stats.regCount) * 100) : 0
@@ -95,7 +139,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Analytics Charts Panel */}
-      <AnalyticsCharts />
+      <AnalyticsCharts trendData={stats.trendData} deptData={stats.deptData} />
 
       {/* Main Grid split */}
       <div className="grid gap-6 md:grid-cols-3">
@@ -119,36 +163,33 @@ export default async function AdminDashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-800/60">
-                <tr className="hover:bg-card/40">
-                  <td className="py-3.5 px-4 font-semibold text-foreground">Tech Heist Hackathon</td>
-                  <td className="py-3.5 px-4">Technical</td>
-                  <td className="py-3.5 px-4">124 / 250</td>
-                  <td className="py-3.5 px-4">
-                    <span className="inline-flex items-center rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-xs font-medium text-emerald-400">
-                      Published
-                    </span>
-                  </td>
-                </tr>
-                <tr className="hover:bg-card/40">
-                  <td className="py-3.5 px-4 font-semibold text-foreground">Guest Lecture: AI Trends</td>
-                  <td className="py-3.5 px-4">Academic</td>
-                  <td className="py-3.5 px-4">98 / 100</td>
-                  <td className="py-3.5 px-4">
-                    <span className="inline-flex items-center rounded-full bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 text-xs font-medium text-amber-400">
-                      Pending Approval
-                    </span>
-                  </td>
-                </tr>
-                <tr className="hover:bg-card/40">
-                  <td className="py-3.5 px-4 font-semibold text-foreground">Logix Coding League</td>
-                  <td className="py-3.5 px-4">Technical</td>
-                  <td className="py-3.5 px-4">80 / 80</td>
-                  <td className="py-3.5 px-4">
-                    <span className="inline-flex items-center rounded-full bg-zinc-500/10 border border-zinc-500/20 px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-                      Completed
-                    </span>
-                  </td>
-                </tr>
+                {stats.recentEvents.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="py-6 text-center text-muted-foreground">No events found.</td>
+                  </tr>
+                ) : (
+                  stats.recentEvents.map((evt: any) => {
+                    const regCount = evt.registrations?.[0]?.count || 0
+                    const catName = evt.categories?.name || "General"
+                    
+                    let statusColor = "bg-zinc-500/10 border-zinc-500/20 text-muted-foreground"
+                    if (evt.status === "published") statusColor = "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
+                    if (evt.status === "pending_approval") statusColor = "bg-amber-500/10 border-amber-500/20 text-amber-400"
+
+                    return (
+                      <tr key={evt.id} className="hover:bg-card/40">
+                        <td className="py-3.5 px-4 font-semibold text-foreground">{evt.title}</td>
+                        <td className="py-3.5 px-4">{catName}</td>
+                        <td className="py-3.5 px-4">{regCount} / {evt.capacity}</td>
+                        <td className="py-3.5 px-4">
+                          <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${statusColor}`}>
+                            {evt.status.replace("_", " ")}
+                          </span>
+                        </td>
+                      </tr>
+                    )
+                  })
+                )}
               </tbody>
             </table>
           </div>

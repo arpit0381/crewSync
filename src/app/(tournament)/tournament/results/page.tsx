@@ -30,7 +30,7 @@ export default async function TournamentResultsPage() {
       }))
     }
   } catch (err) {
-    console.warn("Using mock standings inside results page:", err)
+    console.warn("Database connection failed when fetching standings:", err)
   }
 
   const standings = dbStandings

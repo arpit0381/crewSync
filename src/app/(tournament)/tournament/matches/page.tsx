@@ -46,7 +46,7 @@ export default async function TournamentMatchesPage() {
       dbMatches = matches
     }
   } catch (err) {
-    console.warn("Using mock tournament data due to DB connection:", err)
+    console.warn("Database connection failed when fetching matches:", err)
   }
 
   const events = dbEvents

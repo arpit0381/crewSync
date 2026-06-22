@@ -14,24 +14,12 @@ import {
   Legend
 } from "recharts"
 
-const TREND_DATA = [
-  { name: "Mon", registrations: 24, checkins: 12 },
-  { name: "Tue", registrations: 45, checkins: 20 },
-  { name: "Wed", registrations: 78, checkins: 45 },
-  { name: "Thu", registrations: 120, checkins: 80 },
-  { name: "Fri", registrations: 189, checkins: 130 },
-  { name: "Sat", registrations: 340, checkins: 280 },
-  { name: "Sun", registrations: 412, checkins: 305 },
-]
+interface AnalyticsChartsProps {
+  trendData: { name: string; registrations: number; checkins: number }[]
+  deptData: { name: string; students: number }[]
+}
 
-const DEPT_DATA = [
-  { name: "BCA", students: 184 },
-  { name: "MCA", students: 120 },
-  { name: "BBA", students: 64 },
-  { name: "MBA", students: 44 },
-]
-
-export function AnalyticsCharts() {
+export function AnalyticsCharts({ trendData = [], deptData = [] }: AnalyticsChartsProps) {
   const [mounted, setMounted] = React.useState(false)
 
   // Avoid hydration mismatch since Recharts does client calculations
@@ -57,7 +45,7 @@ export function AnalyticsCharts() {
         </div>
         <div className="h-72 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={TREND_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <AreaChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="regGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
@@ -112,7 +100,7 @@ export function AnalyticsCharts() {
         </div>
         <div className="h-72 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={DEPT_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <BarChart data={deptData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
               <XAxis dataKey="name" stroke="#71717a" fontSize={10} tickLine={false} axisLine={false} />
               <YAxis stroke="#71717a" fontSize={10} tickLine={false} axisLine={false} />

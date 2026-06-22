@@ -33,89 +33,16 @@ export async function createEventAction(formData: FormData) {
   let finalDepartmentId = departmentId
   let finalClubId = clubId
 
-  // 1. Resolve Category
   if (!isUuid(categoryId)) {
-    const mockCategories: { [key: string]: { name: string; type: string } } = {
-      "cat-1": { name: "Workshop", type: "academic" },
-      "cat-2": { name: "Hackathon", type: "technical" },
-      "cat-3": { name: "Guest Lecture", type: "academic" },
-      "cat-4": { name: "Cricket", type: "sports" },
-      "cat-5": { name: "Valorant", type: "esports" }
-    }
-    const mock = mockCategories[categoryId] || { name: "General", type: "technical" }
-    const { data: existing } = await supabase.from("categories").select("id").eq("name", mock.name).maybeSingle()
-    if (existing) {
-      finalCategoryId = existing.id
-    } else {
-      const adminSupabase = createAdminClient()
-      const { data: inserted, error: insErr } = await adminSupabase
-        .from("categories")
-        .insert({ name: mock.name, type: mock.type })
-        .select("id")
-        .single()
-      if (insErr || !inserted) {
-        return { error: "Failed to seed category: " + (insErr?.message || "") }
-      }
-      finalCategoryId = inserted.id
-    }
+    return { error: "Invalid Category ID." }
   }
 
-  // 2. Resolve Department
   if (departmentId && !isUuid(departmentId)) {
-    const mockDepts: { [key: string]: { name: string; code: string } } = {
-      "dept-1": { name: "Bachelor of Computer Applications", code: "BCA" },
-      "dept-2": { name: "Master of Computer Applications", code: "MCA" },
-      "dept-3": { name: "Bachelor of Business Administration", code: "BBA" }
-    }
-    const mock = mockDepts[departmentId]
-    if (mock) {
-      const { data: existing } = await supabase.from("departments").select("id").eq("code", mock.code).maybeSingle()
-      if (existing) {
-        finalDepartmentId = existing.id
-      } else {
-        const adminSupabase = createAdminClient()
-        const { data: inserted, error: insErr } = await adminSupabase
-          .from("departments")
-          .insert({ name: mock.name, code: mock.code })
-          .select("id")
-          .single()
-        if (insErr || !inserted) {
-          return { error: "Failed to seed department: " + (insErr?.message || "") }
-        }
-        finalDepartmentId = inserted.id
-      }
-    } else {
-      finalDepartmentId = null
-    }
+    return { error: "Invalid Department ID." }
   }
 
-  // 3. Resolve Club
   if (clubId && !isUuid(clubId)) {
-    const mockClubs: { [key: string]: string } = {
-      "club-1": "Logix Coding Club",
-      "club-2": "Energy Sports Club",
-      "club-3": "Cultural Arts Club"
-    }
-    const mockName = mockClubs[clubId]
-    if (mockName) {
-      const { data: existing } = await supabase.from("clubs").select("id").eq("name", mockName).maybeSingle()
-      if (existing) {
-        finalClubId = existing.id
-      } else {
-        const adminSupabase = createAdminClient()
-        const { data: inserted, error: insErr } = await adminSupabase
-          .from("clubs")
-          .insert({ name: mockName })
-          .select("id")
-          .single()
-        if (insErr || !inserted) {
-          return { error: "Failed to seed club: " + (insErr?.message || "") }
-        }
-        finalClubId = inserted.id
-      }
-    } else {
-      finalClubId = null
-    }
+    return { error: "Invalid Club ID." }
   }
 
   // Handle banner upload to Cloudinary
@@ -192,49 +119,8 @@ export async function registerForEventAction(
 
   let finalEventId = eventId
 
-  // Resolve mock event ID to UUID
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(eventId)) {
-    const mockEvents: { [key: string]: string } = {
-      "evt-1": "Tech Heist 2026",
-      "evt-2": "Guest Lecture: Future of Web Development",
-      "evt-3": "Valorant Campus Arena",
-      "evt-4": "Guest Lecture: AI Trends",
-      "mock-1": "Tech Heist 2026",
-      "mock-2": "Inter-Department Cricket League",
-      "mock-3": "Valorant Campus Arena"
-    }
-    const mockTitle = mockEvents[eventId] || "Tech Heist 2026"
-    const { data: existing } = await supabase.from("events").select("id").eq("title", mockTitle).maybeSingle()
-    if (existing) {
-      finalEventId = existing.id
-    } else {
-      const adminSupabase = createAdminClient()
-      // Find or create category
-      const { data: cat } = await supabase.from("categories").select("id").limit(1).maybeSingle()
-      let catId = cat?.id
-      if (!catId) {
-        const { data: newCat } = await adminSupabase.from("categories").insert({ name: "General", type: "technical" }).select("id").single()
-        catId = newCat?.id
-      }
-      const { data: newEvt, error: evtErr } = await adminSupabase
-        .from("events")
-        .insert({
-          title: mockTitle,
-          description: "Auto-generated event for registrations seeding.",
-          venue: "Esports Lab",
-          event_date: new Date().toISOString().split("T")[0],
-          event_time: "10:00:00",
-          capacity: 100,
-          category_id: catId,
-          status: "published"
-        })
-        .select("id")
-        .single()
-      if (evtErr || !newEvt) {
-        return { error: "Failed to seed event: " + evtErr.message }
-      }
-      finalEventId = newEvt.id
-    }
+    return { error: "Invalid Event ID." }
   }
 
   // 1. Fetch event config and current registrations count
