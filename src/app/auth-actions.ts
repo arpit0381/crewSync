@@ -45,6 +45,29 @@ export async function signUpAction(formData: FormData) {
   }
 
   const supabase = await createClient()
+
+  // Pre-validate uniqueness of email and roll number to prevent DB trigger constraint failures
+  const { data: existingEmail } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("email", email)
+    .maybeSingle()
+
+  if (existingEmail) {
+    return { error: "This Email is already registered to another account." }
+  }
+
+  if (rollNumber) {
+    const { data: existingRoll } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("roll_number", rollNumber)
+      .maybeSingle()
+
+    if (existingRoll) {
+      return { error: "This Roll Number is already registered to another account." }
+    }
+  }
   
   // Sign up with user metadata, which handle_new_user trigger maps to profile table
   const { error } = await supabase.auth.signUp({
