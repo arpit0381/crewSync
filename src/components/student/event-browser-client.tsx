@@ -27,13 +27,6 @@ interface EventBrowserClientProps {
 }
 
 export function EventBrowserClient({ events, userRegistrations = [] }: EventBrowserClientProps) {
-  const handleClose = () => {
-    setSelectedEvent(null)
-    setError(null)
-    setSuccess(null)
-    setInviteCodeResult(null)
-  }
-
   return (
     <div className="space-y-6">
       <div>
