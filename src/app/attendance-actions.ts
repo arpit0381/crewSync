@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 
-export async function verifyAndCheckInAction(ticketCode: string) {
+export async function verifyAndCheckInAction(ticketCode: string, expectedEventId: string) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: "Unauthorized. Please sign in as organizer." }
@@ -45,6 +45,10 @@ export async function verifyAndCheckInAction(ticketCode: string) {
 
   const student = registration.profiles
   const event = registration.events
+
+  if (registration.event_id !== expectedEventId) {
+    return { error: `Invalid Ticket! This ticket is for "${event.title}", not the selected event.` }
+  }
 
   // 2. Check if student has already checked in for this event
   const { data: existingAttendance } = await supabase
