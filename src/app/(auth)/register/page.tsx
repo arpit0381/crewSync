@@ -114,25 +114,7 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            <div>
-              <label htmlFor="role" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Role (For Testing & Access)
-              </label>
-              <div className="mt-1">
-                <select
-                  id="role"
-                  name="role"
-                  defaultValue="student"
-                  className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
-                >
-                  <option value="student" className="bg-background">Student (Default)</option>
-                  <option value="club_admin" className="bg-background">Club Admin</option>
-                  <option value="department_admin" className="bg-background">Department Admin</option>
-                  <option value="tournament_admin" className="bg-background">Tournament Admin</option>
-                  <option value="super_admin" className="bg-background">Super Admin</option>
-                </select>
-              </div>
-            </div>
+
 
             <div>
               <label htmlFor="email" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">

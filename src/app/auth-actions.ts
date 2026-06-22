@@ -38,7 +38,7 @@ export async function signUpAction(formData: FormData) {
   const name = formData.get("name") as string
   const rollNumber = formData.get("roll_number") as string
   const mobile = formData.get("mobile") as string
-  const role = (formData.get("role") as string) || "student"
+  const role = "student" // Hardcoded to student for registration
 
   if (!email || !password || !name) {
     return { error: "Name, email and password are required" }
@@ -76,11 +76,11 @@ export async function signUpAction(formData: FormData) {
     options: {
       data: {
         name,
-        roll_number: rollNumber || null,
-        mobile: mobile || null,
+        roll_number: rollNumber ? rollNumber : null,
+        mobile: mobile ? mobile : null,
         role,
       },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/auth/callback`,
     },
   })
 
@@ -106,7 +106,7 @@ export async function resetPasswordAction(formData: FormData) {
 
   const supabase = await createClient()
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback?next=/reset-password`,
+    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/auth/callback?next=/reset-password`,
   })
 
   if (error) {
@@ -136,6 +136,17 @@ export async function updatePasswordAction(formData: FormData) {
 }
 
 export async function updateUserRoleAction(userId: string, role: string) {
+  const supabase = await createClient()
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+
+  if (sessionError || !session) {
+    return { error: "Unauthorized" }
+  }
+
+  if (session.user.user_metadata?.role !== 'super_admin') {
+    return { error: "Only super admin can update user roles" }
+  }
+
   const adminClient = createAdminClient()
   
   // 1. Update auth metadata so middleware RBAC works
