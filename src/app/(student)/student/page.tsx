@@ -10,18 +10,20 @@ async function getStudentData() {
     if (!user) return null
 
     // Run all count queries in parallel
-    const [regResult, attResult, certResult, teamResult] = await Promise.all([
+    const [regResult, attResult, certResult, teamResult, recentRegsResult] = await Promise.all([
       supabase.from("registrations").select("*", { count: "exact", head: true }).eq("user_id", user.id),
       supabase.from("attendance").select("*", { count: "exact", head: true }).eq("student_id", user.id),
       supabase.from("certificates").select("*", { count: "exact", head: true }).eq("user_id", user.id),
       supabase.from("team_members").select("*", { count: "exact", head: true }).eq("user_id", user.id),
+      supabase.from("registrations").select("id, event_id, events(title, event_date, venue, categories(name, type))").eq("user_id", user.id).order('created_at', { ascending: false }).limit(5)
     ])
 
     return {
       regCount: regResult.count || 0,
       attCount: attResult.count || 0,
       certCount: certResult.count || 0,
-      teamCount: teamResult.count || 0
+      teamCount: teamResult.count || 0,
+      recentRegs: recentRegsResult.data || []
     }
   } catch {
     return null
@@ -29,7 +31,7 @@ async function getStudentData() {
 }
 
 export default async function StudentDashboardPage() {
-  const stats = await getStudentData() || { regCount: 3, attCount: 2, certCount: 1, teamCount: 1 }
+  const stats = await getStudentData() || { regCount: 0, attCount: 0, certCount: 0, teamCount: 0, recentRegs: [] }
 
   return (
     <div className="space-y-6">
@@ -110,42 +112,38 @@ export default async function StudentDashboardPage() {
           </div>
 
           <div className="space-y-3">
-            {/* Standard static mock display */}
-            <div className="rounded-xl border border-border/80 bg-card/40 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <span className="inline-flex items-center rounded-full bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 text-[10px] font-bold text-blue-400 uppercase tracking-wider">
-                  Technical
-                </span>
-                <h3 className="text-sm font-semibold text-foreground">Tech Heist Hackathon</h3>
-                <p className="text-xs text-muted-foreground">Date: July 15, 2026 | Venue: Lab 4</p>
+            {stats.recentRegs.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-border/80 bg-card/10 p-8 text-center text-muted-foreground text-sm">
+                You haven't registered for any events yet.
               </div>
-              <div className="flex items-center gap-2">
-                <Link
-                  href="/student/tickets"
-                  className="rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-card transition-colors"
-                >
-                  View QR Ticket
-                </Link>
-              </div>
-            </div>
-
-            <div className="rounded-xl border border-border/80 bg-card/40 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <span className="inline-flex items-center rounded-full bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 text-[10px] font-bold text-orange-400 uppercase tracking-wider">
-                  Esports
-                </span>
-                <h3 className="text-sm font-semibold text-foreground">Valorant Arena Tourney</h3>
-                <p className="text-xs text-muted-foreground">Date: July 28, 2026 | Venue: Esports Lab</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Link
-                  href="/student/tickets"
-                  className="rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-card transition-colors"
-                >
-                  View QR Ticket
-                </Link>
-              </div>
-            </div>
+            ) : (
+              stats.recentRegs.map((reg: any) => {
+                const event = reg.events
+                if (!event) return null
+                
+                const catName = event.categories?.name || "Event"
+                
+                return (
+                  <div key={reg.id} className="rounded-xl border border-border/80 bg-card/40 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <span className="inline-flex items-center rounded-full bg-primary/10 border border-primary/20 px-2 py-0.5 text-[10px] font-bold text-primary uppercase tracking-wider">
+                        {catName}
+                      </span>
+                      <h3 className="text-sm font-semibold text-foreground">{event.title}</h3>
+                      <p className="text-xs text-muted-foreground">Date: {event.event_date} | Venue: {event.venue}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/student/tickets`}
+                        className="rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-card transition-colors"
+                      >
+                        View QR Ticket
+                      </Link>
+                    </div>
+                  </div>
+                )
+              })
+            )}
           </div>
         </div>
 

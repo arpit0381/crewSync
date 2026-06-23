@@ -221,7 +221,7 @@ export function LandingClient({ events }: LandingClientProps) {
 
 
 
-  const categories = ["All", "Hackathon", "Esports", "Sports", "Workshop", "Seminar"]
+  const categories = ["All", "Hackathon", "Esports", "Sports", "Workshop", "Seminar", "Technical", "Non-Technical", "Cultural", "Guest Lecture"]
 
   const filteredEvents = activeCategory === "All"
     ? displayEvents
@@ -445,7 +445,7 @@ export function LandingClient({ events }: LandingClientProps) {
                             <Compass className="h-16 w-16 text-primary/30 animate-pulse-slow" />
                           </div>
                         )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                         <div className="absolute bottom-4 left-6 z-10 flex gap-2">
                           <span className="px-3 py-1 rounded-full bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-primary/20">
                             {displayEvents[currentSlide].categories?.name || "Event"}
@@ -545,7 +545,7 @@ export function LandingClient({ events }: LandingClientProps) {
                       : "bg-card border border-border text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  {cat}s
+                  {cat === "All" || cat.endsWith("s") || cat === "Guest Lecture" || cat === "Technical" || cat === "Non-Technical" || cat === "Cultural" ? cat : `${cat}s`}
                 </button>
               ))}
             </div>
@@ -579,7 +579,7 @@ export function LandingClient({ events }: LandingClientProps) {
                           <Compass className="h-10 w-10 text-primary/40 animate-pulse" />
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-background/20" />
+                      <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500" />
                       <span className="absolute top-4 left-4 z-10 text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/20 px-2.5 py-1 rounded-full bg-background/80 backdrop-blur-sm">
                         {categoryName}
                       </span>

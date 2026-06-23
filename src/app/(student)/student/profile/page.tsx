@@ -43,6 +43,22 @@ export default async function StudentProfilePage() {
           .select("*", { count: "exact", head: true })
           .eq("user_id", user.id)
 
+        // Fetch recent registrations and certificates
+        const [recentRegs, recentCerts] = await Promise.all([
+          supabase
+            .from("registrations")
+            .select("id, created_at, events(title, event_date, venue, categories(name))")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false })
+            .limit(5),
+          supabase
+            .from("certificates")
+            .select("id, generated_at, cert_type, events(title)")
+            .eq("user_id", user.id)
+            .order("generated_at", { ascending: false })
+            .limit(5)
+        ])
+
         dbProfile = {
           name: profile.name,
           roll_number: profile.roll_number || "Not Assigned",
@@ -55,7 +71,9 @@ export default async function StudentProfilePage() {
             registered: regCount || 0,
             certificates: certCount || 0,
             teams: teamCount || 0
-          }
+          },
+          recentRegs: recentRegs.data || [],
+          recentCerts: recentCerts.data || []
         }
       }
     }
@@ -75,7 +93,9 @@ export default async function StudentProfilePage() {
       registered: 0,
       certificates: 0,
       teams: 0
-    }
+    },
+    recentRegs: [],
+    recentCerts: []
   }
 
   return (
@@ -178,6 +198,77 @@ export default async function StudentProfilePage() {
 
           <div className="border-t border-border pt-4 mt-6 text-[10px] text-muted-foreground text-center leading-relaxed">
             Information linked directly with college administrative systems. Contact campus registrar to update roll allocations.
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Activity Sections */}
+      <div className="grid gap-6 md:grid-cols-2 mt-6">
+        {/* Recent Registrations */}
+        <div className="rounded-3xl border border-border bg-card/20 backdrop-blur-sm p-6 space-y-4">
+          <div className="flex items-center justify-between border-b border-border pb-3">
+            <h2 className="text-lg font-bold text-foreground">Recent Registrations</h2>
+          </div>
+          <div className="space-y-3">
+            {profile.recentRegs.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-border/80 bg-card/10 p-6 text-center text-muted-foreground text-sm">
+                No recent event registrations.
+              </div>
+            ) : (
+              profile.recentRegs.map((reg: any) => {
+                const event = reg.events
+                if (!event) return null
+                const catName = event.categories?.name || "Event"
+                
+                return (
+                  <div key={reg.id} className="rounded-xl border border-border/80 bg-card/40 p-4 flex flex-col justify-between gap-2">
+                    <div className="flex items-center justify-between">
+                      <span className="inline-flex items-center rounded-full bg-primary/10 border border-primary/20 px-2 py-0.5 text-[10px] font-bold text-primary uppercase tracking-wider">
+                        {catName}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {new Date(reg.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <h3 className="text-sm font-semibold text-foreground">{event.title}</h3>
+                    <p className="text-xs text-muted-foreground">Date: {event.event_date} | Venue: {event.venue}</p>
+                  </div>
+                )
+              })
+            )}
+          </div>
+        </div>
+
+        {/* Recent Certificates */}
+        <div className="rounded-3xl border border-border bg-card/20 backdrop-blur-sm p-6 space-y-4">
+          <div className="flex items-center justify-between border-b border-border pb-3">
+            <h2 className="text-lg font-bold text-foreground">Recent Certificates</h2>
+          </div>
+          <div className="space-y-3">
+            {profile.recentCerts.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-border/80 bg-card/10 p-6 text-center text-muted-foreground text-sm">
+                No certificates earned yet.
+              </div>
+            ) : (
+              profile.recentCerts.map((cert: any) => {
+                const event = cert.events
+                if (!event) return null
+                
+                return (
+                  <div key={cert.id} className="rounded-xl border border-border/80 bg-card/40 p-4 flex flex-col justify-between gap-2">
+                    <div className="flex items-center justify-between">
+                      <span className="inline-flex items-center rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-bold text-emerald-500 uppercase tracking-wider">
+                        {cert.cert_type.replace("_", " ")}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {new Date(cert.generated_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <h3 className="text-sm font-semibold text-foreground">{event.title}</h3>
+                  </div>
+                )
+              })
+            )}
           </div>
         </div>
       </div>
