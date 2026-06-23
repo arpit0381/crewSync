@@ -4,7 +4,7 @@ import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { registerForEventAction } from "@/app/event-actions"
-import { Calendar, MapPin, Users, Loader2, ArrowLeft, Clock, Info, Shield, CheckCircle, Ticket, X } from "lucide-react"
+import { Calendar, MapPin, Users, Loader2, ArrowLeft, Clock, Info, Shield, CheckCircle, Ticket, X, Share2, Check } from "lucide-react"
 
 interface EventDetails {
   id: string
@@ -42,6 +42,31 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn }: EventDet
   const [teamMode, setTeamMode] = React.useState<"create" | "join">("create")
   const [teamName, setTeamName] = React.useState("")
   const [inviteCode, setInviteCode] = React.useState("")
+  const [isCopied, setIsCopied] = React.useState(false)
+
+  const handleShare = async () => {
+    const url = window.location.href
+    const title = event.title
+    const text = `Check out ${title} on Crew Arena!`
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, text, url })
+        return
+      } catch (err) {
+        if ((err as Error).name === "AbortError") return
+      }
+    }
+    
+    // Fallback: Copy to clipboard
+    try {
+      await navigator.clipboard.writeText(url)
+      setIsCopied(true)
+      setTimeout(() => setIsCopied(false), 2000)
+    } catch (err) {
+      console.error("Failed to copy", err)
+    }
+  }
 
   // Auto-open modal if action=register is present
   React.useEffect(() => {
@@ -149,14 +174,32 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn }: EventDet
                 {event.reg_type === "team" ? "Team Event" : "Individual"}
               </span>
             </div>
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-tight drop-shadow-md">
-              {event.title}
-            </h1>
-            <div className="flex items-center gap-2 text-zinc-300 font-medium">
-              <span>Organized by:</span>
-              <span className="text-white font-bold">
-                {event.clubs?.name || event.departments?.name || "Campus Administration"}
-              </span>
+            
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-tight drop-shadow-md">
+                  {event.title}
+                </h1>
+                <div className="flex items-center gap-2 text-zinc-300 font-medium mt-3">
+                  <span>Organized by:</span>
+                  <span className="text-white font-bold">
+                    {event.clubs?.name || event.departments?.name || "Campus Administration"}
+                  </span>
+                </div>
+              </div>
+              
+              {/* Share Button */}
+              <button
+                onClick={handleShare}
+                className="shrink-0 flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 text-white rounded-full px-4 py-2 md:px-5 md:py-2.5 transition-all font-semibold shadow-lg group"
+              >
+                {isCopied ? (
+                  <Check className="h-4 w-4 text-green-400" />
+                ) : (
+                  <Share2 className="h-4 w-4 group-hover:-translate-y-0.5 transition-transform" />
+                )}
+                <span className="hidden sm:inline">{isCopied ? "Copied!" : "Share Event"}</span>
+              </button>
             </div>
           </div>
         </div>
