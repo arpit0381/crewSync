@@ -6,6 +6,7 @@ import { redirect } from "next/navigation"
 export async function signInAction(formData: FormData) {
   const email = formData.get("email") as string
   const password = formData.get("password") as string
+  const redirectUrl = formData.get("redirect") as string
 
   if (!email || !password) {
     return { error: "Email and password are required" }
@@ -23,6 +24,10 @@ export async function signInAction(formData: FormData) {
 
   const role = data.user?.user_metadata?.role || "student"
   
+  if (redirectUrl) {
+    redirect(redirectUrl)
+  }
+
   if (role === "student") {
     redirect("/student")
   } else if (role === "tournament_admin") {

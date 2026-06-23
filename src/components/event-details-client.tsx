@@ -228,7 +228,7 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn }: EventDet
               </div>
             </div>
 
-            <div className="mt-8 pt-6 border-t border-border">
+            <div className="mt-8 pt-6 border-t border-border hidden lg:block">
               {isSuccessfullyRegistered ? (
                 <div className="w-full flex flex-col items-center justify-center rounded-2xl bg-green-500/10 border border-green-500/20 p-4 text-green-500 text-center">
                   <CheckCircle className="h-6 w-6 mb-2" />

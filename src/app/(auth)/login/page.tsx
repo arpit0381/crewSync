@@ -44,6 +44,9 @@ function LoginForm() {
         </div>
       )}
 
+      {/* Hidden input to pass redirect URL to server action */}
+      <input type="hidden" name="redirect" value={searchParams.get("redirect") || ""} />
+
       <div>
         <label htmlFor="email" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           Email address

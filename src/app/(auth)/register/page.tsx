@@ -11,6 +11,13 @@ export default function RegisterPage() {
   const [success, setSuccess] = React.useState<string | null>(null)
   const [loading, setLoading] = React.useState(false)
   const [departments, setDepartments] = React.useState<{id: string, name: string}[]>([])
+  const [loginUrl, setLoginUrl] = React.useState("/login")
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined" && window.location.search) {
+      setLoginUrl(`/login${window.location.search}`)
+    }
+  }, [])
 
   React.useEffect(() => {
     async function fetchDepts() {
@@ -42,10 +49,7 @@ export default function RegisterPage() {
     }
   }
 
-  // Preserve redirect param for the login link
-  const loginUrl = typeof window !== "undefined" && window.location.search 
-    ? `/login${window.location.search}` 
-    : "/login"
+  // Preserve redirect param for the login link (handled safely in useEffect above)
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8 overflow-hidden select-none">
