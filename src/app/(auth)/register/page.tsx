@@ -4,11 +4,22 @@ import * as React from "react"
 import Link from "next/link"
 import { signUpAction } from "@/app/auth-actions"
 import { ShieldCheck, Loader2 } from "lucide-react"
+import { createClient } from "@/lib/supabase/client"
 
 export default function RegisterPage() {
   const [error, setError] = React.useState<string | null>(null)
   const [success, setSuccess] = React.useState<string | null>(null)
   const [loading, setLoading] = React.useState(false)
+  const [departments, setDepartments] = React.useState<{id: string, name: string}[]>([])
+
+  React.useEffect(() => {
+    async function fetchDepts() {
+      const supabase = createClient()
+      const { data } = await supabase.from("departments").select("id, name").order("name")
+      if (data) setDepartments(data)
+    }
+    fetchDepts()
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -114,7 +125,44 @@ export default function RegisterPage() {
               </div>
             </div>
 
-
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="department_id" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Department
+                </label>
+                <div className="mt-1">
+                  <select
+                    id="department_id"
+                    name="department_id"
+                    required
+                    className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
+                  >
+                    <option value="">Select Department</option>
+                    {departments.map((dept) => (
+                      <option key={dept.id} value={dept.id}>{dept.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label htmlFor="section" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Section
+                </label>
+                <div className="mt-1">
+                  <select
+                    id="section"
+                    name="section"
+                    required
+                    className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
+                  >
+                    <option value="">Select Section</option>
+                    {Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)).map((letter) => (
+                      <option key={letter} value={letter}>Section {letter}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
 
             <div>
               <label htmlFor="email" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">

@@ -4,12 +4,19 @@ import { CertificatesClient } from "@/components/dynamic-imports"
 
 export default async function StudentCertificatesPage() {
   let dbCerts: any[] = []
+  let studentName = "Student"
 
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (user) {
+      // Get real student name
+      const { data: profile } = await supabase.from("profiles").select("name").eq("id", user.id).single()
+      if (profile?.name) {
+        studentName = profile.name
+      }
+
       // Query attendance verified list with templates
       const { data: attendances } = await supabase
         .from("attendance")
@@ -63,5 +70,5 @@ export default async function StudentCertificatesPage() {
 
   const certificates = dbCerts
 
-  return <CertificatesClient initialCertificates={certificates} />
+  return <CertificatesClient initialCertificates={certificates} studentName={studentName} />
 }

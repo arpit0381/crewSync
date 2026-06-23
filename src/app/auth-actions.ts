@@ -38,10 +38,12 @@ export async function signUpAction(formData: FormData) {
   const name = formData.get("name") as string
   const rollNumber = formData.get("roll_number") as string
   const mobile = formData.get("mobile") as string
+  const departmentId = formData.get("department_id") as string
+  const section = formData.get("section") as string
   const role = "student" // Hardcoded to student for registration
 
-  if (!email || !password || !name) {
-    return { error: "Name, email and password are required" }
+  if (!email || !password || !name || !departmentId || !section) {
+    return { error: "Name, email, password, department, and section are required" }
   }
 
   const supabase = await createClient()
@@ -79,6 +81,8 @@ export async function signUpAction(formData: FormData) {
         roll_number: rollNumber ? rollNumber : null,
         mobile: mobile ? mobile : null,
         role,
+        department_id: departmentId,
+        section: section
       },
       emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/auth/callback`,
     },
@@ -163,4 +167,63 @@ export async function updateUserRoleAction(userId: string, role: string) {
 
   if (error) return { error: error.message }
   return { success: "User role updated successfully" }
+}
+
+export async function updateProfileAction(data: {
+  name: string
+  roll_number?: string
+  mobile?: string
+  department_id?: string
+  club_id?: string
+  section?: string
+}) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    return { error: "You must be logged in to update your profile." }
+  }
+
+  // If a roll_number is provided, check if it's already used by another user
+  if (data.roll_number) {
+    const { data: existingRoll } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("roll_number", data.roll_number)
+      .neq("id", user.id)
+      .maybeSingle()
+
+    if (existingRoll) {
+      return { error: "This Roll Number is already registered to another account." }
+    }
+  }
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      name: data.name,
+      roll_number: data.roll_number || null,
+      mobile: data.mobile || null,
+      department_id: data.department_id || null,
+      club_id: data.club_id || null,
+      section: data.section || null,
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", user.id)
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  // Optionally update auth user metadata
+  await supabase.auth.updateUser({
+    data: {
+      name: data.name,
+      roll_number: data.roll_number || null,
+      mobile: data.mobile || null,
+      section: data.section || null
+    }
+  })
+
+  return { success: "Profile updated successfully." }
 }

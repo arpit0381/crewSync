@@ -15,7 +15,18 @@ async function addDepartment(formData: FormData) {
 
   try {
     const supabase = await createClient()
-    const { error } = await supabase
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    // Check JWT role instead of RLS to prevent issues
+    if (user?.user_metadata?.role !== 'super_admin') {
+      console.error("Unauthorized: Not a super admin")
+      return
+    }
+
+    const { createAdminClient } = await import("@/lib/supabase/server")
+    const adminClient = createAdminClient()
+
+    const { error } = await adminClient
       .from("departments")
       .insert({
         name,

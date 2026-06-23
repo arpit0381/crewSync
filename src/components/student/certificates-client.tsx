@@ -21,9 +21,10 @@ interface Certificate {
 
 interface CertificatesClientProps {
   initialCertificates: Certificate[]
+  studentName: string
 }
 
-export function CertificatesClient({ initialCertificates }: CertificatesClientProps) {
+export function CertificatesClient({ initialCertificates, studentName }: CertificatesClientProps) {
   const [certs, setCerts] = React.useState<Certificate[]>(initialCertificates)
   const [loadingId, setLoadingId] = React.useState<string | null>(null)
   const [error, setError] = React.useState<string | null>(null)
@@ -204,14 +205,7 @@ export function CertificatesClient({ initialCertificates }: CertificatesClientPr
     doc.save(`Certificate-${c.event_title.replace(/\s+/g, "-")}.pdf`)
   }
 
-  // Get name from localStorage or session
-  const getStudentName = () => {
-    if (typeof window !== "undefined") {
-      // Mock or try to fetch user metadata from local storage
-      return "Arpit Bajpai"
-    }
-    return "Student"
-  }
+  // Real studentName is passed via props
 
   return (
     <div className="space-y-6">
@@ -274,7 +268,7 @@ export function CertificatesClient({ initialCertificates }: CertificatesClientPr
                       onClick={async () => {
                         setLoadingId(c.event_id + "-download")
                         try {
-                          await generatePDFCertificate(c, getStudentName())
+                          await generatePDFCertificate(c, studentName)
                         } catch (err) {
                           console.error("PDF generation failed:", err)
                           setError("Failed to download template. Please check connection.")
