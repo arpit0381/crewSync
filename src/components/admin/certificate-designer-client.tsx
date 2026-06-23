@@ -154,12 +154,14 @@ export function CertificateDesignerClient({ events, templates, attendanceMap, ce
   }
 
   // ─── Bulk Generate ──────────────────────────────────────────────
+  const [selectedCertType, setSelectedCertType] = React.useState<"participation" | "winner" | "runner_up" | "volunteer">("participation")
+
   const handleBulkGenerate = async (userIds: string[]) => {
     setGenerating(true)
     setError(null)
     setSuccess(null)
 
-    const result = await bulkGenerateCertificatesAction(selectedEventId, userIds)
+    const result = await bulkGenerateCertificatesAction(selectedEventId, userIds, selectedCertType as any)
     if (result.error) setError(result.error)
     else setSuccess(result.success || "Generated!")
     setGenerating(false)
@@ -539,16 +541,27 @@ export function CertificateDesignerClient({ events, templates, attendanceMap, ce
                   {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
                   Generate All ({pendingUsers.length})
                 </button>
-                {selectedUsers.size > 0 && (
+                <div className="w-full flex items-center gap-2">
+                  <select
+                    value={selectedCertType}
+                    onChange={(e) => setSelectedCertType(e.target.value as any)}
+                    disabled={generating || pendingUsers.length === 0}
+                    className="rounded-xl border border-primary/30 bg-primary/5 py-3 px-3 text-sm font-bold text-primary focus:outline-none flex-1 max-w-[140px] cursor-pointer disabled:opacity-50"
+                  >
+                    <option value="participation">Participation</option>
+                    <option value="winner">1st Place</option>
+                    <option value="runner_up">Runner Up</option>
+                    <option value="volunteer">Volunteer</option>
+                  </select>
                   <button
                     onClick={() => handleBulkGenerate(Array.from(selectedUsers))}
-                    disabled={generating}
-                    className="w-full flex items-center justify-center gap-2 rounded-xl border border-primary/30 bg-primary/5 py-3 text-sm font-bold text-primary hover:bg-primary/10 transition-all disabled:opacity-50"
+                    disabled={generating || selectedUsers.size === 0}
+                    className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-primary/30 bg-primary/5 py-3 text-sm font-bold text-primary hover:bg-primary/10 transition-all disabled:opacity-50"
                   >
                     {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Users className="h-4 w-4" />}
-                    Generate Selected ({selectedUsers.size})
+                    Generate ({selectedUsers.size})
                   </button>
-                )}
+                </div>
               </div>
             </div>
 

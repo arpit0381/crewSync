@@ -9,7 +9,7 @@ const DEFAULT_SETTINGS = {
   maintenance_mode: "false",
   cloudinary_event_folder: "banners",
   cloudinary_template_folder: "templates",
-  smtp_sender: "notifications@crewarena.com"
+  smtp_sender: "noreply@crewsync.formstuff.in"
 }
 
 // Server Action inside the settings page

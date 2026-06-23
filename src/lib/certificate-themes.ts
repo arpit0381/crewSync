@@ -323,11 +323,25 @@ export function renderThemeToPDF(doc: jsPDF, themeId: string, data: CertificateD
   doc.setLineWidth(0.8)
   doc.line(w / 2 - 60, 52, w / 2 + 60, 52)
 
+  // Dynamic Title Override for Winners
+  let displayTitle = data.certTitle
+  let displayDesc = data.description
+
+  if (data.certType === "winner") {
+    if (displayTitle === "Certificate of Completion" || displayTitle === "Certificate of Participation") {
+      displayTitle = "Certificate of Excellence"
+    }
+  } else if (data.certType === "runner_up") {
+    if (displayTitle === "Certificate of Completion" || displayTitle === "Certificate of Participation") {
+      displayTitle = "Certificate of Achievement"
+    }
+  }
+
   // 5. Certificate Title
   doc.setFont("Times", "italic")
   doc.setFontSize(26)
   doc.setTextColor(...c.title)
-  doc.text(data.certTitle, w / 2, 45, { align: "center" })
+  doc.text(displayTitle, w / 2, 45, { align: "center" })
 
   // 6. Subtitle
   doc.setFont("Helvetica", "normal")
@@ -352,7 +366,7 @@ export function renderThemeToPDF(doc: jsPDF, themeId: string, data: CertificateD
   doc.setFont("Helvetica", "normal")
   doc.setFontSize(11)
   doc.setTextColor(...c.text)
-  doc.text(data.description, w / 2, 108, { align: "center" })
+  doc.text(displayDesc, w / 2, 108, { align: "center" })
 
   // 10. Event Name
   doc.setFont("Helvetica", "bold")
@@ -360,7 +374,28 @@ export function renderThemeToPDF(doc: jsPDF, themeId: string, data: CertificateD
   doc.setTextColor(...c.name)
   doc.text(`"${data.eventName}"`, w / 2, 120, { align: "center" })
 
-  // 11. (Removed Certificate type badge as requested)
+  // 11. Distinct Badges for Winners/Special roles
+  if (data.certType === "winner") {
+    doc.setFont("Times", "bolditalic")
+    doc.setFontSize(14)
+    doc.setTextColor(212, 175, 55) // Solid Gold
+    doc.text(`★ 1ST PLACE WINNER ★`, w / 2, 132, { align: "center" })
+  } else if (data.certType === "runner_up") {
+    doc.setFont("Times", "bolditalic")
+    doc.setFontSize(14)
+    doc.setTextColor(192, 192, 192) // Solid Silver
+    doc.text(`★ RUNNER UP ★`, w / 2, 132, { align: "center" })
+  } else if (data.certType === "volunteer") {
+    doc.setFont("Helvetica", "bold")
+    doc.setFontSize(9)
+    doc.setTextColor(...c.accent)
+    doc.text(`[ VOLUNTEER ]`, w / 2, 132, { align: "center" })
+  } else if (data.certType === "organizer") {
+    doc.setFont("Helvetica", "bold")
+    doc.setFontSize(9)
+    doc.setTextColor(...c.accent)
+    doc.text(`[ ORGANIZER ]`, w / 2, 132, { align: "center" })
+  }
 
   // 12. Date + Certificate ID + Department row
   doc.setFont("Helvetica", "normal")
@@ -397,7 +432,7 @@ export function renderThemeToPDF(doc: jsPDF, themeId: string, data: CertificateD
   doc.setFontSize(6)
   doc.setTextColor(...c.signatureLine)
   doc.text(
-    `VERIFICATION ID: ${data.certificateNumber} | Verify at: ${data.verificationUrl || "crewarena.com/verify"}`,
+    `VERIFICATION ID: ${data.certificateNumber} | Verify at: ${data.verificationUrl || "crewsync.formstuff.in/verify"}`,
     w / 2,
     194,
     { align: "center" }

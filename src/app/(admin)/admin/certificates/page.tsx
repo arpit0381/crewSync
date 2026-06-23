@@ -31,7 +31,7 @@ export default async function AdminCertificatesPage() {
       for (const event of events) {
         const { data: attendances } = await supabase
           .from("attendance")
-          .select("student_id, profiles(id, name, email, roll_number)")
+          .select("student_id, profiles!attendance_student_id_fkey(id, name, email, roll_number)")
           .eq("event_id", event.id)
 
         if (attendances?.length) {
