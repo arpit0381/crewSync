@@ -120,20 +120,11 @@ export function LandingClient({ events }: LandingClientProps) {
   const [dropdownOpen, setDropdownOpen] = React.useState(false)
   const [mounted, setMounted] = React.useState(false)
 
-  // Interactive Live Preview State
-  const [previewTab, setPreviewTab] = React.useState<"hackathon" | "brackets" | "scanner" | "certificates">("hackathon")
+  // Upcoming Events Carousel State
+  const [currentSlide, setCurrentSlide] = React.useState(0)
 
   // Category selection for Event Discovery
   const [activeCategory, setActiveCategory] = React.useState<string>("All")
-
-  // Interactive Hackathon Form Mock State
-  const [hackathonStep, setHackathonStep] = React.useState<"form" | "loading" | "success">("form")
-  const [hackathonTeam, setHackathonTeam] = React.useState("Byte Busters")
-  const [hackathonProject, setHackathonProject] = React.useState("CrewSync Attendance Bot")
-  const [hackathonRepo, setHackathonRepo] = React.useState("https://github.com/crewarena/crewsync")
-
-  // Interactive Bracket Match State
-  const [selectedMatch, setSelectedMatch] = React.useState<{ id: number; team1: string; score1: number; team2: string; score2: number; round: string } | null>(null)
 
   // Interactive Attendance Flow step state
   const [activeAttendanceStep, setActiveAttendanceStep] = React.useState(1)
@@ -144,50 +135,6 @@ export function LandingClient({ events }: LandingClientProps) {
   const [certDone, setCertDone] = React.useState(false)
   const [studentNameInput, setStudentNameInput] = React.useState("Aryan Sharma")
   const [certNumber, setCertNumber] = React.useState<number>(838483)
-
-  React.useEffect(() => {
-    setMounted(true)
-    setCertNumber(Math.floor(Math.random() * 900000 + 100000))
-  }, [])
-
-  // Close dropdown on Escape
-  React.useEffect(() => {
-    if (!dropdownOpen) return
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setDropdownOpen(false)
-    }
-    document.addEventListener("keydown", handleKeyDown)
-    return () => document.removeEventListener("keydown", handleKeyDown)
-  }, [dropdownOpen])
-
-  const packs: { name: ThemePack; color: string; label: string }[] = [
-    { name: "blue", color: "bg-blue-600", label: "Blue Default" },
-    { name: "emerald", color: "bg-emerald-600", label: "Emerald" },
-    { name: "purple", color: "bg-purple-600", label: "Purple" },
-    { name: "crimson", color: "bg-rose-600", label: "Crimson" },
-    { name: "orange", color: "bg-orange-600", label: "Orange" },
-    { name: "college", color: "bg-indigo-900", label: "College Custom" },
-  ]
-
-  // Bracket matches for BGMI Tournament
-  const bracketMatches = [
-    { id: 1, team1: "GodLike Esports", score1: 15, team2: "Entity Gaming", score2: 12, round: "Quarterfinal 1", status: "finished" },
-    { id: 2, team1: "Team Soul", score1: 18, team2: "Reckoning Esports", score2: 14, round: "Quarterfinal 2", status: "finished" },
-    { id: 3, team1: "Global Esports", score1: 16, team2: "Team XSpark", score2: 17, round: "Quarterfinal 3", status: "finished" },
-    { id: 4, team1: "Orangutan Gaming", score1: 11, team2: "Blind Esports", score2: 13, round: "Quarterfinal 4", status: "finished" },
-    { id: 5, team1: "GodLike Esports", score1: 14, team2: "Team Soul", score2: 16, round: "Semifinal 1", status: "finished" },
-    { id: 6, team1: "Team XSpark", score1: 15, team2: "Blind Esports", score2: 12, round: "Semifinal 2", status: "finished" },
-    { id: 7, team1: "Team Soul", score1: 22, team2: "Team XSpark", score2: 19, round: "Grand Final", status: "finished" }
-  ]
-
-  // Leaderboard statistics for battlefy simulation
-  const teamStandings = [
-    { rank: 1, name: "Team Soul", matches: 3, points: 56, logo: "S" },
-    { rank: 2, name: "Team XSpark", matches: 3, points: 51, logo: "X" },
-    { rank: 3, name: "GodLike Esports", matches: 2, points: 29, logo: "G" },
-    { rank: 4, name: "Blind Esports", matches: 2, points: 25, logo: "B" },
-    { rank: 5, name: "Global Esports", matches: 1, points: 16, logo: "GE" }
-  ]
 
   // Fallback high fidelity events if Supabase table is empty
   const fallbackEvents: Event[] = [
@@ -250,19 +197,45 @@ export function LandingClient({ events }: LandingClientProps) {
 
   const displayEvents = events.length > 0 ? events : fallbackEvents
 
+  React.useEffect(() => {
+    setMounted(true)
+    setCertNumber(Math.floor(Math.random() * 900000 + 100000))
+  }, [])
+
+  // Auto-rotate the events carousel
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide(prev => (prev === displayEvents.length - 1 ? 0 : prev + 1))
+    }, 5000)
+    return () => clearInterval(timer)
+  }, [displayEvents.length])
+
+  // Close dropdown on Escape
+  React.useEffect(() => {
+    if (!dropdownOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setDropdownOpen(false)
+    }
+    document.addEventListener("keydown", handleKeyDown)
+    return () => document.removeEventListener("keydown", handleKeyDown)
+  }, [dropdownOpen])
+
+  const packs: { name: ThemePack; color: string; label: string }[] = [
+    { name: "blue", color: "bg-blue-600", label: "Blue Default" },
+    { name: "emerald", color: "bg-emerald-600", label: "Emerald" },
+    { name: "purple", color: "bg-purple-600", label: "Purple" },
+    { name: "crimson", color: "bg-rose-600", label: "Crimson" },
+    { name: "orange", color: "bg-orange-600", label: "Orange" },
+    { name: "college", color: "bg-indigo-900", label: "College Custom" },
+  ]
+
+
+
   const categories = ["All", "Hackathon", "Esports", "Sports", "Workshop", "Seminar"]
 
   const filteredEvents = activeCategory === "All"
     ? displayEvents
     : displayEvents.filter(e => e.categories?.name === activeCategory || e.title.toLowerCase().includes(activeCategory.toLowerCase()))
-
-  const handleHackathonSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setHackathonStep("loading")
-    setTimeout(() => {
-      setHackathonStep("success")
-    }, 2000)
-  }
 
   const handleCertDownload = () => {
     setCertGenerating(true)
@@ -311,8 +284,6 @@ export function LandingClient({ events }: LandingClientProps) {
             <a href="#hero" className="hover:text-primary transition-colors">OS Preview</a>
             <a href="#features" className="hover:text-primary transition-colors">Core Features</a>
             <a href="#discovery" className="hover:text-primary transition-colors">Explore Events</a>
-            <a href="#hackathons" className="hover:text-primary transition-colors">Hackathons</a>
-            <a href="#sports" className="hover:text-primary transition-colors">Sports & Brackets</a>
             <a href="#attendance" className="hover:text-primary transition-colors">QR Flow</a>
           </nav>
 
@@ -445,293 +416,115 @@ export function LandingClient({ events }: LandingClientProps) {
             </div>
           </div>
 
-          {/* Interactive Live Preview Box */}
+          {/* Upcoming Events Carousel */}
           <div className="lg:col-span-7">
-            <div className="rounded-3xl border border-border bg-card/45 backdrop-blur-xl shadow-2xl overflow-hidden glass-panel relative group">
+            <div className="rounded-3xl border border-border bg-card/45 backdrop-blur-xl shadow-2xl overflow-hidden glass-panel relative group h-[480px] flex flex-col">
               {/* Top Window Accent */}
-              <div className="flex items-center justify-between px-4 py-3 bg-card/50 border-b border-border/80">
+              <div className="flex items-center justify-between px-4 py-3 bg-card/50 border-b border-border/80 shrink-0">
                 <div className="flex items-center gap-1.5">
                   <div className="h-3 w-3 rounded-full bg-rose-500/80" />
                   <div className="h-3 w-3 rounded-full bg-amber-500/80" />
                   <div className="h-3 w-3 rounded-full bg-emerald-500/80" />
                 </div>
                 <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-semibold px-2 py-0.5 bg-background/50 rounded-lg border border-border/60">
-                  <Activity className="h-3 w-3 text-primary animate-pulse" />
-                  <span>CREW_SYNC_APP_V2.0</span>
+                  <Compass className="h-3 w-3 text-primary animate-pulse" />
+                  <span>UPCOMING_EVENTS</span>
                 </div>
-                <div className="w-12" />
+                <div className="w-12 flex justify-end gap-1">
+                  <button 
+                    onClick={() => setCurrentSlide(prev => (prev === 0 ? displayEvents.length - 1 : prev - 1))}
+                    className="p-1 rounded-md hover:bg-muted/80 text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
+                  >
+                    <ChevronRight className="h-3 w-3 rotate-180" />
+                  </button>
+                  <button 
+                    onClick={() => setCurrentSlide(prev => (prev === displayEvents.length - 1 ? 0 : prev + 1))}
+                    className="p-1 rounded-md hover:bg-muted/80 text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
+                  >
+                    <ChevronRight className="h-3 w-3" />
+                  </button>
+                </div>
               </div>
 
-              {/* Navigation Tabs */}
-              <div className="flex border-b border-border/80 bg-muted/30 overflow-x-auto">
-                <button
-                  onClick={() => setPreviewTab("hackathon")}
-                  className={`flex-1 py-3 px-4 text-xs font-bold border-b-2 transition-all flex items-center justify-center gap-1.5 whitespace-nowrap cursor-pointer ${
-                    previewTab === "hackathon"
-                      ? "border-primary text-primary bg-background/40"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <Laptop className="h-3.5 w-3.5" />
-                  <span>Hackathon Portal</span>
-                </button>
-                <button
-                  onClick={() => setPreviewTab("brackets")}
-                  className={`flex-1 py-3 px-4 text-xs font-bold border-b-2 transition-all flex items-center justify-center gap-1.5 whitespace-nowrap cursor-pointer ${
-                    previewTab === "brackets"
-                      ? "border-primary text-primary bg-background/40"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <Trophy className="h-3.5 w-3.5" />
-                  <span>Esports Brackets</span>
-                </button>
-                <button
-                  onClick={() => setPreviewTab("scanner")}
-                  className={`flex-1 py-3 px-4 text-xs font-bold border-b-2 transition-all flex items-center justify-center gap-1.5 whitespace-nowrap cursor-pointer ${
-                    previewTab === "scanner"
-                      ? "border-primary text-primary bg-background/40"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <QrCode className="h-3.5 w-3.5" />
-                  <span>Live Scanner</span>
-                </button>
-                <button
-                  onClick={() => setPreviewTab("certificates")}
-                  className={`flex-1 py-3 px-4 text-xs font-bold border-b-2 transition-all flex items-center justify-center gap-1.5 whitespace-nowrap cursor-pointer ${
-                    previewTab === "certificates"
-                      ? "border-primary text-primary bg-background/40"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <Award className="h-3.5 w-3.5" />
-                  <span>Certificates</span>
-                </button>
-              </div>
-
-              {/* Tab Content Canvas */}
-              <div className="p-5 min-h-[380px] flex flex-col justify-between bg-background/25">
+              {/* Carousel Content */}
+              <div className="flex-1 relative overflow-hidden bg-background/25">
                 <AnimatePresence mode="wait">
-                  {previewTab === "hackathon" && (
+                  {displayEvents.length > 0 && (
                     <motion.div
-                      key="hackathon"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="space-y-4 flex-1 flex flex-col justify-between"
+                      key={currentSlide}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.3 }}
+                      className="absolute inset-0 flex flex-col"
                     >
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold border border-emerald-500/20 uppercase">
-                            Accepting Submissions
+                      {/* Banner Area */}
+                      <div className="relative h-48 w-full bg-gradient-to-br from-zinc-800 to-zinc-950 flex items-center justify-center overflow-hidden shrink-0">
+                        {displayEvents[currentSlide].banner_url ? (
+                          <Image
+                            src={displayEvents[currentSlide].banner_url!}
+                            alt={displayEvents[currentSlide].title}
+                            fill
+                            className="object-cover opacity-80 group-hover:scale-105 transition-transform duration-700"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 via-background to-violet-500/10 flex items-center justify-center">
+                            <Compass className="h-16 w-16 text-primary/30 animate-pulse-slow" />
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
+                        <div className="absolute bottom-4 left-6 z-10 flex gap-2">
+                          <span className="px-3 py-1 rounded-full bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-primary/20">
+                            {displayEvents[currentSlide].categories?.name || "Event"}
                           </span>
-                          <span className="text-[11px] text-muted-foreground font-semibold flex items-center gap-1">
-                            <Clock className="h-3 w-3" /> Ends in 04:32:15
-                          </span>
-                        </div>
-                        <h3 className="text-lg font-bold text-foreground">Smart India Hackathon (Local Hub)</h3>
-                        <p className="text-xs text-muted-foreground">
-                          Prototype solutions addressing local transport optimization, energy saving, and student safety tools.
-                        </p>
-                      </div>
-
-                      {/* Mock Devfolio submit block */}
-                      <div className="bg-card/60 rounded-2xl border border-border p-4 space-y-3">
-                        <div className="flex items-center justify-between text-xs border-b border-border/60 pb-2">
-                          <span className="font-semibold text-muted-foreground">Project Registration</span>
-                          <span className="text-primary font-bold">Step 2 of 3</span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2 text-xs">
-                          <div>
-                            <span className="text-[10px] uppercase text-muted-foreground font-bold">Team Name</span>
-                            <p className="font-bold text-foreground">Byte Busters</p>
-                          </div>
-                          <div>
-                            <span className="text-[10px] uppercase text-muted-foreground font-bold">Track</span>
-                            <p className="font-bold text-foreground">Next-Gen SaaS</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 pt-1">
-                          <div className="h-2 flex-1 rounded-full bg-muted overflow-hidden">
-                            <div className="h-full bg-primary rounded-full w-2/3" />
-                          </div>
-                          <span className="text-[10px] font-bold text-muted-foreground">66%</span>
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between pt-2">
-                        <span className="text-[11px] text-muted-foreground font-bold">Submitted Teams: 42</span>
-                        <Link href="/register" className="flex items-center gap-1 text-xs font-bold text-primary hover:underline">
-                          Access Hackathon Portal <ChevronRight className="h-3.5 w-3.5" />
-                        </Link>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {previewTab === "brackets" && (
-                    <motion.div
-                      key="brackets"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="space-y-4 flex-1 flex flex-col justify-between"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <h3 className="text-sm font-bold text-foreground">BGMI Arena Championship</h3>
-                          <p className="text-[10px] text-muted-foreground">Live bracket results and round details</p>
+                      {/* Event Details */}
+                      <div className="flex-1 p-6 flex flex-col justify-between">
+                        <div className="space-y-3">
+                          <h3 className="text-2xl font-black text-foreground leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-300">
+                            {displayEvents[currentSlide].title}
+                          </h3>
+                          <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                            {displayEvents[currentSlide].description}
+                          </p>
                         </div>
-                        <span className="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 text-[10px] font-bold border border-amber-500/20 uppercase">
-                          Grand Finals
-                        </span>
-                      </div>
 
-                      {/* Mock Bracket Visual */}
-                      <div className="grid grid-cols-3 gap-2 items-center bg-card/30 p-3 rounded-2xl border border-border/50 text-[11px]">
-                        {/* Round 1 */}
-                        <div className="space-y-2">
-                          <span className="text-[9px] uppercase text-muted-foreground font-bold">Semifinal</span>
-                          <div className="bg-card p-1.5 rounded-xl border border-border space-y-1">
-                            <div className="flex justify-between font-semibold">
-                              <span>GodLike</span>
-                              <span>14</span>
+                        <div className="pt-4 mt-auto border-t border-border/60">
+                          <div className="grid grid-cols-2 gap-4 mb-4">
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground font-semibold">
+                              <Calendar className="h-4 w-4 text-primary shrink-0" />
+                              <span>{displayEvents[currentSlide].event_date}</span>
                             </div>
-                            <div className="flex justify-between text-muted-foreground">
-                              <span>Soul</span>
-                              <span className="font-bold text-primary">16</span>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground font-semibold">
+                              <MapPin className="h-4 w-4 text-primary shrink-0" />
+                              <span className="truncate">{displayEvents[currentSlide].venue}</span>
                             </div>
                           </div>
+                          
+                          <Link
+                            href={`/events/${displayEvents[currentSlide].id}`}
+                            className="w-full flex items-center justify-center gap-2 rounded-xl bg-card hover:bg-primary py-3 text-sm font-bold border border-border hover:border-primary text-foreground hover:text-primary-foreground transition-all shadow-sm hover:shadow-xl hover:shadow-primary/20 cursor-pointer"
+                          >
+                            Register Now
+                            <ArrowRight className="h-4 w-4" />
+                          </Link>
                         </div>
-
-                        {/* Connection visual */}
-                        <div className="flex items-center justify-center">
-                          <svg className="w-full h-8 text-primary" viewBox="0 0 100 40" fill="none">
-                            <path d="M0 10 H50 V30 H100" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 3" />
-                            <path d="M0 30 H50" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 3" />
-                          </svg>
-                        </div>
-
-                        {/* Finalist */}
-                        <div className="space-y-2">
-                          <span className="text-[9px] uppercase text-muted-foreground font-bold">Champion</span>
-                          <div className="bg-primary/10 p-2 rounded-xl border border-primary/30 space-y-1 text-center">
-                            <Trophy className="h-4 w-4 text-primary mx-auto" />
-                            <p className="font-bold text-primary text-xs">Team Soul</p>
-                            <span className="text-[8px] text-muted-foreground uppercase font-bold">56 Total Pts</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between text-xs pt-2">
-                        <span className="text-[11px] text-muted-foreground font-bold">Matches Completed: 12/13</span>
-                        <Link href="#sports" className="flex items-center gap-1 text-xs font-bold text-primary hover:underline">
-                          View Interactive Brackets <ChevronRight className="h-3.5 w-3.5" />
-                        </Link>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {previewTab === "scanner" && (
-                    <motion.div
-                      key="scanner"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="space-y-4 flex-1 flex flex-col justify-between"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <h3 className="text-sm font-bold text-foreground">QR Attendance Scanner</h3>
-                          <p className="text-[10px] text-muted-foreground">Mobile verification endpoint dashboard</p>
-                        </div>
-                        <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold border border-primary/20">
-                          <span className="h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
-                          Live Scanning
-                        </span>
-                      </div>
-
-                      {/* Mock Scanner Feed & Log */}
-                      <div className="grid grid-cols-2 gap-4 items-center">
-                        <div className="aspect-square bg-zinc-950 rounded-2xl border border-border flex items-center justify-center relative overflow-hidden">
-                          <div className="absolute inset-4 border border-dashed border-primary/50 rounded-xl" />
-                          <QrCode className="h-16 w-16 text-primary animate-pulse" />
-                          <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-primary/80 animate-bounce" />
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <span className="text-[10px] uppercase text-muted-foreground font-bold">Check-In Logs</span>
-                          <div className="space-y-1.5 max-h-[120px] overflow-y-auto text-[10px]">
-                            <div className="flex items-center justify-between p-1 bg-card rounded-lg border border-border">
-                              <span className="font-bold">Rohan Sen</span>
-                              <span className="text-emerald-400">Verified</span>
-                            </div>
-                            <div className="flex items-center justify-between p-1 bg-card rounded-lg border border-border">
-                              <span className="font-bold">Esha Patel</span>
-                              <span className="text-emerald-400">Verified</span>
-                            </div>
-                            <div className="flex items-center justify-between p-1 bg-card rounded-lg border border-border">
-                              <span className="font-bold">Vijay Kumar</span>
-                              <span className="text-emerald-400">Verified</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between pt-2">
-                        <span className="text-[11px] text-muted-foreground font-bold">Scanned: 184 Students</span>
-                        <Link href="#attendance" className="flex items-center gap-1 text-xs font-bold text-primary hover:underline">
-                          Verify Scanner Flow <ChevronRight className="h-3.5 w-3.5" />
-                        </Link>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {previewTab === "certificates" && (
-                    <motion.div
-                      key="certificates"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="space-y-4 flex-1 flex flex-col justify-between"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <h3 className="text-sm font-bold text-foreground">Credential Verification</h3>
-                          <p className="text-[10px] text-muted-foreground">Encrypted, verifiable PDF certificates</p>
-                        </div>
-                        <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold border border-emerald-500/20 uppercase">
-                          Cryptographic Sign
-                        </span>
-                      </div>
-
-                      {/* Mock Certificate Visual */}
-                      <div className="bg-card/80 border border-border p-4 rounded-2xl relative flex items-center justify-between gap-4">
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-1">
-                            <ShieldCheck className="h-4 w-4 text-primary" />
-                            <span className="text-[9px] uppercase tracking-widest font-black">Crew Arena Certified</span>
-                          </div>
-                          <div>
-                            <h4 className="text-xs font-bold text-foreground">Aryan Sharma</h4>
-                            <p className="text-[9px] text-muted-foreground">Winner - BGMI Esports Championship 2026</p>
-                          </div>
-                          <span className="text-[8px] text-muted-foreground block font-mono">HASH: 7C8C...B765</span>
-                        </div>
-                        <div className="w-16 h-16 bg-white p-1 rounded-lg shrink-0 flex items-center justify-center">
-                          <QrCode className="h-full w-full text-zinc-950" />
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between pt-2">
-                        <span className="text-[11px] text-muted-foreground font-bold">Secured: SHA-256</span>
-                        <Link href="#certificate-section" className="flex items-center gap-1 text-xs font-bold text-primary hover:underline">
-                          Try Certificate Customizer <ChevronRight className="h-3.5 w-3.5" />
-                        </Link>
                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
+                
+                {/* Carousel Indicators */}
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-20 pointer-events-none">
+                  {displayEvents.map((_, idx) => (
+                    <div 
+                      key={idx} 
+                      className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentSlide ? "w-6 bg-primary" : "w-1.5 bg-primary/20"}`}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -982,352 +775,6 @@ export function LandingClient({ events }: LandingClientProps) {
                 )
               })
             )}
-          </div>
-        </section>
-
-        {/* Hackathon Portal Section (Devfolio Inspired) */}
-        <section id="hackathons" className="py-16 space-y-8">
-          <div className="text-center max-w-3xl mx-auto space-y-3">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-3 py-1 text-xs font-bold text-emerald-400">
-              <Laptop className="h-3.5 w-3.5" />
-              <span>Devfolio Inspired Workspace</span>
-            </div>
-            <h2 className="text-3xl font-extrabold tracking-tight">Hackathon Center</h2>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              Form cross-functional teams, push code repositories, track project approvals, and present to judges in real-time.
-            </p>
-          </div>
-
-          <div className="grid gap-8 lg:grid-cols-12 items-stretch">
-            {/* Submission workflow stats */}
-            <div className="lg:col-span-5 flex flex-col justify-between bg-card/10 rounded-3xl border border-border/80 p-6 space-y-6">
-              <div className="space-y-4">
-                <h3 className="text-xl font-bold text-foreground">How Submissions Work</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Students register directly, build teams inside the app, import GitHub repos, and upload pitch files. The panel of judges receives immediate notification to scoring sheets.
-                </p>
-
-                <div className="space-y-3.5">
-                  <div className="flex gap-3">
-                    <div className="h-6 w-6 rounded-full bg-primary/10 border border-primary/20 text-primary flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">1</div>
-                    <div>
-                      <h4 className="text-xs font-bold">Team Invitation Link</h4>
-                      <p className="text-[11px] text-muted-foreground">Generate security tokens for crew members.</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="h-6 w-6 rounded-full bg-primary/10 border border-primary/20 text-primary flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">2</div>
-                    <div>
-                      <h4 className="text-xs font-bold">Build & Sync Repository</h4>
-                      <p className="text-[11px] text-muted-foreground">Deploy codes, verify repository licenses.</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="h-6 w-6 rounded-full bg-primary/10 border border-primary/20 text-primary flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">3</div>
-                    <div>
-                      <h4 className="text-xs font-bold">Encrypted Submission</h4>
-                      <p className="text-[11px] text-muted-foreground">Send pitch documents to scoring algorithms.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Devfolio Style Stat Bar */}
-              <div className="pt-4 border-t border-border/60 grid grid-cols-3 gap-2 text-center text-xs">
-                <div>
-                  <p className="text-lg font-extrabold text-primary">5,432</p>
-                  <p className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold">Commits Synced</p>
-                </div>
-                <div>
-                  <p className="text-lg font-extrabold text-primary">124</p>
-                  <p className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold">Teams Registered</p>
-                </div>
-                <div>
-                  <p className="text-lg font-extrabold text-primary">32</p>
-                  <p className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold">Mentors Live</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Interactive Hackathon Submission Mock */}
-            <div className="lg:col-span-7 rounded-3xl border border-border bg-card/25 p-6 glass-panel relative flex flex-col justify-between">
-              <div className="flex items-center justify-between border-b border-border/60 pb-3 mb-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Submission Console</span>
-                <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                  DEVFOLIO_SYNC: ON
-                </span>
-              </div>
-
-              <AnimatePresence mode="wait">
-                {hackathonStep === "form" && (
-                  <motion.form
-                    key="form"
-                    onSubmit={handleHackathonSubmit}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="space-y-4 flex-1 flex flex-col justify-between"
-                  >
-                    <div className="space-y-3">
-                      <div>
-                        <label className="text-[10px] uppercase font-bold text-muted-foreground block mb-1">Team Name</label>
-                        <input
-                          type="text"
-                          required
-                          value={hackathonTeam}
-                          onChange={(e) => setHackathonTeam(e.target.value)}
-                          className="w-full bg-background border border-border rounded-xl px-3 py-2 text-xs text-foreground focus:outline-none focus:border-primary transition-colors"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[10px] uppercase font-bold text-muted-foreground block mb-1">Project Title</label>
-                        <input
-                          type="text"
-                          required
-                          value={hackathonProject}
-                          onChange={(e) => setHackathonProject(e.target.value)}
-                          className="w-full bg-background border border-border rounded-xl px-3 py-2 text-xs text-foreground focus:outline-none focus:border-primary transition-colors"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[10px] uppercase font-bold text-muted-foreground block mb-1">GitHub Repository URL</label>
-                        <input
-                          type="url"
-                          required
-                          value={hackathonRepo}
-                          onChange={(e) => setHackathonRepo(e.target.value)}
-                          className="w-full bg-background border border-border rounded-xl px-3 py-2 text-xs text-foreground focus:outline-none focus:border-primary transition-colors font-mono"
-                        />
-                      </div>
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="w-full mt-4 bg-primary text-primary-foreground font-bold text-xs py-3 rounded-xl shadow-lg shadow-primary/10 hover:scale-[1.01] transition-all cursor-pointer flex items-center justify-center gap-1.5"
-                    >
-                      Submit Project to Jury
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </button>
-                  </motion.form>
-                )}
-
-                {hackathonStep === "loading" && (
-                  <motion.div
-                    key="loading"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="flex-1 flex flex-col items-center justify-center py-8 space-y-4"
-                  >
-                    <Loader2 className="h-10 w-10 text-primary animate-spin" />
-                    <div className="text-center space-y-1">
-                      <p className="text-xs font-bold text-foreground">Packaging Submission Repository</p>
-                      <p className="text-[10px] text-muted-foreground">Verifying branch status & pushing metadata...</p>
-                    </div>
-                  </motion.div>
-                )}
-
-                {hackathonStep === "success" && (
-                  <motion.div
-                    key="success"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="flex-1 flex flex-col justify-between py-2"
-                  >
-                    <div className="flex flex-col items-center justify-center text-center space-y-3 py-6">
-                      <div className="h-12 w-12 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                        <Check className="h-6 w-6 animate-bounce" />
-                      </div>
-                      <div className="space-y-1">
-                        <h4 className="text-sm font-bold text-foreground">Project Submitted Successfully!</h4>
-                        <p className="text-[10px] text-muted-foreground">Jury notified. Transaction receipt created.</p>
-                      </div>
-                    </div>
-
-                    <div className="bg-background rounded-2xl border border-border p-3 text-[10px] font-mono space-y-1">
-                      <div className="flex justify-between"><span className="text-muted-foreground">JURY_STATUS:</span> <span className="text-emerald-400 font-bold">QUEUED</span></div>
-                      <div className="flex justify-between"><span className="text-muted-foreground">TEAM:</span> <span>{hackathonTeam}</span></div>
-                      <div className="flex justify-between"><span className="text-muted-foreground">PROJECT:</span> <span>{hackathonProject}</span></div>
-                      <div className="flex justify-between"><span className="text-muted-foreground">REPO:</span> <span className="truncate max-w-[180px]">{hackathonRepo}</span></div>
-                    </div>
-
-                    <button
-                      onClick={() => setHackathonStep("form")}
-                      className="w-full mt-4 bg-muted hover:bg-muted/80 text-foreground font-bold text-xs py-2 rounded-xl border border-border cursor-pointer transition-colors"
-                    >
-                      Reset Submission Simulator
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-        </section>
-
-        {/* Sports & Esports Section (Battlefy Inspired) */}
-        <section id="sports" className="py-16 space-y-8">
-          <div className="text-center max-w-3xl mx-auto space-y-3">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/5 px-3 py-1 text-xs font-bold text-amber-400">
-              <Trophy className="h-3.5 w-3.5" />
-              <span>Battlefy Inspired Brackets</span>
-            </div>
-            <h2 className="text-3xl font-extrabold tracking-tight">Sports & Esports Hub</h2>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              Automatic bracket routing, department-based leaderboards, and game credentials broadcasting.
-            </p>
-          </div>
-
-          <div className="grid gap-8 lg:grid-cols-12 items-stretch">
-            {/* Interactive Tournament Bracket */}
-            <div className="lg:col-span-8 rounded-3xl border border-border bg-card/20 p-6 flex flex-col justify-between relative overflow-hidden">
-              <div className="flex items-center justify-between border-b border-border/60 pb-3 mb-6">
-                <div className="space-y-0.5">
-                  <h3 className="text-sm font-bold text-foreground">Interactive Tournament Bracket</h3>
-                  <p className="text-[10px] text-muted-foreground">Click matches to highlight connections</p>
-                </div>
-                <div className="flex gap-2">
-                  <span className="px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 text-[10px] font-bold border border-rose-500/20 uppercase">
-                    BGMI Playoffs
-                  </span>
-                </div>
-              </div>
-
-              {/* Bracket Tree Layout */}
-              <div className="grid grid-cols-3 gap-3 items-center min-h-[220px]">
-                
-                {/* Column 1: Quarterfinals */}
-                <div className="space-y-4">
-                  <span className="text-[9px] uppercase font-bold text-muted-foreground tracking-widest block border-b border-border/40 pb-1">Quarterfinal</span>
-                  <div
-                    onClick={() => setSelectedMatch(bracketMatches[0])}
-                    className={`p-2 rounded-xl border transition-all cursor-pointer text-[10px] space-y-1 ${
-                      selectedMatch?.id === 1 ? "border-primary bg-primary/5 shadow-md shadow-primary/5" : "border-border bg-card/50 hover:border-primary/40"
-                    }`}
-                  >
-                    <div className="flex justify-between font-semibold">
-                      <span>GodLike</span>
-                      <span>15</span>
-                    </div>
-                    <div className="flex justify-between text-muted-foreground">
-                      <span>Entity</span>
-                      <span>12</span>
-                    </div>
-                  </div>
-
-                  <div
-                    onClick={() => setSelectedMatch(bracketMatches[1])}
-                    className={`p-2 rounded-xl border transition-all cursor-pointer text-[10px] space-y-1 ${
-                      selectedMatch?.id === 2 ? "border-primary bg-primary/5 shadow-md shadow-primary/5" : "border-border bg-card/50 hover:border-primary/40"
-                    }`}
-                  >
-                    <div className="flex justify-between font-semibold">
-                      <span>Soul</span>
-                      <span>18</span>
-                    </div>
-                    <div className="flex justify-between text-muted-foreground">
-                      <span>Reckoning</span>
-                      <span>14</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Column 2: Semifinal */}
-                <div className="space-y-8">
-                  <span className="text-[9px] uppercase font-bold text-muted-foreground tracking-widest block border-b border-border/40 pb-1">Semifinal</span>
-                  <div
-                    onClick={() => setSelectedMatch(bracketMatches[4])}
-                    className={`p-2 rounded-xl border transition-all cursor-pointer text-[10px] space-y-1 ${
-                      selectedMatch?.id === 5 ? "border-primary bg-primary/5 shadow-md shadow-primary/5" : "border-border bg-card/50 hover:border-primary/40"
-                    }`}
-                  >
-                    <div className="flex justify-between text-muted-foreground">
-                      <span>GodLike</span>
-                      <span>14</span>
-                    </div>
-                    <div className="flex justify-between font-semibold">
-                      <span>Soul</span>
-                      <span>16</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Column 3: Finals */}
-                <div className="space-y-12">
-                  <span className="text-[9px] uppercase font-bold text-muted-foreground tracking-widest block border-b border-border/40 pb-1">Grand Final</span>
-                  <div
-                    onClick={() => setSelectedMatch(bracketMatches[6])}
-                    className={`p-2.5 rounded-xl border transition-all cursor-pointer text-[10px] space-y-1 text-center bg-primary/5 ${
-                      selectedMatch?.id === 7 ? "border-primary bg-primary/10 shadow-md" : "border-primary/30 hover:border-primary"
-                    }`}
-                  >
-                    <Trophy className="h-4 w-4 text-primary mx-auto mb-1 animate-pulse" />
-                    <p className="font-bold text-foreground">Team Soul</p>
-                    <p className="text-[9px] text-muted-foreground mt-0.5">Champions (22-19)</p>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Match Inspect Modal Overlay */}
-              <AnimatePresence>
-                {selectedMatch && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 15 }}
-                    className="mt-4 p-3 bg-muted/50 rounded-2xl border border-border flex items-center justify-between text-xs"
-                  >
-                    <div className="space-y-1">
-                      <span className="text-[9px] uppercase font-bold text-primary block">{selectedMatch.round} Summary</span>
-                      <p className="font-bold">
-                        {selectedMatch.team1} ({selectedMatch.score1}) vs {selectedMatch.team2} ({selectedMatch.score2})
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => setSelectedMatch(null)}
-                      className="px-2 py-1 rounded bg-card hover:bg-muted text-[10px] border border-border cursor-pointer transition-colors"
-                    >
-                      Close Summary
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Battlefy Leaderboard Standings */}
-            <div className="lg:col-span-4 rounded-3xl border border-border bg-card/10 p-6 flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="border-b border-border/60 pb-3">
-                  <h3 className="text-sm font-bold text-foreground">League Rankings</h3>
-                  <p className="text-[10px] text-muted-foreground">Top squads based on overall tournament points</p>
-                </div>
-
-                <div className="space-y-2">
-                  {teamStandings.map((team) => (
-                    <div key={team.rank} className="flex items-center justify-between p-2 rounded-xl bg-card border border-border/60 hover:border-primary/20 transition-all text-xs">
-                      <div className="flex items-center gap-3">
-                        <span className="font-bold text-muted-foreground w-4 text-center">{team.rank}</span>
-                        <div className="h-6 w-6 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-primary text-[10px]">
-                          {team.logo}
-                        </div>
-                        <span className="font-semibold">{team.name}</span>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-bold text-foreground">{team.points} pts</p>
-                        <p className="text-[8px] text-muted-foreground">{team.matches} played</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-border/60 text-center">
-                <Link href="/register" className="text-xs font-bold text-primary hover:underline flex items-center justify-center gap-1">
-                  Join Free Fire & BGMI Lobbies <ArrowRight className="h-3 w-3" />
-                </Link>
-              </div>
-            </div>
           </div>
         </section>
 
