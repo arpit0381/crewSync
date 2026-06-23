@@ -18,7 +18,9 @@ export async function getRegistrationsByEventAction(eventId: string) {
         name,
         roll_number,
         mobile,
-        email
+        email,
+        section,
+        departments (name)
       ),
       teams (
         name
@@ -46,6 +48,8 @@ export async function getRegistrationsByEventAction(eventId: string) {
     roll_number: r.profiles?.roll_number || "N/A",
     phone: r.profiles?.mobile || "N/A",
     email: r.profiles?.email || "N/A",
+    department: r.profiles?.departments?.name || "N/A",
+    section: r.profiles?.section || "N/A",
     team_name: r.teams?.name || null
   }))
 

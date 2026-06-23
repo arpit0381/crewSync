@@ -57,8 +57,10 @@ export async function createEventAction(formData: FormData) {
     }
   }
 
+  const adminClient = createAdminClient()
+
   // Insert event
-  const { data: event, error } = await supabase
+  const { data: event, error } = await adminClient
     .from("events")
     .insert({
       title,

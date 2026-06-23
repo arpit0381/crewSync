@@ -18,6 +18,8 @@ interface RegistrationFull {
   roll_number: string
   phone: string
   email: string
+  department: string
+  section: string
   team_name: string | null
 }
 
@@ -53,7 +55,7 @@ export function RegistrationsClient({ events, initialRegs }: RegistrationsClient
   const exportToCSV = () => {
     if (filteredRegs.length === 0) return
 
-    const headers = ["Registration ID", "Date", "Event", "Student Name", "Roll Number", "Email", "Phone", "Team Name"]
+    const headers = ["Registration ID", "Date", "Event", "Student Name", "Roll Number", "Email", "Phone", "Department", "Section", "Team Name"]
     const csvRows = []
     csvRows.push(headers.join(","))
 
@@ -66,6 +68,8 @@ export function RegistrationsClient({ events, initialRegs }: RegistrationsClient
         `"${r.roll_number}"`,
         `"${r.email}"`,
         `"${r.phone}"`,
+        `"${r.department}"`,
+        `"${r.section}"`,
         `"${r.team_name || 'Individual'}"`
       ]
       csvRows.push(row.join(","))
@@ -167,6 +171,9 @@ export function RegistrationsClient({ events, initialRegs }: RegistrationsClient
                       <div>
                         <p className="font-semibold text-foreground whitespace-nowrap">{reg.student_name}</p>
                         <p className="text-[10px] text-muted-foreground font-mono mt-0.5">{reg.roll_number}</p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">
+                          {reg.department} {reg.section !== "N/A" && reg.section ? `(Sec ${reg.section})` : ""}
+                        </p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
