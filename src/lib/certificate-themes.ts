@@ -386,7 +386,7 @@ export function renderThemeToPDF(doc: jsPDF, themeId: string, data: CertificateD
   // 14. QR Code (if provided as data URL)
   if (data.includeQr && data.qrDataUrl) {
     try {
-      doc.addImage(data.qrDataUrl, "PNG", w / 2 - 12.5, 170, 25, 25)
+      doc.addImage(data.qrDataUrl, "PNG", w / 2 - 12.5, 162, 25, 25)
     } catch {
       // QR code rendering failed silently
     }
