@@ -28,7 +28,14 @@ export async function updateSession(request: NextRequest) {
   )
 
   // Refresh session if expired - IMPORTANT: use getUser(), not getSession() for security
-  const { data: { user } } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } catch (error) {
+    console.error("Middleware Supabase fetch error:", error)
+    // Treat as unauthenticated if fetch fails (e.g. offline or DNS error)
+  }
 
   const url = new URL(request.url)
   const path = url.pathname

@@ -51,13 +51,13 @@ export default async function EventAttendancePage({ params }: { params: Promise<
     attendanceData.forEach((record) => {
       attendanceMap.set(record.student_id, {
         checked_in_at: record.checked_in_at,
-        checked_in_by_name: record.checker?.name || "Unknown Admin"
+        checked_in_by_name: (record.checker as any)?.name || "Unknown Admin"
       })
     })
   }
 
   // Fetch Participants
-  const participants = []
+  const participants: any[] = []
 
   if (event.reg_type === "individual") {
     // Fetch all individual registrations

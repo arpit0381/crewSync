@@ -38,6 +38,18 @@ export const CertificatesClient = dynamic(
   }
 )
 
+export const CertificateDesignerClient = dynamic(
+  () => import("@/components/admin/certificate-designer-client").then(mod => ({ default: mod.CertificateDesignerClient })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-96 w-full bg-card/10 rounded-2xl border border-border animate-pulse flex items-center justify-center text-xs text-muted-foreground">
+        Loading certificate designer...
+      </div>
+    ),
+  }
+)
+
 export const TicketsClient = dynamic(
   () => import("@/components/student/tickets-client").then(mod => ({ default: mod.TicketsClient })),
   {

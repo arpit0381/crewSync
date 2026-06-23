@@ -37,7 +37,12 @@ import {
   Check,
   Cpu,
   Clock,
-  Compass
+  Compass,
+  Menu,
+  X,
+  Mail,
+  Heart,
+  Code2
 } from "lucide-react"
 
 // Types
@@ -125,6 +130,9 @@ export function LandingClient({ events }: LandingClientProps) {
 
   // Category selection for Event Discovery
   const [activeCategory, setActiveCategory] = React.useState<string>("All")
+
+  // Mobile Menu State
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
 
 
   // Fallback high fidelity events if Supabase table is empty
@@ -239,103 +247,153 @@ export function LandingClient({ events }: LandingClientProps) {
         <div className="absolute inset-0 grid-bg-mesh opacity-[0.45] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_40%,#000_65%,transparent_100%)]" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        
-        {/* Navigation Bar */}
-        <header className="flex h-20 items-center justify-between border-b border-border/80 backdrop-blur-md sticky top-0 z-50">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-card border border-border shadow-md">
-              <ShieldCheck className="h-6 w-6 text-primary" />
+      {/* Floating Navigation Bar */}
+      <header className="fixed top-4 left-4 right-4 md:left-6 md:right-6 lg:left-1/2 lg:-translate-x-1/2 lg:w-[calc(100%-3rem)] lg:max-w-7xl z-50">
+        <div className="rounded-2xl border border-border/50 bg-background/60 backdrop-blur-2xl shadow-xl transition-all duration-300">
+          <div className="flex h-16 md:h-20 items-center justify-between px-4 md:px-6">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-violet-600 shadow-md shadow-primary/20">
+                <ShieldCheck className="h-6 w-6 text-white" />
+              </div>
+              <span className="text-xl font-black tracking-tight">
+                CREW<span className="text-primary font-medium ml-1">ARENA</span>
+              </span>
             </div>
-            <span className="text-xl font-black tracking-tight">
-              CREW<span className="text-primary font-medium ml-1">ARENA</span>
-            </span>
-          </div>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-semibold text-muted-foreground">
-            <a href="#hero" className="hover:text-primary transition-colors">OS Preview</a>
-            <a href="#features" className="hover:text-primary transition-colors">Core Features</a>
-            <a href="#discovery" className="hover:text-primary transition-colors">Explore Events</a>
-            <a href="#attendance" className="hover:text-primary transition-colors">QR Flow</a>
-          </nav>
+            {/* Desktop Nav Links */}
+            <nav className="hidden lg:flex items-center gap-8 text-sm font-bold text-muted-foreground">
+              <a href="#hero" className="hover:text-primary transition-colors">Platform</a>
+              <a href="#features" className="hover:text-primary transition-colors">Features</a>
+              <a href="#discovery" className="hover:text-primary transition-colors">Events</a>
+              <a href="#attendance" className="hover:text-primary transition-colors">Check-in</a>
+            </nav>
 
-          {/* Theme Settings & Actions */}
-          <div className="flex items-center gap-3">
-            
-            {/* Theme Pack Dropdown */}
-            <div className="relative">
+            {/* Theme Settings & Actions */}
+            <div className="flex items-center gap-2 md:gap-3">
+              
+              {/* Theme Pack Dropdown */}
+              <div className="relative hidden sm:block">
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center gap-1.5 rounded-xl border border-border px-3 py-2.5 text-xs font-semibold bg-card/50 hover:bg-muted/80 transition-all text-foreground cursor-pointer shadow-sm"
+                >
+                  <Palette className="h-4 w-4 text-primary" />
+                  <span className="capitalize hidden md:inline">{themePack}</span>
+                  <ChevronDown className="h-3 w-3 opacity-60" />
+                </button>
+
+                {dropdownOpen && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-30" 
+                      onClick={() => setDropdownOpen(false)} 
+                    />
+                    <div className="absolute right-0 mt-2 w-52 rounded-2xl border border-border bg-card p-3 shadow-2xl z-40 animate-in fade-in slide-in-from-top-2 duration-150">
+                      <p className="px-2 py-1 text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">
+                        Select Theme Accent
+                      </p>
+                      <div className="grid grid-cols-2 gap-1.5">
+                        {packs.map((pack) => (
+                          <button
+                            key={pack.name}
+                            onClick={() => {
+                              setThemePack(pack.name)
+                              setDropdownOpen(false)
+                            }}
+                            className={`flex items-center gap-2 rounded-xl px-2 py-2 text-xs font-medium hover:bg-muted/80 transition-all cursor-pointer ${
+                              themePack === pack.name ? "bg-primary/10 text-primary border border-primary/20" : "text-foreground border border-transparent"
+                            }`}
+                          >
+                            <span className={`h-3 w-3 rounded-full ${pack.color} border border-white/20`} />
+                            <span className="truncate capitalize">{pack.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Dark/Light Toggle */}
               <button
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-xs font-semibold bg-card/50 hover:bg-muted/80 transition-all text-foreground cursor-pointer shadow-sm"
+                onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+                className="rounded-xl p-2.5 hover:bg-muted/80 text-foreground transition-all border border-border bg-card/50 cursor-pointer shadow-sm"
+                aria-label="Toggle theme mode"
               >
-                <Palette className="h-3.5 w-3.5 text-primary" />
-                <span className="capitalize hidden sm:inline">{themePack}</span>
-                <ChevronDown className="h-3 w-3 opacity-60" />
+                {!mounted ? (
+                  <div className="h-4 w-4" />
+                ) : resolvedTheme === "dark" ? (
+                  <Sun className="h-4 w-4 text-amber-400" />
+                ) : (
+                  <Moon className="h-4 w-4 text-muted-foreground" />
+                )}
               </button>
 
-              {dropdownOpen && (
-                <>
-                  <div 
-                    className="fixed inset-0 z-30" 
-                    onClick={() => setDropdownOpen(false)} 
-                  />
-                  <div className="absolute right-0 mt-2 w-48 rounded-2xl border border-border bg-card p-2.5 shadow-2xl z-40 animate-in fade-in slide-in-from-top-2 duration-150">
-                    <p className="px-2 py-1 text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">
-                      Select Theme Accent
-                    </p>
-                    <div className="grid grid-cols-2 gap-1">
-                      {packs.map((pack) => (
-                        <button
-                          key={pack.name}
-                          onClick={() => {
-                            setThemePack(pack.name)
-                            setDropdownOpen(false)
-                          }}
-                          className={`flex items-center gap-1.5 rounded-xl px-2 py-2 text-xs font-medium hover:bg-muted/80 transition-all cursor-pointer ${
-                            themePack === pack.name ? "bg-primary/10 text-primary border border-primary/20" : "text-foreground border border-transparent"
-                          }`}
-                        >
-                          <span className={`h-2.5 w-2.5 rounded-full ${pack.color} border border-white/20`} />
-                          <span className="truncate capitalize">{pack.name}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
+              {/* Desktop CTAs */}
+              <div className="hidden md:flex items-center gap-2">
+                <Link
+                  href="/login"
+                  className="text-xs font-bold hover:text-primary transition-colors px-3 py-2.5 rounded-xl"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/register"
+                  className="text-xs font-bold bg-primary text-primary-foreground px-5 py-2.5 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] hover:bg-primary/95 transition-all"
+                >
+                  Get Started
+                </Link>
+              </div>
+
+              {/* Mobile Menu Toggle */}
+              <button 
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="lg:hidden p-2.5 rounded-xl hover:bg-muted/80 transition-colors border border-border bg-card/50 cursor-pointer"
+              >
+                {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+              </button>
             </div>
-
-            {/* Dark/Light Toggle */}
-            <button
-              onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-              className="rounded-xl p-2 hover:bg-muted/80 text-foreground transition-all border border-border bg-card/50 cursor-pointer shadow-sm"
-              aria-label="Toggle theme mode"
-            >
-              {!mounted ? (
-                <div className="h-4 w-4" />
-              ) : resolvedTheme === "dark" ? (
-                <Sun className="h-4 w-4 text-amber-400" />
-              ) : (
-                <Moon className="h-4 w-4 text-muted-foreground" />
-              )}
-            </button>
-
-            {/* CTAs */}
-            <Link
-              href="/login"
-              className="hidden sm:inline-flex text-xs font-bold hover:text-primary transition-colors px-3 py-2 rounded-xl"
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/register"
-              className="text-xs font-bold bg-primary text-primary-foreground px-4 py-2.5 rounded-xl shadow-lg shadow-primary/15 hover:scale-[1.02] hover:bg-primary/95 transition-all"
-            >
-              Get Started
-            </Link>
           </div>
-        </header>
+
+          {/* Mobile Menu Content */}
+          <AnimatePresence>
+            {mobileMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="lg:hidden border-t border-border/50 overflow-hidden bg-background/80 backdrop-blur-xl rounded-b-2xl"
+              >
+                <div className="p-4 space-y-4">
+                  <nav className="flex flex-col gap-2">
+                    <a href="#hero" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/10 hover:text-primary transition-colors">Platform</a>
+                    <a href="#features" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/10 hover:text-primary transition-colors">Features</a>
+                    <a href="#discovery" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/10 hover:text-primary transition-colors">Events</a>
+                    <a href="#attendance" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/10 hover:text-primary transition-colors">Check-in</a>
+                  </nav>
+                  
+                  <div className="grid grid-cols-2 gap-2 pt-4 border-t border-border/50">
+                    <Link
+                      href="/login"
+                      className="flex items-center justify-center text-xs font-bold border border-border bg-card/50 px-4 py-3 rounded-xl transition-all"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/register"
+                      className="flex items-center justify-center text-xs font-bold bg-primary text-primary-foreground px-4 py-3 rounded-xl shadow-lg shadow-primary/20 transition-all"
+                    >
+                      Get Started
+                    </Link>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </header>
+
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-28 md:pt-36">
 
         {/* Hero Section */}
         <section id="hero" className="py-16 md:py-24 grid gap-12 lg:grid-cols-12 items-center">
@@ -729,50 +787,78 @@ export function LandingClient({ events }: LandingClientProps) {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="border-t border-border/80 py-12 text-xs text-muted-foreground">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-primary" />
-                <span className="font-bold text-foreground">Crew Arena</span>
+        {/* Modern Footer */}
+        <footer className="mt-20 border-t border-border/40 bg-card/20 backdrop-blur-3xl rounded-t-[3rem] px-6 pt-16 pb-8 md:px-12 md:pt-24 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] relative overflow-hidden">
+          {/* Decorative Footer Glows */}
+          <div className="absolute top-0 left-1/4 w-1/2 h-[2px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-violet-500/5 rounded-full blur-[100px] pointer-events-none" />
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-16 relative z-10">
+            {/* Brand Info */}
+            <div className="md:col-span-5 space-y-6 text-center md:text-left">
+              <div className="flex items-center justify-center md:justify-start gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-violet-600 shadow-lg shadow-primary/20">
+                  <ShieldCheck className="h-7 w-7 text-white" />
+                </div>
+                <span className="text-3xl font-black tracking-tighter">
+                  CREW<span className="text-primary font-medium ml-1">ARENA</span>
+                </span>
               </div>
-              <p className="text-[11px] leading-relaxed">
-                The comprehensive campus event and tournament operating system.
+              <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto md:mx-0">
+                The ultimate operating system for campus events, hackathons, and esports. Bringing the entire college community together in one dynamic arena.
               </p>
+              
+              {/* Developer Badge */}
+              <div className="inline-flex flex-col items-center md:items-start gap-2 pt-4">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                  <Code2 className="h-4 w-4 text-primary" />
+                  <span>Designed & Developed by</span>
+                </div>
+                <div className="flex flex-col sm:flex-row items-center gap-4 bg-background/50 border border-border/50 rounded-2xl p-2.5 backdrop-blur-md">
+                  <span className="text-lg font-black bg-gradient-to-r from-primary via-indigo-400 to-violet-400 bg-clip-text text-transparent px-2">
+                    Arpit Bajpai
+                  </span>
+                  <a 
+                    href="mailto:arpitbajpai038@gmail.com"
+                    className="flex items-center gap-2 bg-card hover:bg-primary hover:text-primary-foreground text-foreground border border-border px-4 py-2 rounded-xl text-xs font-bold transition-all group shadow-sm"
+                  >
+                    <Mail className="h-3.5 w-3.5 group-hover:scale-110 transition-transform" />
+                    <span>Contact / Feedback</span>
+                  </a>
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-1">arpitbajpai038@gmail.com</p>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <h4 className="font-bold text-foreground text-[11px] uppercase tracking-wider">Explore</h4>
-              <ul className="space-y-1.5 text-[11px]">
-                <li><Link href="#discovery" className="hover:text-primary transition-colors">Campus Events</Link></li>
-                <li><Link href="#discovery" className="hover:text-primary transition-colors">Workshops</Link></li>
-                <li><Link href="#discovery" className="hover:text-primary transition-colors">Tournaments</Link></li>
+            {/* Quick Links */}
+            <div className="md:col-span-2 md:col-start-8 space-y-4 text-center md:text-left">
+              <h4 className="font-extrabold text-foreground text-sm uppercase tracking-wider">Explore</h4>
+              <ul className="space-y-3 text-sm font-medium text-muted-foreground">
+                <li><Link href="#discovery" className="hover:text-primary transition-colors flex items-center justify-center md:justify-start gap-2"><ArrowRight className="h-3 w-3" /> Campus Events</Link></li>
+                <li><Link href="#discovery" className="hover:text-primary transition-colors flex items-center justify-center md:justify-start gap-2"><ArrowRight className="h-3 w-3" /> Tech Workshops</Link></li>
+                <li><Link href="#discovery" className="hover:text-primary transition-colors flex items-center justify-center md:justify-start gap-2"><ArrowRight className="h-3 w-3" /> Sports & Esports</Link></li>
               </ul>
             </div>
 
-            <div className="space-y-2">
-              <h4 className="font-bold text-foreground text-[11px] uppercase tracking-wider">Platform</h4>
-              <ul className="space-y-1.5 text-[11px]">
-                <li><Link href="/register" className="hover:text-primary transition-colors">Create Account</Link></li>
-                <li><Link href="/login" className="hover:text-primary transition-colors">Sign In</Link></li>
-              </ul>
-            </div>
-
-            <div className="space-y-2">
-              <h4 className="font-bold text-foreground text-[11px] uppercase tracking-wider">Contact & About</h4>
-              <ul className="space-y-1.5 text-[11px]">
-                <li><a href="mailto:support@crewarena.edu" className="hover:text-primary transition-colors">support@crewarena.edu</a></li>
-                <li><span className="block">Student Welfare Center, Main Campus</span></li>
+            {/* Platform Links */}
+            <div className="md:col-span-2 space-y-4 text-center md:text-left">
+              <h4 className="font-extrabold text-foreground text-sm uppercase tracking-wider">Platform</h4>
+              <ul className="space-y-3 text-sm font-medium text-muted-foreground">
+                <li><Link href="/register" className="hover:text-primary transition-colors flex items-center justify-center md:justify-start gap-2"><ArrowRight className="h-3 w-3" /> Create Account</Link></li>
+                <li><Link href="/login" className="hover:text-primary transition-colors flex items-center justify-center md:justify-start gap-2"><ArrowRight className="h-3 w-3" /> Sign In</Link></li>
+                <li><Link href="/docs" className="hover:text-primary transition-colors flex items-center justify-center md:justify-start gap-2"><ArrowRight className="h-3 w-3" /> Organizer Guide</Link></li>
               </ul>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between border-t border-border/60 pt-6 gap-4">
-            <p>© {new Date().getFullYear()} Crew Arena. Designed for premium campus engagement.</p>
-            <div className="flex gap-4">
-              <a href="#" className="hover:underline">Privacy Policy</a>
-              <a href="#" className="hover:underline">Terms of Service</a>
+          <div className="flex flex-col md:flex-row items-center justify-between border-t border-border/50 pt-8 gap-6 relative z-10">
+            <p className="text-xs font-semibold text-muted-foreground text-center md:text-left">
+              © {new Date().getFullYear()} Crew Arena. Built with <Heart className="h-3 w-3 inline text-rose-500 mx-0.5" /> for the campus community.
+            </p>
+            <div className="flex items-center gap-6 text-xs font-semibold text-muted-foreground">
+              <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
+              <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
             </div>
           </div>
         </footer>
