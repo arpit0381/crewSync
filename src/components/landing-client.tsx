@@ -126,15 +126,6 @@ export function LandingClient({ events }: LandingClientProps) {
   // Category selection for Event Discovery
   const [activeCategory, setActiveCategory] = React.useState<string>("All")
 
-  // Interactive Attendance Flow step state
-  const [activeAttendanceStep, setActiveAttendanceStep] = React.useState(1)
-
-  // Interactive Certificate state
-  const [certType, setCertType] = React.useState<"winner" | "participation" | "coordinator">("winner")
-  const [certGenerating, setCertGenerating] = React.useState(false)
-  const [certDone, setCertDone] = React.useState(false)
-  const [studentNameInput, setStudentNameInput] = React.useState("Aryan Sharma")
-  const [certNumber, setCertNumber] = React.useState<number>(838483)
 
   // Fallback high fidelity events if Supabase table is empty
   const fallbackEvents: Event[] = [
@@ -199,7 +190,6 @@ export function LandingClient({ events }: LandingClientProps) {
 
   React.useEffect(() => {
     setMounted(true)
-    setCertNumber(Math.floor(Math.random() * 900000 + 100000))
   }, [])
 
   // Auto-rotate the events carousel
@@ -237,23 +227,6 @@ export function LandingClient({ events }: LandingClientProps) {
     ? displayEvents
     : displayEvents.filter(e => e.categories?.name === activeCategory || e.title.toLowerCase().includes(activeCategory.toLowerCase()))
 
-  const handleCertDownload = () => {
-    setCertGenerating(true)
-    setTimeout(() => {
-      setCertGenerating(false)
-      setCertDone(true)
-      // trigger small text download to simulate file
-      const element = document.createElement("a");
-      const file = new Blob([
-        `Crew Arena Secure Certificate\nRecipient: ${studentNameInput}\nType: ${certType.toUpperCase()}\nVerification Hash: ca_cert_${Math.random().toString(36).substring(2, 15)}\nDate: 2026-06-22\nAuthorized by Crew Arena Registrar.`
-      ], {type: 'text/plain'});
-      element.href = URL.createObjectURL(file);
-      element.download = `crew-arena-${certType}-certificate.txt`;
-      document.body.appendChild(element);
-      element.click();
-      document.body.removeChild(element);
-    }, 2500)
-  }
 
   return (
     <div className="relative min-h-screen bg-background text-foreground overflow-hidden selection:bg-primary selection:text-primary-foreground font-sans">
@@ -373,14 +346,14 @@ export function LandingClient({ events }: LandingClientProps) {
             </div>
             
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.08] text-foreground">
-              The Operating System for
+              Discover & Join
               <span className="block bg-gradient-to-r from-primary via-indigo-400 to-violet-400 bg-clip-text text-transparent mt-1">
-                Campus Life
+                Campus Events
               </span>
             </h1>
             
             <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-              Manage hackathons, sports brackets, esports standings, automatic QR attendance tracking, credentials, and student analytics on a single, high-fidelity platform.
+              Explore hackathons, sports championships, esports tournaments, workshops, and exclusive seminars happening right now across the campus.
             </p>
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
@@ -395,7 +368,7 @@ export function LandingClient({ events }: LandingClientProps) {
                 href="/register"
                 className="flex items-center justify-center gap-2 rounded-xl border border-border bg-card/60 backdrop-blur-sm px-6 py-3.5 text-sm font-semibold hover:bg-muted/55 transition-all text-foreground"
               >
-                Get Started
+                Create Account
               </Link>
             </div>
 
@@ -403,15 +376,15 @@ export function LandingClient({ events }: LandingClientProps) {
             <div className="flex flex-wrap gap-4 pt-6 text-xs text-muted-foreground border-t border-border/60">
               <div className="flex items-center gap-1">
                 <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
-                <span>Zero paper attendance</span>
+                <span>Instant Registration</span>
               </div>
               <div className="flex items-center gap-1">
                 <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
-                <span>Automated certificates</span>
+                <span>Digital E-Tickets</span>
               </div>
               <div className="flex items-center gap-1">
                 <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
-                <span>Live bracket generators</span>
+                <span>Verified Credentials</span>
               </div>
             </div>
           </div>
@@ -532,147 +505,23 @@ export function LandingClient({ events }: LandingClientProps) {
 
         {/* Live Stats Section */}
         <section className="py-12 border-y border-border/80 bg-card/10 rounded-[2.5rem] px-6 my-12">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center max-w-5xl mx-auto">
             <div className="space-y-1">
               <AnimatedCounter value={10000} suffix="+" />
               <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Students engaged</p>
             </div>
             <div className="space-y-1 border-l border-border/80 md:border-l-0">
               <AnimatedCounter value={500} suffix="+" />
-              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Events Managed</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Active Events</p>
             </div>
             <div className="space-y-1 border-t border-border/80 md:border-t-0 md:border-l border-border/80 pt-6 md:pt-0">
               <AnimatedCounter value={50} suffix="+" />
-              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Student Clubs</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Campus Clubs</p>
             </div>
             <div className="space-y-1 border-t border-border/80 md:border-t-0 md:border-l border-border/80 pt-6 md:pt-0">
-              <AnimatedCounter value={20} suffix="+" />
-              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Departments</p>
-            </div>
-            <div className="space-y-1 border-t border-border/80 md:border-t-0 md:border-l border-border/80 pt-6 md:pt-0 col-span-2 md:col-span-1">
               <AnimatedCounter value={100000} suffix="+" />
               <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Registrations</p>
             </div>
-          </div>
-        </section>
-
-        {/* Feature Showcase Grid */}
-        <section id="features" className="py-16 space-y-12">
-          <div className="text-center max-w-3xl mx-auto space-y-3">
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-              Engineered for the Modern Campus
-            </h2>
-            <p className="text-sm sm:text-base text-muted-foreground">
-              Everything required to scale student activities, verify attendances, host multi-stage tournaments, and automate administrative overhead.
-            </p>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            
-            {/* Feature 1 */}
-            <div className="rounded-3xl border border-border/60 bg-card/20 p-6 flex flex-col justify-between hover:border-primary/40 transition-all hover:scale-[1.02] duration-300 group hover:shadow-lg hover:shadow-primary/5 cursor-pointer">
-              <div className="space-y-4">
-                <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                  <Calendar className="h-5 w-5" />
-                </div>
-                <h3 className="text-base font-bold text-foreground">Event Management</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Design complex workflows, manage venues, set custom limits, and coordinate department activities seamlessly.
-                </p>
-              </div>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="rounded-3xl border border-border/60 bg-card/20 p-6 flex flex-col justify-between hover:border-primary/40 transition-all hover:scale-[1.02] duration-300 group hover:shadow-lg hover:shadow-primary/5 cursor-pointer">
-              <div className="space-y-4">
-                <div className="h-10 w-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400 group-hover:scale-110 transition-transform">
-                  <QrCode className="h-5 w-5" />
-                </div>
-                <h3 className="text-base font-bold text-foreground">QR Attendance</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Fast attendance capture at venues. Generates unique secure QR tickets for students, scanned instantly by organizers.
-                </p>
-              </div>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="rounded-3xl border border-border/60 bg-card/20 p-6 flex flex-col justify-between hover:border-primary/40 transition-all hover:scale-[1.02] duration-300 group hover:shadow-lg hover:shadow-primary/5 cursor-pointer">
-              <div className="space-y-4">
-                <div className="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
-                  <Laptop className="h-5 w-5" />
-                </div>
-                <h3 className="text-base font-bold text-foreground">Hackathons</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Devfolio-inspired project workspace with automated registration, repository submission, and review pipelines.
-                </p>
-              </div>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="rounded-3xl border border-border/60 bg-card/20 p-6 flex flex-col justify-between hover:border-primary/40 transition-all hover:scale-[1.02] duration-300 group hover:shadow-lg hover:shadow-primary/5 cursor-pointer">
-              <div className="space-y-4">
-                <div className="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
-                  <Trophy className="h-5 w-5" />
-                </div>
-                <h3 className="text-base font-bold text-foreground">Sports & Leagues</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Interactive fixture systems, tournament schedules, point charts, and department leaderboards.
-                </p>
-              </div>
-            </div>
-
-            {/* Feature 5 */}
-            <div className="rounded-3xl border border-border/60 bg-card/20 p-6 flex flex-col justify-between hover:border-primary/40 transition-all hover:scale-[1.02] duration-300 group hover:shadow-lg hover:shadow-primary/5 cursor-pointer">
-              <div className="space-y-4">
-                <div className="h-10 w-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 group-hover:scale-110 transition-transform">
-                  <Flame className="h-5 w-5" />
-                </div>
-                <h3 className="text-base font-bold text-foreground">Esports Arena</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Official tournament cards, custom lobbies, credentials broadcasting, live scoreboard trackers, and bracket routes.
-                </p>
-              </div>
-            </div>
-
-            {/* Feature 6 */}
-            <div className="rounded-3xl border border-border/60 bg-card/20 p-6 flex flex-col justify-between hover:border-primary/40 transition-all hover:scale-[1.02] duration-300 group hover:shadow-lg hover:shadow-primary/5 cursor-pointer">
-              <div className="space-y-4">
-                <div className="h-10 w-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
-                  <Award className="h-5 w-5" />
-                </div>
-                <h3 className="text-base font-bold text-foreground">Secured Certificates</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Generate digital verification credentials signed by coordinators, instantly downloadable once check-in conditions are met.
-                </p>
-              </div>
-            </div>
-
-            {/* Feature 7 */}
-            <div className="rounded-3xl border border-border/60 bg-card/20 p-6 flex flex-col justify-between hover:border-primary/40 transition-all hover:scale-[1.02] duration-300 group hover:shadow-lg hover:shadow-primary/5 cursor-pointer">
-              <div className="space-y-4">
-                <div className="h-10 w-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 group-hover:scale-110 transition-transform">
-                  <BarChart3 className="h-5 w-5" />
-                </div>
-                <h3 className="text-base font-bold text-foreground">Activity Analytics</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Examine attendance rates, club registrations growth, coordinate department performance, and student engagement graphs.
-                </p>
-              </div>
-            </div>
-
-            {/* Feature 8 */}
-            <div className="rounded-3xl border border-border/60 bg-card/20 p-6 flex flex-col justify-between hover:border-primary/40 transition-all hover:scale-[1.02] duration-300 group hover:shadow-lg hover:shadow-primary/5 cursor-pointer">
-              <div className="space-y-4">
-                <div className="h-10 w-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
-                  <Users2 className="h-5 w-5" />
-                </div>
-                <h3 className="text-base font-bold text-foreground">Team Registrations</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Form virtual crews, generate invite-only team links, lock sizes, and register groups seamlessly for collective tasks.
-                </p>
-              </div>
-            </div>
-
           </div>
         </section>
 
@@ -778,257 +627,7 @@ export function LandingClient({ events }: LandingClientProps) {
           </div>
         </section>
 
-        {/* QR Attendance Section */}
-        <section id="attendance" className="py-16 space-y-12">
-          <div className="text-center max-w-3xl mx-auto space-y-3">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-bold text-primary">
-              <QrCode className="h-3.5 w-3.5" />
-              <span>End-to-End Visual Loop</span>
-            </div>
-            <h2 className="text-3xl font-extrabold tracking-tight">QR Attendance Flow</h2>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              Automated offline check-ins. Read the flow path from event claim to credential unlocking.
-            </p>
-          </div>
 
-          {/* Interactive Connective Flow */}
-          <div className="grid gap-6 md:grid-cols-5 items-stretch relative">
-            
-            {/* Step 1 */}
-            <div
-              onClick={() => setActiveAttendanceStep(1)}
-              className={`p-6 rounded-3xl border transition-all cursor-pointer flex flex-col justify-between space-y-4 ${
-                activeAttendanceStep === 1 ? "border-primary bg-primary/5 shadow-lg shadow-primary/5" : "border-border bg-card/20 hover:border-primary/20"
-              }`}
-            >
-              <span className="text-[10px] font-bold text-primary uppercase">Step 01</span>
-              <div className="h-10 w-10 rounded-xl bg-card border border-border flex items-center justify-center text-foreground">
-                <Compass className="h-5 w-5" />
-              </div>
-              <div>
-                <h4 className="text-sm font-bold">Register Online</h4>
-                <p className="text-[11px] text-muted-foreground mt-1">Claim your seat on our public page catalog.</p>
-              </div>
-            </div>
-
-            {/* Step 2 */}
-            <div
-              onClick={() => setActiveAttendanceStep(2)}
-              className={`p-6 rounded-3xl border transition-all cursor-pointer flex flex-col justify-between space-y-4 ${
-                activeAttendanceStep === 2 ? "border-primary bg-primary/5 shadow-lg shadow-primary/5" : "border-border bg-card/20 hover:border-primary/20"
-              }`}
-            >
-              <span className="text-[10px] font-bold text-primary uppercase">Step 02</span>
-              <div className="h-10 w-10 rounded-xl bg-card border border-border flex items-center justify-center text-foreground">
-                <QrCode className="h-5 w-5" />
-              </div>
-              <div>
-                <h4 className="text-sm font-bold">Get Ticket QR</h4>
-                <p className="text-[11px] text-muted-foreground mt-1">Instant, cryptographically unique event ticket.</p>
-              </div>
-            </div>
-
-            {/* Step 3 */}
-            <div
-              onClick={() => setActiveAttendanceStep(3)}
-              className={`p-6 rounded-3xl border transition-all cursor-pointer flex flex-col justify-between space-y-4 ${
-                activeAttendanceStep === 3 ? "border-primary bg-primary/5 shadow-lg shadow-primary/5" : "border-border bg-card/20 hover:border-primary/20"
-              }`}
-            >
-              <span className="text-[10px] font-bold text-primary uppercase">Step 03</span>
-              <div className="h-10 w-10 rounded-xl bg-card border border-border flex items-center justify-center text-foreground">
-                <UserCheck className="h-5 w-5" />
-              </div>
-              <div>
-                <h4 className="text-sm font-bold">Scan at Venue</h4>
-                <p className="text-[11px] text-muted-foreground mt-1">Organizer scans ticket for instant verification.</p>
-              </div>
-            </div>
-
-            {/* Step 4 */}
-            <div
-              onClick={() => setActiveAttendanceStep(4)}
-              className={`p-6 rounded-3xl border transition-all cursor-pointer flex flex-col justify-between space-y-4 ${
-                activeAttendanceStep === 4 ? "border-primary bg-primary/5 shadow-lg shadow-primary/5" : "border-border bg-card/20 hover:border-primary/20"
-              }`}
-            >
-              <span className="text-[10px] font-bold text-primary uppercase">Step 04</span>
-              <div className="h-10 w-10 rounded-xl bg-card border border-border flex items-center justify-center text-foreground">
-                <CheckCircle2 className="h-5 w-5" />
-              </div>
-              <div>
-                <h4 className="text-sm font-bold">Attendance Marked</h4>
-                <p className="text-[11px] text-muted-foreground mt-1">System saves check-in date, time, and device logs.</p>
-              </div>
-            </div>
-
-            {/* Step 5 */}
-            <div
-              onClick={() => setActiveAttendanceStep(5)}
-              className={`p-6 rounded-3xl border transition-all cursor-pointer flex flex-col justify-between space-y-4 ${
-                activeAttendanceStep === 5 ? "border-primary bg-primary/5 shadow-lg shadow-primary/5" : "border-border bg-card/20 hover:border-primary/20"
-              }`}
-            >
-              <span className="text-[10px] font-bold text-primary uppercase">Step 05</span>
-              <div className="h-10 w-10 rounded-xl bg-card border border-border flex items-center justify-center text-foreground">
-                <Award className="h-5 w-5" />
-              </div>
-              <div>
-                <h4 className="text-sm font-bold">Cert unlocked</h4>
-                <p className="text-[11px] text-muted-foreground mt-1">Automatic verification and download credentials unlocked.</p>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Interactive Description of current step */}
-          <div className="bg-card/40 border border-border rounded-3xl p-5 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="space-y-1">
-              <span className="text-[10px] font-bold text-primary uppercase tracking-widest block">Flow Details</span>
-              <p className="text-xs text-muted-foreground leading-relaxed max-w-xl">
-                {activeAttendanceStep === 1 && "Start by exploring the active events dashboard. Register for any event using individual credentials or team tokens. The registration is immediately written to Supabase tables."}
-                {activeAttendanceStep === 2 && "Once registration is successful, the app generates a ticket. It uses unique hash mechanisms containing user, team, and event IDs to compile the QR image."}
-                {activeAttendanceStep === 3 && "At the sports field or workshop hall, presentation coordinators use the integrated mobile attendance camera scanner to decrypt your ticket QR."}
-                {activeAttendanceStep === 4 && "The system validates the QR token. Upon approval, it writes attendance timestamp records and changes check-in status from pending to verified."}
-                {activeAttendanceStep === 5 && "Verified attendance validates student coordinates. This triggers automated digital signatures, unlocking a high-resolution certificate for instant download."}
-              </p>
-            </div>
-            <button
-              onClick={() => setActiveAttendanceStep(prev => prev < 5 ? prev + 1 : 1)}
-              className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-xs transition-all hover:scale-[1.02] cursor-pointer"
-            >
-              Next Step {activeAttendanceStep === 5 ? "(Reset)" : ""}
-            </button>
-          </div>
-        </section>
-
-        {/* Certificate Customizer Section */}
-        <section id="certificate-section" className="py-16 space-y-8">
-          <div className="text-center max-w-3xl mx-auto space-y-3">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/25 bg-violet-500/5 px-3 py-1 text-xs font-bold text-violet-400">
-              <Award className="h-3.5 w-3.5" />
-              <span>Verifiable Security</span>
-            </div>
-            <h2 className="text-3xl font-extrabold tracking-tight">Verifiable PDF Certificates</h2>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              Automated credentials generated instantly upon event check-in validation. Test the download experience.
-            </p>
-          </div>
-
-          <div className="grid gap-8 lg:grid-cols-12 items-stretch">
-            {/* Customizer Panel */}
-            <div className="lg:col-span-5 flex flex-col justify-between bg-card/20 rounded-3xl border border-border/80 p-6 space-y-6">
-              <div className="space-y-4">
-                <h3 className="text-lg font-bold text-foreground">Configure Sandbox Preview</h3>
-                
-                <div className="space-y-3 text-xs">
-                  <div>
-                    <label className="text-[10px] uppercase font-bold text-muted-foreground block mb-1">Student Name</label>
-                    <input
-                      type="text"
-                      value={studentNameInput}
-                      onChange={(e) => setStudentNameInput(e.target.value)}
-                      className="w-full bg-background border border-border rounded-xl px-3 py-2 text-foreground focus:outline-none focus:border-primary"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-[10px] uppercase font-bold text-muted-foreground block mb-1">Certificate Template</label>
-                    <div className="grid grid-cols-3 gap-2">
-                      <button
-                        onClick={() => { setCertType("winner"); setCertDone(false); }}
-                        className={`py-2 px-1 text-[10px] font-bold rounded-xl border transition-all cursor-pointer ${
-                          certType === "winner" ? "border-primary bg-primary/10 text-primary" : "border-border hover:bg-muted"
-                        }`}
-                      >
-                        🏆 Winner
-                      </button>
-                      <button
-                        onClick={() => { setCertType("participation"); setCertDone(false); }}
-                        className={`py-2 px-1 text-[10px] font-bold rounded-xl border transition-all cursor-pointer ${
-                          certType === "participation" ? "border-primary bg-primary/10 text-primary" : "border-border hover:bg-muted"
-                        }`}
-                      >
-                        🤝 Participant
-                      </button>
-                      <button
-                        onClick={() => { setCertType("coordinator"); setCertDone(false); }}
-                        className={`py-2 px-1 text-[10px] font-bold rounded-xl border transition-all cursor-pointer ${
-                          certType === "coordinator" ? "border-primary bg-primary/10 text-primary" : "border-border hover:bg-muted"
-                        }`}
-                      >
-                        ⚡ Volunteer
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <button
-                  disabled={certGenerating}
-                  onClick={handleCertDownload}
-                  className="w-full bg-primary text-primary-foreground font-bold text-xs py-3 rounded-xl shadow-lg shadow-primary/10 hover:scale-[1.01] transition-all cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50"
-                >
-                  {certGenerating ? (
-                    <>
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                      Signing Digital Assets...
-                    </>
-                  ) : (
-                    <>
-                      <Download className="h-3.5 w-3.5" />
-                      Download Verification PDF
-                    </>
-                  )}
-                </button>
-                {certDone && (
-                  <p className="text-[10px] text-center text-emerald-400 font-bold animate-pulse">
-                    ✓ Certificate file generated & pushed to local disk!
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Live Certificate Card Rendering */}
-            <div className="lg:col-span-7 rounded-3xl border border-border bg-card/25 p-8 relative flex flex-col justify-between overflow-hidden shadow-2xl glass-panel">
-              {/* Decorative glows */}
-              <div className="absolute -top-12 -right-12 h-32 w-32 bg-primary/10 rounded-full blur-2xl" />
-              <div className="absolute -bottom-12 -left-12 h-32 w-32 bg-indigo-500/10 rounded-full blur-2xl" />
-
-              <div className="border border-border/80 p-6 rounded-2xl flex flex-col justify-between flex-1 space-y-6 relative z-10 min-h-[220px]">
-                <div className="flex items-center justify-between border-b border-border/60 pb-3">
-                  <div className="flex items-center gap-1.5">
-                    <ShieldCheck className="h-4 w-4 text-primary" />
-                    <span className="text-[9px] uppercase tracking-widest font-extrabold text-foreground">Crew Arena Registrar</span>
-                  </div>
-                  <span className="text-[8px] font-mono text-muted-foreground">CRT_NO: {certNumber}</span>
-                </div>
-
-                <div className="space-y-2 text-center py-2">
-                  <span className="text-[9px] uppercase tracking-widest font-black text-primary">Certificate of Excellence</span>
-                  <h3 className="text-xl font-black text-foreground tracking-tight">{studentNameInput || "Your Name Here"}</h3>
-                  <p className="text-[10px] text-muted-foreground leading-relaxed max-w-sm mx-auto">
-                    {certType === "winner" && "For securing the 1st Rank position at the Crew Campus Esports & Hackathon playoffs, demonstrating outstanding development skill and technical efficiency."}
-                    {certType === "participation" && "For active, verified participation in the collaborative workshops and campus activities, validating attendance and check-in benchmarks."}
-                    {certType === "coordinator" && "For rendering excellent volunteer efforts as a student group leader, coordinating venues, scanning check-ins, and assisting attendees."}
-                  </p>
-                </div>
-
-                <div className="flex items-end justify-between border-t border-border/60 pt-4 text-[9px] text-muted-foreground font-semibold">
-                  <div>
-                    <p className="text-foreground">Dr. Alok Vardhan</p>
-                    <span className="text-[8px]">Dean, Student Activity Council</span>
-                  </div>
-                  
-                  <div className="h-10 w-10 bg-white p-0.5 rounded border border-border flex items-center justify-center shrink-0">
-                    <QrCode className="h-full w-full text-zinc-950" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* Trust Coordinate Grid */}
         <section className="py-16 space-y-8">
@@ -1107,9 +706,9 @@ export function LandingClient({ events }: LandingClientProps) {
             <div className="absolute inset-0 z-0 pointer-events-none bg-radial-[circle_at_center,transparent_40%,var(--background)] opacity-60" />
             
             <div className="space-y-2 relative z-10">
-              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Ready to transform your campus events?</h2>
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Ready to join the action?</h2>
               <p className="text-xs sm:text-sm text-muted-foreground max-w-xl mx-auto">
-                Join thousands of students and organizers. Deploy tournament brackets, scanner apps, and certificate engines.
+                Join thousands of students discovering and participating in the best campus events.
               </p>
             </div>
 
@@ -1144,21 +743,19 @@ export function LandingClient({ events }: LandingClientProps) {
             </div>
 
             <div className="space-y-2">
-              <h4 className="font-bold text-foreground text-[11px] uppercase tracking-wider">Features</h4>
+              <h4 className="font-bold text-foreground text-[11px] uppercase tracking-wider">Explore</h4>
               <ul className="space-y-1.5 text-[11px]">
-                <li><Link href="#discovery" className="hover:text-primary transition-colors">Event Explorer</Link></li>
-                <li><Link href="#hackathons" className="hover:text-primary transition-colors">Hackathon Desk</Link></li>
-                <li><Link href="#sports" className="hover:text-primary transition-colors">Sports Brackets</Link></li>
-                <li><Link href="#attendance" className="hover:text-primary transition-colors">QR Scanning Flow</Link></li>
+                <li><Link href="#discovery" className="hover:text-primary transition-colors">Campus Events</Link></li>
+                <li><Link href="#discovery" className="hover:text-primary transition-colors">Workshops</Link></li>
+                <li><Link href="#discovery" className="hover:text-primary transition-colors">Tournaments</Link></li>
               </ul>
             </div>
 
             <div className="space-y-2">
-              <h4 className="font-bold text-foreground text-[11px] uppercase tracking-wider">Resources</h4>
+              <h4 className="font-bold text-foreground text-[11px] uppercase tracking-wider">Platform</h4>
               <ul className="space-y-1.5 text-[11px]">
-                <li><Link href="#certificate-section" className="hover:text-primary transition-colors">Certificate Verify</Link></li>
-                <li><Link href="/register" className="hover:text-primary transition-colors">Join Portal</Link></li>
-                <li><Link href="/login" className="hover:text-primary transition-colors">Admin Dashboard</Link></li>
+                <li><Link href="/register" className="hover:text-primary transition-colors">Create Account</Link></li>
+                <li><Link href="/login" className="hover:text-primary transition-colors">Sign In</Link></li>
               </ul>
             </div>
 
