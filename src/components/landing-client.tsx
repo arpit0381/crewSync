@@ -673,8 +673,8 @@ export function LandingClient({ events }: LandingClientProps) {
                 "Crew Arena completely eliminated the Google Sheets mess we had for hackathons. Teams formed and registered in seconds, and we tracked submissions in real-time."
               </p>
               <div>
-                <h4 className="text-xs font-bold text-foreground">Kabir Roy</h4>
-                <p className="text-[9px] text-muted-foreground">GDG Lead / Student Organizer</p>
+                <h4 className="text-xs font-bold text-foreground">Ashwin Jauhary</h4>
+                <p className="text-[9px] text-muted-foreground">President Codester Club</p>
               </div>
             </div>
 
@@ -683,8 +683,8 @@ export function LandingClient({ events }: LandingClientProps) {
                 "Scanning tickets at the sports gate was seamless. We marked attendance for 400+ participants within 15 minutes, and their certificates generated automatically."
               </p>
               <div>
-                <h4 className="text-xs font-bold text-foreground">Preeti Nair</h4>
-                <p className="text-[9px] text-muted-foreground">Sports Coordinator</p>
+                <h4 className="text-xs font-bold text-foreground">Sanskriti Gupta</h4>
+                <p className="text-[9px] text-muted-foreground">President Sports Club CHE</p>
               </div>
             </div>
 
@@ -693,8 +693,8 @@ export function LandingClient({ events }: LandingClientProps) {
                 "As an administrator, the department-wide engagement insights are invaluable. Crew Arena provides clear transparency into student activity parameters."
               </p>
               <div>
-                <h4 className="text-xs font-bold text-foreground">Prof. S. R. Sen</h4>
-                <p className="text-[9px] text-muted-foreground">Faculty Convener / Dean Student Affairs</p>
+                <h4 className="text-xs font-bold text-foreground">Prof. Vipin Dwivedi</h4>
+                <p className="text-[9px] text-muted-foreground">Faculty Convener</p>
               </div>
             </div>
           </div>
