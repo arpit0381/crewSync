@@ -2,8 +2,9 @@
 
 import * as React from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { createEventAction, updateEventStatusAction } from "@/app/event-actions"
-import { Calendar, MapPin, Users, Plus, X, Loader2, Check, ArrowRight } from "lucide-react"
+import { Calendar, MapPin, Users, Plus, X, Loader2, Check, ArrowRight, ClipboardCheck } from "lucide-react"
 
 interface Category {
   id: string
@@ -289,6 +290,16 @@ export function EventManagerClient({
                         : "Individual Registrations"}
                     </span>
                   </div>
+                </div>
+
+                <div className="mt-4 pt-4 border-t border-border/80">
+                  <Link 
+                    href={`/admin/events/${event.id}/attendance`} 
+                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary/10 text-primary py-2.5 text-sm font-semibold hover:bg-primary/20 transition-all"
+                  >
+                    <ClipboardCheck className="h-4 w-4" />
+                    View Attendance
+                  </Link>
                 </div>
               </div>
             </div>
