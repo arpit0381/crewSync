@@ -65,7 +65,7 @@ export const CERTIFICATE_THEMES: CertificateTheme[] = [
       name: [255, 255, 255],
       text: [160, 160, 160],
       accent: [212, 175, 55],
-     
+      signatureLine: [100, 100, 100],
     },
     preview: {
       bgClass: "bg-[#0f0f11]",
@@ -88,7 +88,7 @@ export const CERTIFICATE_THEMES: CertificateTheme[] = [
       name: [255, 255, 255],
       text: [150, 180, 220],
       accent: [70, 130, 220],
-     
+      signatureLine: [80, 120, 180],
     },
     preview: {
       bgClass: "bg-[#0c1937]",
@@ -360,22 +360,7 @@ export function renderThemeToPDF(doc: jsPDF, themeId: string, data: CertificateD
   doc.setTextColor(...c.name)
   doc.text(`"${data.eventName}"`, w / 2, 120, { align: "center" })
 
-  // 11. Certificate type badge
-  const typeLabel =
-    data.certType === "winner"
-      ? "WINNER"
-      : data.certType === "runner_up"
-        ? "RUNNER UP"
-        : data.certType === "volunteer"
-          ? "VOLUNTEER"
-          : data.certType === "organizer"
-            ? "ORGANIZER"
-            : "PARTICIPATION"
-
-  doc.setFont("Helvetica", "bold")
-  doc.setFontSize(7)
-  doc.setTextColor(...c.accent)
-  doc.text(`[ ${typeLabel} ]`, w / 2, 128, { align: "center" })
+  // 11. (Removed Certificate type badge as requested)
 
   // 12. Date + Certificate ID + Department row
   doc.setFont("Helvetica", "normal")
@@ -386,11 +371,6 @@ export function renderThemeToPDF(doc: jsPDF, themeId: string, data: CertificateD
   doc.text(`${dateStr}          ${idStr}`, w / 2, 158, { align: "center" })
 
   // 13. Signatures
-  doc.setDrawColor(...c.signatureLine)
-  doc.setLineWidth(0.4)
-  doc.line(45, 175, 110, 175)
-  doc.line(w - 110, 175, w - 45, 175)
-
   doc.setFont("Helvetica", "italic")
   doc.setFontSize(9)
   doc.setTextColor(...c.text)
@@ -406,7 +386,7 @@ export function renderThemeToPDF(doc: jsPDF, themeId: string, data: CertificateD
   // 14. QR Code (if provided as data URL)
   if (data.includeQr && data.qrDataUrl) {
     try {
-      doc.addImage(data.qrDataUrl, "PNG", w / 2 - 10, 162, 20, 20)
+      doc.addImage(data.qrDataUrl, "PNG", w / 2 - 12.5, 170, 25, 25)
     } catch {
       // QR code rendering failed silently
     }

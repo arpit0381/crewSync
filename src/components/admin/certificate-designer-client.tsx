@@ -729,17 +729,15 @@ function CertificatePreview({
                 <span className={c.accentClass}>ID: {"{{certificate_id}}"}</span>
               </div>
               <div className="flex justify-between items-end px-2 sm:px-6">
-                <div className="text-center">
-                  <div className={`w-12 sm:w-20 h-[1px] ${c.borderClass} mb-1`} />
+                <div className="text-center w-20 sm:w-32">
                   <p className={`text-[6px] sm:text-[8px] italic ${c.accentClass}`}>{sigLeftName}</p>
                   <p className={`text-[5px] sm:text-[6px] ${c.accentClass} opacity-60`}>{sigLeftTitle}</p>
                 </div>
-                {/* Center seal placeholder */}
-                <div className={`h-6 w-6 sm:h-10 sm:w-10 rounded-full border-2 ${c.borderClass} flex items-center justify-center`}>
-                  <Award className={`h-3 w-3 sm:h-5 sm:w-5 ${c.titleClass}`} />
+                {/* Center QR placeholder */}
+                <div className={`h-8 w-8 sm:h-12 sm:w-12 rounded bg-white flex items-center justify-center p-0.5`}>
+                  <QrCode className="h-full w-full text-black opacity-80" />
                 </div>
-                <div className="text-center">
-                  <div className={`w-12 sm:w-20 h-[1px] ${c.borderClass} mb-1`} />
+                <div className="text-center w-20 sm:w-32">
                   <p className={`text-[6px] sm:text-[8px] italic ${c.accentClass}`}>{sigRightName}</p>
                   <p className={`text-[5px] sm:text-[6px] ${c.accentClass} opacity-60`}>{sigRightTitle}</p>
                 </div>

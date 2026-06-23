@@ -103,9 +103,10 @@ export function CertificatesClient({ initialCertificates, studentName }: Certifi
 
       // Generate QR code data URL if needed
       let qrDataUrl: string | undefined
-      if (c.include_qr && c.verification_url) {
+      if (c.include_qr) {
+        const verifyUrl = c.verification_url || `${window.location.origin}/verify/${c.id}`
         try {
-          qrDataUrl = await QRCode.toDataURL(c.verification_url, {
+          qrDataUrl = await QRCode.toDataURL(verifyUrl, {
             width: 200,
             margin: 1,
             color: { dark: "#000000", light: "#ffffff" },
