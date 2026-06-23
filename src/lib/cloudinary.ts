@@ -45,4 +45,33 @@ export async function uploadImageToCloudinary(file: File, folder: string): Promi
     ).end(buffer)
   })
 }
+
+export async function uploadBase64ToCloudinary(base64Str: string, folder: string): Promise<string> {
+  if (!isConfigured) {
+    console.log(`[SIMULATED CLOUDINARY UPLOAD] Uploading base64 file to folder "${folder}"`)
+    if (folder === "banners") {
+      return "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&auto=format&fit=crop&q=80"
+    }
+    return "https://images.unsplash.com/photo-1496469888073-80de7e9b97cb?w=1000&auto=format&fit=crop&q=80"
+  }
+
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload(
+      base64Str,
+      {
+        folder,
+        resource_type: "auto",
+      },
+      (error, result) => {
+        if (error) {
+          console.error("Cloudinary upload error:", error)
+          reject(new Error(error.message))
+        } else {
+          resolve(result?.secure_url || "")
+        }
+      }
+    )
+  })
+}
+
 export { cloudinary }

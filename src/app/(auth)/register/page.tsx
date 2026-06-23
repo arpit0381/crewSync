@@ -34,13 +34,18 @@ export default function RegisterPage() {
       setError(result.error)
       setLoading(false)
     } else if (result && result.success) {
-      setSuccess(result.success)
-      setLoading(false)
-      // Clear form inputs
-      const form = e.target as HTMLFormElement
-      form.reset()
+      // Instead of showing success message, redirect the user
+      // We read search params directly from window since we are in a client component
+      const urlParams = new URLSearchParams(window.location.search)
+      const redirectUrl = urlParams.get("redirect") || "/student"
+      window.location.href = redirectUrl
     }
   }
+
+  // Preserve redirect param for the login link
+  const loginUrl = typeof window !== "undefined" && window.location.search 
+    ? `/login${window.location.search}` 
+    : "/login"
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8 overflow-hidden select-none">
@@ -216,7 +221,7 @@ export default function RegisterPage() {
           <div className="mt-6 text-center text-xs">
             <span className="text-muted-foreground">Already have an account? </span>
             <Link
-              href="/login"
+              href={loginUrl}
               className="font-semibold text-primary hover:text-primary/80 transition-colors"
             >
               Sign in

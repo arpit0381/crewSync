@@ -45,17 +45,9 @@ export async function createEventAction(formData: FormData) {
     return { error: "Invalid Club ID." }
   }
 
-  // Handle banner upload to Cloudinary
-  const bannerFile = formData.get("banner_file") as File
-  let bannerUrl = null
-
-  if (bannerFile && bannerFile.size > 0) {
-    try {
-      bannerUrl = await uploadImageToCloudinary(bannerFile, "banners")
-    } catch (uploadErr: any) {
-      return { error: "Banner upload failed: " + uploadErr.message }
-    }
-  }
+  // The file has already been uploaded by the client using the API route (bypassing Turbopack bug)
+  const bannerUrlOverride = formData.get("banner_url_override") as string
+  let bannerUrl = bannerUrlOverride || null
 
   const adminClient = createAdminClient()
 

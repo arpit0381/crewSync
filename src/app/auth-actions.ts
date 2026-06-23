@@ -92,7 +92,7 @@ export async function signUpAction(formData: FormData) {
     return { error: error.message }
   }
 
-  return { success: "Registration successful! Please check your email for the verification link." }
+  return { success: true }
 }
 
 export async function signOutAction() {

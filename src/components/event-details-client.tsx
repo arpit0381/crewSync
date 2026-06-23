@@ -43,11 +43,33 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn }: EventDet
   const [teamName, setTeamName] = React.useState("")
   const [inviteCode, setInviteCode] = React.useState("")
 
+  // Auto-open modal if action=register is present
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.get("action") === "register" && isLoggedIn && !isSuccessfullyRegistered) {
+        setShowRegModal(true)
+        
+        // Optionally clean up URL so refreshing doesn't keep opening it
+        const newUrl = window.location.pathname
+        window.history.replaceState({}, "", newUrl)
+      }
+    }
+  }, [isLoggedIn, isSuccessfullyRegistered])
+
+  const handleRegisterClick = () => {
+    if (!isLoggedIn) {
+      window.location.href = `/register?redirect=${encodeURIComponent(`/events/${event.id}?action=register`)}`
+      return
+    }
+    setShowRegModal(true)
+  }
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!isLoggedIn) {
-      window.location.href = `/login?next=/events/${event.id}`
+      window.location.href = `/register?redirect=${encodeURIComponent(`/events/${event.id}?action=register`)}`
       return
     }
 
@@ -217,7 +239,7 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn }: EventDet
                 </div>
               ) : (
                 <button
-                  onClick={() => setShowRegModal(true)}
+                  onClick={handleRegisterClick}
                   className="w-full flex items-center justify-center gap-2 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground py-4 font-bold text-lg transition-all shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1"
                 >
                   <Ticket className="h-5 w-5" />
@@ -240,7 +262,7 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn }: EventDet
           </Link>
         ) : (
           <button
-            onClick={() => setShowRegModal(true)}
+            onClick={handleRegisterClick}
             className="w-full flex items-center justify-center rounded-xl bg-primary text-primary-foreground py-3.5 font-bold shadow-lg shadow-primary/20"
           >
             Register Now
