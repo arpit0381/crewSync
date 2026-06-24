@@ -4,7 +4,7 @@ import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { createEventAction, updateEventStatusAction, deleteEventAction, updateEventAction } from "@/app/event-actions"
-import { Calendar, MapPin, Users, Plus, X, Loader2, Check, ArrowRight, ClipboardCheck, Trash2, Search, LayoutGrid, List, Filter, Edit2, Copy, Archive } from "lucide-react"
+import { Calendar, MapPin, Users, Plus, X, Loader2, Check, ArrowRight, ClipboardCheck, Trash2, Search, LayoutGrid, List, Filter, Edit2, Copy, Archive, Share2, QrCode } from "lucide-react"
 
 interface Category {
   id: string
@@ -65,11 +65,11 @@ export function EventManagerClient({
   const [searchQuery, setSearchQuery] = React.useState("")
   const [viewMode, setViewMode] = React.useState<"grid" | "list">("grid")
   
-  // Modals state
   const [modalMode, setModalMode] = React.useState<"create" | "edit" | "clone">("create")
   const [activeEvent, setActiveEvent] = React.useState<Event | null>(null)
   const [eventToDelete, setEventToDelete] = React.useState<string | null>(null)
   const [isDeleting, setIsDeleting] = React.useState(false)
+  const [qrEvent, setQrEvent] = React.useState<Event | null>(null)
   
   // Registration type state for conditional fields
   const [regType, setRegType] = React.useState<"individual" | "team">("individual")
@@ -87,6 +87,18 @@ export function EventManagerClient({
   const totalEvents = events.length
   const publishedEvents = events.filter(e => e.status === "published").length
   const upcomingEvents = events.filter(e => new Date(e.event_date) >= new Date()).length
+
+  const handleCopyLink = async (eventId: string) => {
+    try {
+      const url = `${window.location.origin}/events/${eventId}`
+      await navigator.clipboard.writeText(url)
+      setSuccess("Event link copied to clipboard!")
+      setTimeout(() => setSuccess(null), 3000)
+    } catch (err) {
+      setError("Failed to copy link")
+      setTimeout(() => setError(null), 3000)
+    }
+  }
 
   const handleDeleteConfirm = async () => {
     if (!eventToDelete) return
@@ -243,7 +255,17 @@ export function EventManagerClient({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {/* Global Notifications */}
+      {(success || error) && !isModalOpen && (
+        <div className={`fixed top-6 right-6 z-[100] px-6 py-3 rounded-xl shadow-lg border animate-in slide-in-from-top-4 duration-300 ${success ? 'bg-emerald-950/90 border-emerald-900 text-emerald-400' : 'bg-red-950/90 border-red-900 text-red-400'}`}>
+          <p className="text-sm font-semibold flex items-center gap-2">
+            {success ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
+            {success || error}
+          </p>
+        </div>
+      )}
+
       {/* Header Panel */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -357,6 +379,12 @@ export function EventManagerClient({
                    </button>
                    <button onClick={() => handleOpenModal("clone", event)} className="p-1.5 rounded-full bg-background/80 backdrop-blur text-foreground hover:bg-primary hover:text-primary-foreground transition-colors" title="Clone Event">
                      <Copy className="h-3.5 w-3.5" />
+                   </button>
+                   <button onClick={() => handleCopyLink(event.id)} className="p-1.5 rounded-full bg-background/80 backdrop-blur text-foreground hover:bg-primary hover:text-primary-foreground transition-colors" title="Copy Link">
+                     <Share2 className="h-3.5 w-3.5" />
+                   </button>
+                   <button onClick={() => setQrEvent(event)} className="p-1.5 rounded-full bg-background/80 backdrop-blur text-foreground hover:bg-primary hover:text-primary-foreground transition-colors" title="Show QR Code">
+                     <QrCode className="h-3.5 w-3.5" />
                    </button>
                    <button onClick={() => setEventToDelete(event.id)} className="p-1.5 rounded-full bg-background/80 backdrop-blur text-red-500 hover:bg-red-500 hover:text-white transition-colors" title="Delete Event">
                      <Trash2 className="h-3.5 w-3.5" />
@@ -487,6 +515,12 @@ export function EventManagerClient({
                       </button>
                       <button onClick={() => handleOpenModal("clone", event)} className="p-1.5 text-muted-foreground hover:text-foreground transition-colors" title="Clone">
                         <Copy className="h-4 w-4" />
+                      </button>
+                      <button onClick={() => handleCopyLink(event.id)} className="p-1.5 text-muted-foreground hover:text-foreground transition-colors" title="Copy Link">
+                        <Share2 className="h-4 w-4" />
+                      </button>
+                      <button onClick={() => setQrEvent(event)} className="p-1.5 text-muted-foreground hover:text-foreground transition-colors" title="QR Code">
+                        <QrCode className="h-4 w-4" />
                       </button>
                       <button onClick={() => setEventToDelete(event.id)} className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors" title="Delete">
                         <Trash2 className="h-4 w-4" />
@@ -777,6 +811,41 @@ export function EventManagerClient({
                 Yes, Delete
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* QR Code Modal */}
+      {qrEvent && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm">
+          <div className="relative w-full max-w-sm rounded-3xl border border-border bg-card p-8 shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col items-center text-center">
+            <button
+              onClick={() => setQrEvent(null)}
+              className="absolute top-4 right-4 rounded-lg p-1.5 hover:bg-muted text-muted-foreground"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <div className="p-3 rounded-full bg-primary/10 mb-4 text-primary">
+              <QrCode className="h-8 w-8" />
+            </div>
+            <h2 className="text-xl font-bold text-foreground mb-2">Event QR Code</h2>
+            <p className="text-sm text-muted-foreground mb-6">Scan to view or register for {qrEvent.title}</p>
+            
+            <div className="bg-white p-4 rounded-2xl shadow-inner border border-zinc-200 mb-6">
+               <img 
+                 src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(typeof window !== 'undefined' ? `${window.location.origin}/events/${qrEvent.id}` : '')}`} 
+                 alt="QR Code"
+                 className="w-48 h-48"
+               />
+            </div>
+            
+            <button
+              onClick={() => handleCopyLink(qrEvent.id)}
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow hover:bg-primary/95 transition-all"
+            >
+              <Share2 className="h-4 w-4" />
+              Copy Direct Link
+            </button>
           </div>
         </div>
       )}
