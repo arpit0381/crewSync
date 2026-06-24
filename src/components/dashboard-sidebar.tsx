@@ -78,6 +78,10 @@ export function DashboardSidebar({ role, isOpen, onClose }: DashboardSidebarProp
     { label: "Tournament Standings", href: "/tournament/results", icon: Trophy },
   ]
 
+  const scannerItems: SidebarItem[] = [
+    { label: "Attendance Scan", href: "/admin/attendance", icon: CheckSquare },
+  ]
+
   const getItems = () => {
     switch (role) {
       case "super_admin":
@@ -86,6 +90,8 @@ export function DashboardSidebar({ role, isOpen, onClose }: DashboardSidebarProp
         return adminItems
       case "tournament_admin":
         return tournamentItems
+      case "scanner":
+        return scannerItems
       default:
         return studentItems
     }
@@ -111,7 +117,7 @@ export function DashboardSidebar({ role, isOpen, onClose }: DashboardSidebarProp
         <div className="flex h-16 items-center justify-between px-6 md:justify-center">
           <div className="flex items-center gap-2.5">
             <div className="relative h-6 w-6 overflow-hidden rounded-lg border border-border/30 shrink-0 shadow-sm">
-              <Image src="/icons/icon-192x192.png" alt="Crew Sync Logo" fill className="object-cover" />
+              <Image src="/icons/icon-192x192.png" alt="Crew Sync Logo" width={24} height={24} className="object-cover" />
             </div>
             <span className="text-lg font-extrabold tracking-wider text-foreground">
               CREW <span className="text-primary">SYNC</span>

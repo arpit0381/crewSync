@@ -64,6 +64,8 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(new URL("/student", request.url))
     } else if (role === "tournament_admin") {
       return NextResponse.redirect(new URL("/tournament", request.url))
+    } else if (role === "scanner") {
+      return NextResponse.redirect(new URL("/admin/attendance", request.url))
     } else {
       return NextResponse.redirect(new URL("/admin", request.url))
     }
@@ -73,11 +75,16 @@ export async function updateSession(request: NextRequest) {
   if (user) {
     const role = user.user_metadata?.role || "student"
 
-    // Protect /admin: only super_admin, department_admin, club_admin, or tournament_admin
+    // Protect /admin: only super_admin, department_admin, club_admin, tournament_admin, or scanner
     if (path.startsWith("/admin")) {
-      const allowedRoles = ["super_admin", "department_admin", "club_admin", "tournament_admin"]
+      const allowedRoles = ["super_admin", "department_admin", "club_admin", "tournament_admin", "scanner"]
       if (!allowedRoles.includes(role)) {
         return NextResponse.redirect(new URL("/student", request.url))
+      }
+
+      // Scanner can only access the attendance scanner and its child paths
+      if (role === "scanner" && !path.startsWith("/admin/attendance")) {
+        return NextResponse.redirect(new URL("/admin/attendance", request.url))
       }
     }
 

@@ -112,6 +112,7 @@ export function UsersManagerClient({ initialUsers }: UsersManagerClientProps) {
               <option value="department_admin">Department Admin</option>
               <option value="club_admin">Club Admin</option>
               <option value="tournament_admin">Tournament Admin</option>
+              <option value="scanner">Attendance Scanner</option>
               <option value="student">Student</option>
             </select>
           </div>
@@ -188,6 +189,7 @@ export function UsersManagerClient({ initialUsers }: UsersManagerClientProps) {
                             <option value="club_admin">Club Admin</option>
                             <option value="department_admin">Dept Admin</option>
                             <option value="tournament_admin">Tourney Admin</option>
+                            <option value="scanner">Attendance Scanner</option>
                             <option value="super_admin">Super Admin</option>
                           </select>
                         )}
@@ -251,6 +253,7 @@ export function UsersManagerClient({ initialUsers }: UsersManagerClientProps) {
                       <option value="club_admin">Club Admin</option>
                       <option value="department_admin">Dept Admin</option>
                       <option value="tournament_admin">Tourney Admin</option>
+                      <option value="scanner">Attendance Scanner</option>
                       <option value="super_admin">Super Admin</option>
                     </select>
                   )}

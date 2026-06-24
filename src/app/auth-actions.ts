@@ -32,6 +32,8 @@ export async function signInAction(formData: FormData) {
     redirect("/student")
   } else if (role === "tournament_admin") {
     redirect("/tournament")
+  } else if (role === "scanner") {
+    redirect("/admin/attendance")
   } else {
     redirect("/admin")
   }

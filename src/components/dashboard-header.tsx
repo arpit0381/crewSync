@@ -65,7 +65,7 @@ export function DashboardHeader({ userEmail, userName, userRole, toggleSidebar }
         )}
         <div className="flex items-center gap-2.5">
           <div className="relative h-6 w-6 overflow-hidden rounded-lg border border-border/30 shrink-0 shadow-sm">
-            <Image src="/icons/icon-192x192.png" alt="Crew Sync Logo" fill className="object-cover" />
+            <Image src="/icons/icon-192x192.png" alt="Crew Sync Logo" width={24} height={24} className="object-cover" />
           </div>
           <span className="text-lg font-bold tracking-tight text-foreground">
             Crew <span className="text-primary">Sync</span>

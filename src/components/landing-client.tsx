@@ -259,7 +259,7 @@ export function LandingClient({ events }: LandingClientProps) {
           <div className="flex h-16 md:h-20 items-center justify-between px-4 md:px-6">
             <div className="flex items-center gap-3">
               <div className="relative h-10 w-10 overflow-hidden rounded-xl border border-border/30 shadow-md">
-                <Image src="/icons/icon-192x192.png" alt="Crew Sync Logo" fill className="object-cover" />
+                <Image src="/icons/icon-192x192.png" alt="Crew Sync Logo" width={40} height={40} className="object-cover" />
               </div>
               <span className="text-xl font-black tracking-tight">
                 CREW<span className="text-primary font-medium ml-1">SYNC</span>
@@ -805,7 +805,7 @@ export function LandingClient({ events }: LandingClientProps) {
             <div className="md:col-span-5 space-y-6 text-center md:text-left">
               <div className="flex items-center justify-center md:justify-start gap-3">
                 <div className="relative h-12 w-12 overflow-hidden rounded-2xl border border-border/30 shadow-lg">
-                  <Image src="/icons/icon-192x192.png" alt="Crew Sync Logo" fill className="object-cover" />
+                  <Image src="/icons/icon-192x192.png" alt="Crew Sync Logo" width={48} height={48} className="object-cover" />
                 </div>
                 <span className="text-3xl font-black tracking-tighter">
                   CREW<span className="text-primary font-medium ml-1">SYNC</span>

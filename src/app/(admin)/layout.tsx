@@ -20,7 +20,7 @@ export default async function AdminLayout({
   const name = user.user_metadata?.name || "Admin"
   const role = user.user_metadata?.role || "student"
 
-  const allowedRoles = ["super_admin", "department_admin", "club_admin", "tournament_admin"]
+  const allowedRoles = ["super_admin", "department_admin", "club_admin", "tournament_admin", "scanner"]
   if (!allowedRoles.includes(role)) {
     redirect("/student")
   }
