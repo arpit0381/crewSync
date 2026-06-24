@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 import { useTheme as useNextTheme } from "next-themes"
 import { useTheme, type ThemePack } from "@/components/theme-provider"
 import { signOutAction } from "@/app/auth-actions"
@@ -62,7 +63,10 @@ export function DashboardHeader({ userEmail, userName, userRole, toggleSidebar }
             <Menu className="h-5 w-5" />
           </button>
         )}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
+          <div className="relative h-6 w-6 overflow-hidden rounded-lg border border-border/30 shrink-0 shadow-sm">
+            <Image src="/icons/icon-192x192.png" alt="Crew Sync Logo" fill className="object-cover" />
+          </div>
           <span className="text-lg font-bold tracking-tight text-foreground">
             Crew <span className="text-primary">Sync</span>
           </span>

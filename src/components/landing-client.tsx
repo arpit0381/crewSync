@@ -57,6 +57,7 @@ interface Event {
   capacity: number
   reg_type: "individual" | "team"
   categories?: { name: string; type: string } | null
+  registrationsCount?: number
 }
 
 interface LandingClientProps {
@@ -146,7 +147,8 @@ export function LandingClient({ events }: LandingClientProps) {
       event_time: "09:00 AM",
       capacity: 120,
       reg_type: "team",
-      categories: { name: "Hackathon", type: "academic" }
+      categories: { name: "Hackathon", type: "academic" },
+      registrationsCount: 84
     },
     {
       id: "mock-2",
@@ -157,7 +159,8 @@ export function LandingClient({ events }: LandingClientProps) {
       event_time: "02:00 PM",
       capacity: 200,
       reg_type: "team",
-      categories: { name: "Esports", type: "gaming" }
+      categories: { name: "Esports", type: "gaming" },
+      registrationsCount: 162
     },
     {
       id: "mock-3",
@@ -168,7 +171,8 @@ export function LandingClient({ events }: LandingClientProps) {
       event_time: "04:00 PM",
       capacity: 64,
       reg_type: "team",
-      categories: { name: "Sports", type: "sports" }
+      categories: { name: "Sports", type: "sports" },
+      registrationsCount: 48
     },
     {
       id: "mock-4",
@@ -179,7 +183,8 @@ export function LandingClient({ events }: LandingClientProps) {
       event_time: "10:30 AM",
       capacity: 500,
       reg_type: "individual",
-      categories: { name: "Workshop", type: "academic" }
+      categories: { name: "Workshop", type: "academic" },
+      registrationsCount: 380
     },
     {
       id: "mock-5",
@@ -190,7 +195,8 @@ export function LandingClient({ events }: LandingClientProps) {
       event_time: "05:30 PM",
       capacity: 350,
       reg_type: "individual",
-      categories: { name: "Seminar", type: "academic" }
+      categories: { name: "Seminar", type: "academic" },
+      registrationsCount: 290
     }
   ]
 
@@ -252,8 +258,8 @@ export function LandingClient({ events }: LandingClientProps) {
         <div className="rounded-2xl border border-border/50 bg-background/60 backdrop-blur-2xl shadow-xl transition-all duration-300">
           <div className="flex h-16 md:h-20 items-center justify-between px-4 md:px-6">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-violet-600 shadow-md shadow-primary/20">
-                <ShieldCheck className="h-6 w-6 text-white" />
+              <div className="relative h-10 w-10 overflow-hidden rounded-xl border border-border/30 shadow-md">
+                <Image src="/icons/icon-192x192.png" alt="Crew Sync Logo" fill className="object-cover" />
               </div>
               <span className="text-xl font-black tracking-tight">
                 CREW<span className="text-primary font-medium ml-1">SYNC</span>
@@ -666,7 +672,7 @@ export function LandingClient({ events }: LandingClientProps) {
                           <span className="inline-flex items-center gap-1 font-bold text-foreground">
                             <Users className="h-3 w-3 text-primary" /> {event.reg_type === "team" ? "Team event" : "Individual"}
                           </span>
-                          <span>Max Cap: {event.capacity}</span>
+                          <span className="font-semibold text-primary">{event.registrationsCount || 0} / {event.capacity} Joined</span>
                         </div>
                       </div>
 
@@ -798,8 +804,8 @@ export function LandingClient({ events }: LandingClientProps) {
             {/* Brand Info */}
             <div className="md:col-span-5 space-y-6 text-center md:text-left">
               <div className="flex items-center justify-center md:justify-start gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-violet-600 shadow-lg shadow-primary/20">
-                  <ShieldCheck className="h-7 w-7 text-white" />
+                <div className="relative h-12 w-12 overflow-hidden rounded-2xl border border-border/30 shadow-lg">
+                  <Image src="/icons/icon-192x192.png" alt="Crew Sync Logo" fill className="object-cover" />
                 </div>
                 <span className="text-3xl font-black tracking-tighter">
                   CREW<span className="text-primary font-medium ml-1">SYNC</span>

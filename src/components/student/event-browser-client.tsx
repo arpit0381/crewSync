@@ -19,6 +19,7 @@ interface Event {
   max_team_size: number
   status: string
   categories?: { name: string; type: string }
+  registrationsCount?: number
 }
 
 interface EventBrowserClientProps {
@@ -80,6 +81,18 @@ export function EventBrowserClient({ events, userRegistrations = [] }: EventBrow
                 <div className="flex items-center gap-2">
                   <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
                   <span className="truncate">{event.venue}</span>
+                </div>
+                <div className="pt-2">
+                  <div className="w-full bg-muted dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                    <div 
+                      className="bg-primary h-full transition-all" 
+                      style={{ width: `${Math.min(100, ((event.registrationsCount || 0) / event.capacity) * 100)}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-[10px] font-bold text-muted-foreground mt-1.5 uppercase tracking-wider">
+                    <span>{event.registrationsCount || 0} Joined</span>
+                    <span>{event.capacity} Capacity</span>
+                  </div>
                 </div>
               </div>
 

@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { resetPasswordAction } from "@/app/auth-actions"
-import { ShieldCheck, Loader2 } from "lucide-react"
+import { Loader2 } from "lucide-react"
 
 export default function ForgotPasswordPage() {
   const [error, setError] = React.useState<string | null>(null)
@@ -39,8 +39,8 @@ export default function ForgotPasswordPage() {
 
       <div className="relative z-10 w-full max-w-md space-y-8">
         <div className="text-center">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-card border border-border shadow-xl">
-            <ShieldCheck className="h-7 w-7 text-primary" />
+          <div className="mx-auto relative h-14 w-14 overflow-hidden rounded-2xl border border-border/30 shadow-xl group hover:border-primary/50 transition-all duration-300 bg-card">
+            <img src="/icons/icon-192x192.png" alt="Crew Sync Logo" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110" />
           </div>
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
             Reset your password

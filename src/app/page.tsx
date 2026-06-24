@@ -16,7 +16,8 @@ async function getPublishedEvents() {
         event_time,
         capacity,
         reg_type,
-        categories(name, type)
+        categories(name, type),
+        registrations(count)
       `)
       .eq("status", "published")
       .order("event_date", { ascending: true })
@@ -26,7 +27,10 @@ async function getPublishedEvents() {
       return null
     }
 
-    return events
+    return events.map(e => ({
+      ...e,
+      registrationsCount: (e.registrations as any)?.[0]?.count || 0
+    }))
   } catch (err) {
     console.warn("Supabase connection failed:", err)
     return null

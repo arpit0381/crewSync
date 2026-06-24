@@ -36,13 +36,17 @@ export default async function StudentEventsPage() {
         min_team_size,
         max_team_size,
         status,
-        categories(name, type)
+        categories(name, type),
+        registrations(count)
       `)
       .eq("status", "published")
       .order("event_date", { ascending: true })
 
     if (events && events.length > 0) {
-      dbEvents = events
+      dbEvents = events.map(e => ({
+        ...e,
+        registrationsCount: e.registrations?.[0]?.count || 0
+      }))
     }
   } catch (err) {
     console.warn("Using mock data inside StudentEventsPage due to DB connection:", err)

@@ -261,7 +261,7 @@ export async function registerForEventAction(
     if (regErr) return { error: regErr.message }
 
     // Auto-generate a ticket for the user
-    const ticketCode = `CRA-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
+    const ticketCode = `CRS-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
     const adminSupabase = createAdminClient()
     await adminSupabase.from("tickets").insert({
       ticket_code: ticketCode,
@@ -316,7 +316,7 @@ export async function registerForEventAction(
       if (regErr) return { error: regErr.message }
 
       // Auto-generate ticket
-      const ticketCode = `CRA-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
+      const ticketCode = `CRS-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
       const adminSupabase = createAdminClient()
       await adminSupabase.from("tickets").insert({
         ticket_code: ticketCode,
@@ -379,7 +379,7 @@ export async function registerForEventAction(
       if (regErr) return { error: regErr.message }
 
       // Auto-generate ticket
-      const ticketCode = `CRA-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
+      const ticketCode = `CRS-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
       const adminSupabase = createAdminClient()
       await adminSupabase.from("tickets").insert({
         ticket_code: ticketCode,

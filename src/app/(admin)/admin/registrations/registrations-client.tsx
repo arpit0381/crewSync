@@ -144,71 +144,130 @@ export function RegistrationsClient({ events, initialRegs }: RegistrationsClient
             {loading ? "Loading registrations..." : "No registrations found."}
           </div>
         ) : (
-          <div className="overflow-x-auto border border-border/50 rounded-2xl">
-            <table className="w-full text-left text-sm text-foreground">
-              <thead className="bg-background/40 text-xs font-bold uppercase text-muted-foreground border-b border-border">
-                <tr>
-                  <th className="px-6 py-4 rounded-tl-2xl">Date</th>
-                  <th className="px-6 py-4">Student Info</th>
-                  <th className="px-6 py-4">Contact</th>
-                  <th className="px-6 py-4">Event Link</th>
-                  <th className="px-6 py-4">Roster Status</th>
-                  <th className="px-6 py-4 rounded-tr-2xl text-right">Registration ID</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-850/50">
-                {filteredRegs.map((reg) => (
-                  <tr key={reg.id} className="hover:bg-card/10 transition-colors">
-                    <td className="px-6 py-4 text-muted-foreground whitespace-nowrap">
-                      {new Date(reg.created_at).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit"
-                      })}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div>
-                        <p className="font-semibold text-foreground whitespace-nowrap">{reg.student_name}</p>
-                        <p className="text-[10px] text-muted-foreground font-mono mt-0.5">{reg.roll_number}</p>
-                        <p className="text-[10px] text-muted-foreground mt-0.5">
-                          {reg.department} {reg.section !== "N/A" && reg.section ? `(Sec ${reg.section})` : ""}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div>
-                        <p className="text-xs text-foreground whitespace-nowrap">{reg.email}</p>
-                        <p className="text-[10px] text-muted-foreground font-mono mt-0.5">{reg.phone}</p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-1.5">
-                        <Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                        <span className="truncate max-w-[200px] text-foreground font-medium">{reg.event_title}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      {reg.team_name ? (
-                        <div className="flex items-center gap-1.5 text-xs text-primary font-semibold">
-                          <Users className="h-3.5 w-3.5 shrink-0" />
-                          <span className="truncate max-w-[120px]">{reg.team_name}</span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                          <Ticket className="h-3.5 w-3.5 shrink-0" />
-                          <span>Individual Entry</span>
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-right font-mono text-xs text-muted-foreground uppercase whitespace-nowrap">
-                      #{reg.id.substring(0, 8)}
-                    </td>
+          <>
+            {/* Desktop Table Layout */}
+            <div className="overflow-x-auto border border-border/50 rounded-2xl hidden md:block">
+              <table className="w-full text-left text-sm text-foreground">
+                <thead className="bg-background/40 text-xs font-bold uppercase text-muted-foreground border-b border-border">
+                  <tr>
+                    <th className="px-6 py-4 rounded-tl-2xl">Date</th>
+                    <th className="px-6 py-4">Student Info</th>
+                    <th className="px-6 py-4">Contact</th>
+                    <th className="px-6 py-4">Event Link</th>
+                    <th className="px-6 py-4">Roster Status</th>
+                    <th className="px-6 py-4 rounded-tr-2xl text-right">Registration ID</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-zinc-850/50">
+                  {filteredRegs.map((reg) => (
+                    <tr key={reg.id} className="hover:bg-card/10 transition-colors">
+                      <td className="px-6 py-4 text-muted-foreground whitespace-nowrap">
+                        {new Date(reg.created_at).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit"
+                        })}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div>
+                          <p className="font-semibold text-foreground whitespace-nowrap">{reg.student_name}</p>
+                          <p className="text-[10px] text-muted-foreground font-mono mt-0.5">{reg.roll_number}</p>
+                          <p className="text-[10px] text-muted-foreground mt-0.5">
+                            {reg.department} {reg.section !== "N/A" && reg.section ? `(Sec ${reg.section})` : ""}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div>
+                          <p className="text-xs text-foreground whitespace-nowrap">{reg.email}</p>
+                          <p className="text-[10px] text-muted-foreground font-mono mt-0.5">{reg.phone}</p>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-1.5">
+                          <Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                          <span className="truncate max-w-[200px] text-foreground font-medium">{reg.event_title}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        {reg.team_name ? (
+                          <div className="flex items-center gap-1.5 text-xs text-primary font-semibold">
+                            <Users className="h-3.5 w-3.5 shrink-0" />
+                            <span className="truncate max-w-[120px]">{reg.team_name}</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                            <Ticket className="h-3.5 w-3.5 shrink-0" />
+                            <span>Individual Entry</span>
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-right font-mono text-xs text-muted-foreground uppercase whitespace-nowrap">
+                        #{reg.id.substring(0, 8)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card Layout */}
+            <div className="md:hidden space-y-3">
+              {filteredRegs.map((reg) => (
+                <div key={reg.id} className="rounded-2xl border border-border bg-card/40 p-4 space-y-3">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="font-semibold text-foreground text-sm">{reg.student_name}</p>
+                      <p className="text-[10px] text-muted-foreground font-mono">{reg.roll_number}</p>
+                    </div>
+                    <span className="text-[10px] font-mono text-muted-foreground uppercase bg-background border border-border px-2 py-0.5 rounded-md">
+                      #{reg.id.substring(0, 8)}
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5 text-xs border-y border-border/50 py-2.5">
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Calendar className="h-3.5 w-3.5 text-primary shrink-0" />
+                      <span className="font-medium text-foreground truncate">{reg.event_title}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <span className="text-[10px] font-bold uppercase tracking-wider">Type:</span>
+                      {reg.team_name ? (
+                        <span className="text-primary font-semibold flex items-center gap-1">
+                          <Users className="h-3.5 w-3.5" /> {reg.team_name}
+                        </span>
+                      ) : (
+                        <span className="text-foreground flex items-center gap-1">
+                          <Ticket className="h-3.5 w-3.5" /> Individual
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <span className="text-[10px] font-bold uppercase tracking-wider">Dept:</span>
+                      <span className="text-foreground">{reg.department} {reg.section !== "N/A" && reg.section ? `(Sec ${reg.section})` : ""}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-2 text-[11px] text-muted-foreground">
+                    <p className="truncate">Email: <span className="text-foreground font-medium">{reg.email}</span></p>
+                    <p>Phone: <span className="text-foreground font-mono">{reg.phone}</span></p>
+                    <div className="flex justify-between border-t border-border/30 pt-2 text-[10px]">
+                      <span>Reg Date:</span>
+                      <span className="text-foreground font-medium">
+                        {new Date(reg.created_at).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit"
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>

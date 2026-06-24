@@ -89,7 +89,7 @@ export async function saveCertificateDesignAction(formData: FormData) {
   const signatoryLeftTitle = formData.get("signatory_left_title") as string || "Event Coordinator"
   const signatoryRightName = formData.get("signatory_right_name") as string || "Director"
   const signatoryRightTitle = formData.get("signatory_right_title") as string || "Campus Director"
-  const certNumberFormat = formData.get("cert_number_format") as string || "CRA-2026-{{event_id}}-{{user_id}}"
+  const certNumberFormat = formData.get("cert_number_format") as string || "CRS-2026-{{event_id}}-{{user_id}}"
   const autoGenerate = formData.get("auto_generate") === "true"
   const includeQr = formData.get("include_qr") !== "false"
   const status = formData.get("status") as string || "draft"
@@ -193,7 +193,7 @@ export async function bulkGenerateCertificatesAction(
 
   if (!event) return { error: "Event not found." }
 
-  const certFormat = template.cert_number_format || "CRA-2026-{{event_id}}-{{user_id}}"
+  const certFormat = template.cert_number_format || "CRS-2026-{{event_id}}-{{user_id}}"
   
   let generated = 0
   let skipped = 0
@@ -345,7 +345,7 @@ export async function claimCertificateAction(eventId: string, certType: "partici
   }
 
   // 4. Generate certificate
-  const certFormat = template.cert_number_format || "CRA-2026-{{event_id}}-{{user_id}}"
+  const certFormat = template.cert_number_format || "CRS-2026-{{event_id}}-{{user_id}}"
   const certNumber = generateCertificateNumber(certFormat, eventId, user.id)
 
   const { data: cert, error: certErr } = await supabase

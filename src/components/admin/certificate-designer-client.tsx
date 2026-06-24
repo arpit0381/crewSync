@@ -85,7 +85,7 @@ export function CertificateDesignerClient({ events, templates, attendanceMap, ce
   const [sigLeftTitle, setSigLeftTitle] = React.useState("Event Coordinator")
   const [sigRightName, setSigRightName] = React.useState("Director")
   const [sigRightTitle, setSigRightTitle] = React.useState("Campus Director")
-  const [certNumberFormat, setCertNumberFormat] = React.useState("CRA-2026-{{event_id}}-{{user_id}}")
+  const [certNumberFormat, setCertNumberFormat] = React.useState("CRS-2026-{{event_id}}-{{user_id}}")
   const [autoGenerate, setAutoGenerate] = React.useState(true)
   const [includeQr, setIncludeQr] = React.useState(true)
 
@@ -108,7 +108,7 @@ export function CertificateDesignerClient({ events, templates, attendanceMap, ce
       setSigLeftTitle(existing.signatory_left_title || "Event Coordinator")
       setSigRightName(existing.signatory_right_name || "Director")
       setSigRightTitle(existing.signatory_right_title || "Campus Director")
-      setCertNumberFormat(existing.cert_number_format || "CRA-2026-{{event_id}}-{{user_id}}")
+      setCertNumberFormat(existing.cert_number_format || "CRS-2026-{{event_id}}-{{user_id}}")
       setAutoGenerate(existing.auto_generate ?? true)
       setIncludeQr(existing.include_qr ?? true)
     }

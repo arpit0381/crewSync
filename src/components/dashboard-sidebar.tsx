@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { 
   Home, 
@@ -108,7 +109,10 @@ export function DashboardSidebar({ role, isOpen, onClose }: DashboardSidebarProp
         }`}
       >
         <div className="flex h-16 items-center justify-between px-6 md:justify-center">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
+            <div className="relative h-6 w-6 overflow-hidden rounded-lg border border-border/30 shrink-0 shadow-sm">
+              <Image src="/icons/icon-192x192.png" alt="Crew Sync Logo" fill className="object-cover" />
+            </div>
             <span className="text-lg font-extrabold tracking-wider text-foreground">
               CREW <span className="text-primary">SYNC</span>
             </span>
