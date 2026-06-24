@@ -1,0 +1,128 @@
+﻿
+E:\my stuf\crewarena\public\sw.js
+  2:7  warning  'OFFLINE_URL' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\app\(admin)\admin\clubs\page.tsx
+  3:52  warning  'Award' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\app\(admin)\admin\departments\page.tsx
+  3:26  warning  'Award' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\app\(admin)\admin\esports\page.tsx
+  3:57  warning  'Eye' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\app\(admin)\admin\settings\page.tsx
+  3:10  warning  'Settings' is defined but never used. Allowed unused vars must match /^_/u     @typescript-eslint/no-unused-vars
+  3:20  warning  'ShieldCheck' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  3:46  warning  'ToggleLeft' is defined but never used. Allowed unused vars must match /^_/u   @typescript-eslint/no-unused-vars
+  3:58  warning  'ToggleRight' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  3:77  warning  'Key' is defined but never used. Allowed unused vars must match /^_/u          @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\app\(admin)\admin\sports\page.tsx
+  3:18  warning  'Calendar' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\app\(auth)\login\page.tsx
+  7:10  warning  'ShieldCheck' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\app\(student)\student\attendance\page.tsx
+  2:48  warning  'Award' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\app\(student)\student\page.tsx
+  3:10  warning  'Calendar' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\app\(student)\student\teams\page.tsx
+  2:41  warning  'Award' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\app\(tournament)\tournament\results\page.tsx
+  2:18  warning  'Award' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\app\(tournament)\tournament\teams\page.tsx
+  2:10  warning  'Users' is defined but never used. Allowed unused vars must match /^_/u      @typescript-eslint/no-unused-vars
+  2:17  warning  'Clipboard' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\app\event-actions.ts
+  5:10  warning  'uploadImageToCloudinary' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\app\verify\[id]\page.tsx
+  2:40  warning  'ExternalLink' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\components\admin\attendance-scanner-client.tsx
+   64:12  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+  219:15  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\components\admin\certificate-designer-client.tsx
+    6:3   warning  'Award' is defined but never used. Allowed unused vars must match /^_/u                  @typescript-eslint/no-unused-vars
+    8:16  warning  'Hash' is defined but never used. Allowed unused vars must match /^_/u                   @typescript-eslint/no-unused-vars
+  199:9   warning  'previewScale' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  597:48  warning  'idx' is defined but never used. Allowed unused args must match /^_/u                    @typescript-eslint/no-unused-vars
+  675:63  warning  'large' is defined but never used. Allowed unused args must match /^_/u                  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\components\admin\esports-credentials-client.tsx
+   5:25  warning  'Key' is defined but never used. Allowed unused vars must match /^_/u                                                   @typescript-eslint/no-unused-vars
+  36:6   warning  React Hook React.useEffect has a missing dependency: 'activeTourney'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+E:\my stuf\crewarena\src\components\admin\event-manager-client.tsx
+   7:60   warning  'ArrowRight' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   7:122  warning  'Filter' is defined but never used. Allowed unused vars must match /^_/u      @typescript-eslint/no-unused-vars
+   7:143  warning  'Archive' is defined but never used. Allowed unused vars must match /^_/u     @typescript-eslint/no-unused-vars
+  97:14   warning  'err' is defined but never used                                               @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\components\admin\tournament-matches-client.tsx
+   7:10  warning  'Calendar' is defined but never used. Allowed unused vars must match /^_/u                @typescript-eslint/no-unused-vars
+   7:20  warning  'Play' is defined but never used. Allowed unused vars must match /^_/u                    @typescript-eslint/no-unused-vars
+   7:37  warning  'Trophy' is defined but never used. Allowed unused vars must match /^_/u                  @typescript-eslint/no-unused-vars
+  41:19  warning  'setMatches' is assigned a value but never used. Allowed unused vars must match /^_/u     @typescript-eslint/no-unused-vars
+  50:9   warning  'activeMatches' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\components\admin\users-manager-client.tsx
+  5:10  warning  'Users' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\components\dashboard-header.tsx
+  13:3   warning  'User' is defined but never used. Allowed unused vars must match /^_/u         @typescript-eslint/no-unused-vars
+  15:3   warning  'ShieldAlert' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  25:35  warning  'userEmail' is defined but never used. Allowed unused args must match /^_/u    @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\components\landing-client.tsx
+  13:3  warning  'Award' is defined but never used. Allowed unused vars must match /^_/u        @typescript-eslint/no-unused-vars
+  14:3  warning  'ShieldCheck' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  20:3  warning  'Laptop' is defined but never used. Allowed unused vars must match /^_/u       @typescript-eslint/no-unused-vars
+  22:3  warning  'QrCode' is defined but never used. Allowed unused vars must match /^_/u       @typescript-eslint/no-unused-vars
+  23:3  warning  'Download' is defined but never used. Allowed unused vars must match /^_/u     @typescript-eslint/no-unused-vars
+  25:3  warning  'Activity' is defined but never used. Allowed unused vars must match /^_/u     @typescript-eslint/no-unused-vars
+  26:3  warning  'UserCheck' is defined but never used. Allowed unused vars must match /^_/u    @typescript-eslint/no-unused-vars
+  27:3  warning  'Users2' is defined but never used. Allowed unused vars must match /^_/u       @typescript-eslint/no-unused-vars
+  29:3  warning  'Search' is defined but never used. Allowed unused vars must match /^_/u       @typescript-eslint/no-unused-vars
+  30:3  warning  'Filter' is defined but never used. Allowed unused vars must match /^_/u       @typescript-eslint/no-unused-vars
+  31:3  warning  'Flame' is defined but never used. Allowed unused vars must match /^_/u        @typescript-eslint/no-unused-vars
+  32:3  warning  'Zap' is defined but never used. Allowed unused vars must match /^_/u          @typescript-eslint/no-unused-vars
+  33:3  warning  'BarChart3' is defined but never used. Allowed unused vars must match /^_/u    @typescript-eslint/no-unused-vars
+  34:3  warning  'Loader2' is defined but never used. Allowed unused vars must match /^_/u      @typescript-eslint/no-unused-vars
+  37:3  warning  'Check' is defined but never used. Allowed unused vars must match /^_/u        @typescript-eslint/no-unused-vars
+  39:3  warning  'Clock' is defined but never used. Allowed unused vars must match /^_/u        @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\components\shared\brackets-view.tsx
+  5:18  warning  'Calendar' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  5:28  warning  'Check' is defined but never used. Allowed unused vars must match /^_/u     @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\components\student\certificates-client.tsx
+  11:53  warning  'Filter' is defined but never used. Allowed unused vars must match /^_/u                @typescript-eslint/no-unused-vars
+  55:9   warning  'recentCerts' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\components\student\event-browser-client.tsx
+  6:28  warning  'Users' is defined but never used. Allowed unused vars must match /^_/u    @typescript-eslint/no-unused-vars
+  6:35  warning  'X' is defined but never used. Allowed unused vars must match /^_/u        @typescript-eslint/no-unused-vars
+  6:38  warning  'Loader2' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  6:47  warning  'Award' is defined but never used. Allowed unused vars must match /^_/u    @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\components\student\student-profile-client.tsx
+  45:14  warning  'err' is defined but never used  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\components\student\tickets-client.tsx
+   6:38  warning  'CheckCircle' is defined but never used. Allowed unused vars must match /^_/u          @typescript-eslint/no-unused-vars
+  31:19  warning  'setTickets' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+E:\my stuf\crewarena\src\lib\supabase\middleware.ts
+  18:48  warning  'options' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+
+Γ£û 69 problems (0 errors, 69 warnings)
+
