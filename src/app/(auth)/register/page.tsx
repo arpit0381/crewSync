@@ -69,7 +69,7 @@ export default function RegisterPage() {
             Create your account
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Join your campus arena today
+            Join your campus sync today
           </p>
         </div>
 

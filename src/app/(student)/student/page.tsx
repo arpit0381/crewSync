@@ -40,7 +40,7 @@ export default async function StudentDashboardPage() {
         <div className="absolute -top-[40%] -right-[10%] w-64 h-64 bg-primary/10 rounded-full blur-[60px]" />
         <div className="relative z-10 space-y-2 max-w-xl">
           <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-            Welcome to Crew Arena
+            Welcome to Crew Sync
           </h1>
           <p className="text-sm text-muted-foreground">
             Keep track of your registered hackathons, active sports tournaments, tickets, 

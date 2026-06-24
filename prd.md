@@ -1,4 +1,4 @@
-# CREW ARENA
+# CREW SYNC
 
 ### The Ultimate Campus Event & Tournament Management Platform
 
@@ -10,7 +10,7 @@
 
 # 1. Product Vision
 
-Crew Arena is a modern all-in-one platform for managing college events, hackathons, sports tournaments, esports competitions, workshops, seminars, club activities, registrations, attendance tracking, certificates, and analytics.
+Crew Sync is a modern all-in-one platform for managing college events, hackathons, sports tournaments, esports competitions, workshops, seminars, club activities, registrations, attendance tracking, certificates, and analytics.
 
 The platform eliminates spreadsheets, manual attendance sheets, paper registrations, and fragmented event management tools.
 
@@ -547,4 +547,4 @@ Hosting
 
 # Final Product Statement
 
-Crew Arena will serve as the central operating system for college events, tournaments, clubs, sports, esports, attendance, certificates, and student engagement, providing a unified and modern experience for students and administrators.
+Crew Sync will serve as the central operating system for college events, tournaments, clubs, sports, esports, attendance, certificates, and student engagement, providing a unified and modern experience for students and administrators.

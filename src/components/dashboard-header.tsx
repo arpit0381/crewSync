@@ -64,7 +64,7 @@ export function DashboardHeader({ userEmail, userName, userRole, toggleSidebar }
         )}
         <div className="flex items-center gap-2">
           <span className="text-lg font-bold tracking-tight text-foreground">
-            Crew <span className="text-primary">Arena</span>
+            Crew <span className="text-primary">Sync</span>
           </span>
         </div>
       </div>

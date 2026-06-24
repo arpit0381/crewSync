@@ -1,6 +1,6 @@
 {
-  "name": "Crew Arena",
-  "short_name": "CrewArena",
+  "name": "Crew Sync",
+  "short_name": "CrewSync",
   "description": "The Ultimate Campus Event & Tournament Management Platform",
   "start_url": "/",
   "display": "standalone",

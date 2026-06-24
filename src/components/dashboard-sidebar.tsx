@@ -110,7 +110,7 @@ export function DashboardSidebar({ role, isOpen, onClose }: DashboardSidebarProp
         <div className="flex h-16 items-center justify-between px-6 md:justify-center">
           <div className="flex items-center gap-2">
             <span className="text-lg font-extrabold tracking-wider text-foreground">
-              CREW <span className="text-primary">ARENA</span>
+              CREW <span className="text-primary">SYNC</span>
             </span>
           </div>
           <button

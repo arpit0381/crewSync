@@ -256,7 +256,7 @@ export function LandingClient({ events }: LandingClientProps) {
                 <ShieldCheck className="h-6 w-6 text-white" />
               </div>
               <span className="text-xl font-black tracking-tight">
-                CREW<span className="text-primary font-medium ml-1">ARENA</span>
+                CREW<span className="text-primary font-medium ml-1">SYNC</span>
               </span>
             </div>
 
@@ -400,7 +400,7 @@ export function LandingClient({ events }: LandingClientProps) {
           <div className="lg:col-span-5 space-y-6 text-left">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-bold text-primary">
               <Sparkles className="h-3.5 w-3.5" />
-              <span>One Arena. Every Event.</span>
+              <span>One Sync. Every Event.</span>
             </div>
             
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.08] text-foreground">
@@ -728,7 +728,7 @@ export function LandingClient({ events }: LandingClientProps) {
           <div className="grid gap-6 md:grid-cols-3">
             <div className="p-6 rounded-3xl border border-border bg-card/20 space-y-4">
               <p className="text-xs text-muted-foreground leading-relaxed italic">
-                "Crew Arena completely eliminated the Google Sheets mess we had for hackathons. Teams formed and registered in seconds, and we tracked submissions in real-time."
+                "Crew Sync completely eliminated the Google Sheets mess we had for hackathons. Teams formed and registered in seconds, and we tracked submissions in real-time."
               </p>
               <div>
                 <h4 className="text-xs font-bold text-foreground">Ashwin Jauhary</h4>
@@ -748,7 +748,7 @@ export function LandingClient({ events }: LandingClientProps) {
 
             <div className="p-6 rounded-3xl border border-border bg-card/20 space-y-4">
               <p className="text-xs text-muted-foreground leading-relaxed italic">
-                "As an administrator, the department-wide engagement insights are invaluable. Crew Arena provides clear transparency into student activity parameters."
+                "As an administrator, the department-wide engagement insights are invaluable. Crew Sync provides clear transparency into student activity parameters."
               </p>
               <div>
                 <h4 className="text-xs font-bold text-foreground">Prof. Vipin Dwivedi</h4>
@@ -802,11 +802,11 @@ export function LandingClient({ events }: LandingClientProps) {
                   <ShieldCheck className="h-7 w-7 text-white" />
                 </div>
                 <span className="text-3xl font-black tracking-tighter">
-                  CREW<span className="text-primary font-medium ml-1">ARENA</span>
+                  CREW<span className="text-primary font-medium ml-1">SYNC</span>
                 </span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto md:mx-0">
-                The ultimate operating system for campus events, hackathons, and esports. Bringing the entire college community together in one dynamic arena.
+                The ultimate operating system for campus events, hackathons, and esports. Bringing the entire college community together in one dynamic platform.
               </p>
               
               {/* Developer Badge */}
@@ -854,7 +854,7 @@ export function LandingClient({ events }: LandingClientProps) {
 
           <div className="flex flex-col md:flex-row items-center justify-between border-t border-border/50 pt-8 gap-6 relative z-10">
             <p className="text-xs font-semibold text-muted-foreground text-center md:text-left">
-              © {new Date().getFullYear()} Crew Arena. Built with <Heart className="h-3 w-3 inline text-rose-500 mx-0.5" /> for the campus community.
+              © {new Date().getFullYear()} Crew Sync. Built with <Heart className="h-3 w-3 inline text-rose-500 mx-0.5" /> for the campus community.
             </p>
             <div className="flex items-center gap-6 text-xs font-semibold text-muted-foreground">
               <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>

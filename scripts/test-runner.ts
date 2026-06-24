@@ -84,7 +84,7 @@ function calculateStandings(matches: any[], teams: Team[]): Standing[] {
 // RUN TESTS
 function runTestSuite() {
   console.log("\n=========================================")
-  console.log("      CREW ARENA - TEST RUNNER")
+  console.log("      CREW SYNC - TEST RUNNER")
   console.log("=========================================\n")
 
   // Test Case 1: Knockout bracket with even team count

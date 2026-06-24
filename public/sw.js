@@ -1,4 +1,4 @@
-const CACHE_NAME = "crew-arena-v2";
+const CACHE_NAME = "crew-sync-v2";
 const OFFLINE_URL = "/offline";
 
 const ASSETS_TO_CACHE = [

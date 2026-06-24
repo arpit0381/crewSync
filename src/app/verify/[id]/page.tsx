@@ -50,7 +50,7 @@ export default async function CertificateVerificationPage({ params }: PageProps)
         {/* Header */}
         <div className="text-center mb-8">
           <span className="text-lg font-extrabold tracking-wider text-foreground">
-            CREW <span className="text-primary">ARENA</span>
+            CREW <span className="text-primary">SYNC</span>
           </span>
           <p className="text-xs text-muted-foreground mt-1">Certificate Verification Portal</p>
         </div>
@@ -118,7 +118,7 @@ export default async function CertificateVerificationPage({ params }: PageProps)
         {/* Branding footer */}
         <div className="text-center mt-6">
           <p className="text-[10px] text-muted-foreground">
-            Powered by <span className="font-bold">Crew Arena</span> • Built by Arpit Bajpai
+            Powered by <span className="font-bold">Crew Sync</span> • Built by Arpit Bajpai
           </p>
         </div>
       </div>

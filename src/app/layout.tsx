@@ -15,13 +15,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Crew Arena | Campus Event & Tournament OS",
-  description: "One Arena. Every Event. Manage college hackathons, sports brackets, esports, attendance tracking, certificates, and analytics.",
+  title: "Crew Sync | Campus Event & Tournament OS",
+  description: "One Sync. Every Event. Manage college hackathons, sports brackets, esports, attendance tracking, certificates, and analytics.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Crew Arena",
+    title: "Crew Sync",
   },
 };
 

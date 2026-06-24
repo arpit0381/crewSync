@@ -124,10 +124,10 @@ export default function LoginPage() {
             <ShieldCheck className="h-7 w-7 text-primary transition-transform duration-300 group-hover:scale-110" />
           </div>
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
-            Welcome back to Crew Arena
+            Welcome back to Crew Sync
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            One Arena. Every Event.
+            One Sync. Every Event.
           </p>
         </div>
 

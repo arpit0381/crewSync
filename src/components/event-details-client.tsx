@@ -47,7 +47,7 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn }: EventDet
   const handleShare = async () => {
     const url = window.location.href
     const title = event.title
-    const text = `Check out ${title} on Crew Arena!`
+    const text = `Check out ${title} on Crew Sync!`
 
     if (navigator.share) {
       try {

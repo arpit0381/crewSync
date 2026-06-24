@@ -1,4 +1,4 @@
-# 🎪 Crew Arena.....
+# 🎪 Crew Sync.....
 ### The Ultimate Campus Event & Tournament Management Platform
 
 <div align="center">
@@ -19,9 +19,9 @@
 
 ---
 
-## 🌟 What is Crew Arena?
+## 🌟 What is Crew Sync?
 
-Crew Arena is a modern, all-in-one platform designed to revolutionize how colleges manage events, tournaments, and student engagement. Whether it's academic workshops, hackathons, sports tournaments, or esports competitions, Crew Arena provides a unified solution that eliminates spreadsheets, manual processes, and fragmented tools.
+Crew Sync is a modern, all-in-one platform designed to revolutionize how colleges manage events, tournaments, and student engagement. Whether it's academic workshops, hackathons, sports tournaments, or esports competitions, Crew Sync provides a unified solution that eliminates spreadsheets, manual processes, and fragmented tools.
 
 <div align="center">
   <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=400&fit=crop" alt="Team Collaboration" width="100%" height="400">

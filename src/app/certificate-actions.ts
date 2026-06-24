@@ -35,7 +35,7 @@ async function sendResendEmail({
         Authorization: `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        from: "Crew Arena <noreply@crewsync.formstuff.in>",
+        from: "Crew Sync <noreply@crewsync.formstuff.in>",
         to: [to],
         subject,
         html,
@@ -60,15 +60,15 @@ export async function sendTicketEmailAction(email: string, studentName: string, 
   const subject = `Entry Ticket Confirmed: ${eventTitle}`
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px; background-color: #ffffff;">
-      <h2 style="color: #3b82f6;">Crew Arena</h2>
+      <h2 style="color: #3b82f6;">Crew Sync</h2>
       <p>Hello <strong>${studentName}</strong>,</p>
       <p>Your registration for <strong>${eventTitle}</strong> is successfully confirmed!</p>
       <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
         <p style="margin: 0; font-size: 14px; color: #4b5563;">YOUR ENTRY TICKET CODE:</p>
         <p style="margin: 5px 0 0 0; font-size: 24px; font-weight: bold; letter-spacing: 2px; color: #1f2937;">${ticketCode}</p>
       </div>
-      <p style="font-size: 14px; color: #6b7280;">You can download your PDF ticket from your Crew Arena student dashboard. Present the QR code at the event entrance for scanning.</p>
-      <p>Regards,<br/>Crew Arena Team</p>
+      <p style="font-size: 14px; color: #6b7280;">You can download your PDF ticket from your Crew Sync student dashboard. Present the QR code at the event entrance for scanning.</p>
+      <p>Regards,<br/>Crew Sync Team</p>
     </div>
   `
   return await sendResendEmail({ to: email, subject, html })
@@ -262,7 +262,7 @@ export async function bulkGenerateCertificatesAction(
               <p>Your certificate of <strong>${certType}</strong> for <strong>${event.title}</strong> is generated and ready!</p>
               <p>Certificate Number: <strong>${certNumber}</strong></p>
               <p>Visit your student dashboard → My Certificates to download it.</p>
-              <p>Regards,<br/>Crew Arena Team</p>
+              <p>Regards,<br/>Crew Sync Team</p>
             </div>
           `
         })
@@ -391,7 +391,7 @@ export async function claimCertificateAction(eventId: string, certType: "partici
         <p>Your certificate of <strong>${certType}</strong> for the event <strong>${eventTitle}</strong> is generated and ready to download!</p>
         <p>Certificate Number: <strong>${certNumber}</strong></p>
         <p>Visit your student dashboard → My Certificates to download it.</p>
-        <p>Regards,<br/>Crew Arena Team</p>
+        <p>Regards,<br/>Crew Sync Team</p>
       </div>
     `
   })

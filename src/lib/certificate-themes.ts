@@ -438,9 +438,9 @@ export function renderThemeToPDF(doc: jsPDF, themeId: string, data: CertificateD
     { align: "center" }
   )
 
-  // 16. Crew Arena branding
+  // 16. Crew Sync branding
   doc.setFont("Helvetica", "bold")
   doc.setFontSize(5)
   doc.setTextColor(...c.signatureLine)
-  doc.text("Powered by CREW ARENA", w / 2, 206, { align: "center" })
+  doc.text("Powered by CREW SYNC", w / 2, 206, { align: "center" })
 }
