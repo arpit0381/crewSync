@@ -20,7 +20,8 @@ export default async function AdminEventsPage() {
         .select(`
           id, title, description, banner_url, venue, event_date, event_time,
           capacity, reg_type, min_team_size, max_team_size, status,
-          category_id, department_id, club_id, categories(name, type)
+          category_id, department_id, club_id, categories(name, type),
+          registrations(count)
         `)
         .order("created_at", { ascending: false }),
     ])
@@ -28,7 +29,12 @@ export default async function AdminEventsPage() {
     if (categoriesResult.data?.length) dbCategories = categoriesResult.data
     if (departmentsResult.data?.length) dbDepartments = departmentsResult.data
     if (clubsResult.data?.length) dbClubs = clubsResult.data
-    if (eventsResult.data?.length) dbEvents = eventsResult.data
+    if (eventsResult.data?.length) {
+      dbEvents = eventsResult.data.map(e => ({
+        ...e,
+        registrationsCount: e.registrations?.[0]?.count || 0
+      }))
+    }
   } catch (err) {
     console.warn("Using mock data inside AdminEventsPage due to DB connection:", err)
   }

@@ -40,6 +40,7 @@ interface Event {
   categories?: { name: string; type: string }
   department_id?: string | null
   club_id?: string | null
+  registrationsCount?: number
 }
 
 interface EventManagerClientProps {
@@ -214,7 +215,8 @@ export function EventManagerClient({
         category_id: result.event.category_id,
         department_id: result.event.department_id,
         club_id: result.event.club_id,
-        categories: categories.find((c) => c.id === result.event.category_id)
+        categories: categories.find((c) => c.id === result.event.category_id),
+        registrationsCount: modalMode === "edit" ? activeEvent?.registrationsCount : 0
       }
 
       if (modalMode === "edit") {
@@ -402,6 +404,18 @@ export function EventManagerClient({
                         : "Individual Registrations"}
                     </span>
                   </div>
+                  <div className="pt-2">
+                    <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
+                      <div 
+                        className="bg-primary h-full transition-all" 
+                        style={{ width: `${Math.min(100, ((event.registrationsCount || 0) / event.capacity) * 100)}%` }}
+                      />
+                    </div>
+                    <div className="flex justify-between text-[10px] font-bold text-muted-foreground mt-1.5 uppercase tracking-wider">
+                      <span>{event.registrationsCount || 0} Registered</span>
+                      <span>{event.capacity} Capacity</span>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="mt-4 pt-4 border-t border-border/80 flex items-center gap-2">
@@ -425,6 +439,7 @@ export function EventManagerClient({
                 <th className="px-4 py-3 font-semibold text-muted-foreground">Event</th>
                 <th className="px-4 py-3 font-semibold text-muted-foreground">Date & Venue</th>
                 <th className="px-4 py-3 font-semibold text-muted-foreground">Status</th>
+                <th className="px-4 py-3 font-semibold text-muted-foreground">Registrations</th>
                 <th className="px-4 py-3 font-semibold text-muted-foreground text-right">Actions</th>
               </tr>
             </thead>
@@ -450,6 +465,17 @@ export function EventManagerClient({
                       <option value="published">Published</option>
                       <option value="completed">Completed</option>
                     </select>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-16 bg-muted rounded-full h-1.5 overflow-hidden">
+                        <div 
+                          className="bg-primary h-full transition-all" 
+                          style={{ width: `${Math.min(100, ((event.registrationsCount || 0) / event.capacity) * 100)}%` }}
+                        />
+                      </div>
+                      <span className="text-xs font-semibold text-foreground">{event.registrationsCount || 0}/{event.capacity}</span>
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-1">
