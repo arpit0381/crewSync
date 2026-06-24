@@ -372,8 +372,8 @@ export function EventManagerClient({
                 ) : null}
                 <div className="absolute inset-0 bg-background/40" />
                 
-                {/* Quick Actions (Hover) */}
-                <div className="absolute top-3 right-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                {/* Quick Actions (Always visible on mobile, hover on desktop) */}
+                <div className="absolute top-3 right-3 flex items-center gap-2 flex-wrap justify-end max-w-[80%] opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                    <button onClick={() => handleOpenModal("edit", event)} className="p-1.5 rounded-full bg-background/80 backdrop-blur text-foreground hover:bg-primary hover:text-primary-foreground transition-colors" title="Edit Event">
                      <Edit2 className="h-3.5 w-3.5" />
                    </button>
@@ -460,8 +460,8 @@ export function EventManagerClient({
           ))}
         </div>
       ) : (
-        <div className="rounded-2xl border border-border overflow-hidden">
-          <table className="w-full text-left text-sm whitespace-nowrap">
+        <div className="rounded-2xl border border-border overflow-x-auto">
+          <table className="w-full text-left text-sm whitespace-nowrap min-w-[800px]">
             <thead className="bg-muted/50 border-b border-border">
               <tr>
                 <th className="px-4 py-3 font-semibold text-muted-foreground">Event</th>
