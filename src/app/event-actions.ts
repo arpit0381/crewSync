@@ -83,6 +83,79 @@ export async function createEventAction(formData: FormData) {
   return { success: "Event created successfully", event }
 }
 
+export async function updateEventAction(eventId: string, formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: "Unauthorized" }
+
+  const title = formData.get("title") as string
+  const description = formData.get("description") as string
+  const categoryId = formData.get("category_id") as string
+  const venue = formData.get("venue") as string
+  const date = formData.get("event_date") as string
+  const time = formData.get("event_time") as string
+  const capacity = parseInt(formData.get("capacity") as string) || 100
+  const regType = formData.get("reg_type") as "individual" | "team"
+  const minTeamSize = parseInt(formData.get("min_team_size") as string) || 1
+  const maxTeamSize = parseInt(formData.get("max_team_size") as string) || 1
+  const departmentId = formData.get("department_id") as string || null
+  const clubId = formData.get("club_id") as string || null
+  const status = (formData.get("status") as any) || "draft"
+
+  if (!title || !description || !categoryId || !venue || !date || !time) {
+    return { error: "All required fields must be filled" }
+  }
+
+  const isUuid = (val: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
+
+  if (!isUuid(categoryId)) return { error: "Invalid Category ID." }
+  if (departmentId && !isUuid(departmentId)) return { error: "Invalid Department ID." }
+  if (clubId && !isUuid(clubId)) return { error: "Invalid Club ID." }
+
+  const bannerUrlOverride = formData.get("banner_url_override") as string
+  let bannerUrl = bannerUrlOverride || null
+
+  const adminClient = createAdminClient()
+
+  // Prepare update payload
+  const payload: any = {
+    title,
+    description,
+    category_id: categoryId,
+    venue,
+    event_date: date,
+    event_time: time,
+    capacity,
+    reg_type: regType,
+    min_team_size: regType === "team" ? minTeamSize : 1,
+    max_team_size: regType === "team" ? maxTeamSize : 1,
+    department_id: departmentId,
+    club_id: clubId,
+    status,
+    updated_at: new Date().toISOString()
+  }
+
+  // Only update banner if a new one was provided
+  if (bannerUrl) {
+    payload.banner_url = bannerUrl
+  }
+
+  const { data: event, error } = await adminClient
+    .from("events")
+    .update(payload)
+    .eq("id", eventId)
+    .select()
+    .single()
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath("/admin/events")
+  revalidatePath("/")
+  return { success: "Event updated successfully", event }
+}
+
 export async function updateEventStatusAction(
   eventId: string,
   status: "draft" | "pending_approval" | "published" | "completed"
@@ -100,6 +173,25 @@ export async function updateEventStatusAction(
   revalidatePath("/admin/events")
   revalidatePath("/")
   return { success: `Event status updated to ${status.replace("_", " ")}` }
+}
+
+export async function deleteEventAction(eventId: string) {
+  const adminClient = createAdminClient()
+  
+  // We use the admin client to bypass RLS policies if needed, 
+  // or we could check user permissions here.
+  const { error } = await adminClient
+    .from("events")
+    .delete()
+    .eq("id", eventId)
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath("/admin/events")
+  revalidatePath("/")
+  return { success: "Event deleted successfully" }
 }
 
 export async function registerForEventAction(

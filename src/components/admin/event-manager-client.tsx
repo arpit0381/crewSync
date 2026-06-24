@@ -3,8 +3,8 @@
 import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { createEventAction, updateEventStatusAction } from "@/app/event-actions"
-import { Calendar, MapPin, Users, Plus, X, Loader2, Check, ArrowRight, ClipboardCheck } from "lucide-react"
+import { createEventAction, updateEventStatusAction, deleteEventAction, updateEventAction } from "@/app/event-actions"
+import { Calendar, MapPin, Users, Plus, X, Loader2, Check, ArrowRight, ClipboardCheck, Trash2, Search, LayoutGrid, List, Filter, Edit2, Copy, Archive } from "lucide-react"
 
 interface Category {
   id: string
@@ -61,16 +61,56 @@ export function EventManagerClient({
   const [error, setError] = React.useState<string | null>(null)
   const [success, setSuccess] = React.useState<string | null>(null)
   const [activeFilter, setActiveFilter] = React.useState<string>("all")
+  const [searchQuery, setSearchQuery] = React.useState("")
+  const [viewMode, setViewMode] = React.useState<"grid" | "list">("grid")
+  
+  // Modals state
+  const [modalMode, setModalMode] = React.useState<"create" | "edit" | "clone">("create")
+  const [activeEvent, setActiveEvent] = React.useState<Event | null>(null)
+  const [eventToDelete, setEventToDelete] = React.useState<string | null>(null)
+  const [isDeleting, setIsDeleting] = React.useState(false)
   
   // Registration type state for conditional fields
   const [regType, setRegType] = React.useState<"individual" | "team">("individual")
 
   const filteredEvents = React.useMemo(() => {
     return events.filter((e) => {
-      if (activeFilter === "all") return true
-      return e.status === activeFilter
+      const matchesFilter = activeFilter === "all" || e.status === activeFilter
+      const matchesSearch = e.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            e.venue.toLowerCase().includes(searchQuery.toLowerCase())
+      return matchesFilter && matchesSearch
     })
-  }, [events, activeFilter])
+  }, [events, activeFilter, searchQuery])
+
+  // Analytics
+  const totalEvents = events.length
+  const publishedEvents = events.filter(e => e.status === "published").length
+  const upcomingEvents = events.filter(e => new Date(e.event_date) >= new Date()).length
+
+  const handleDeleteConfirm = async () => {
+    if (!eventToDelete) return
+    setIsDeleting(true)
+    const result = await deleteEventAction(eventToDelete)
+    if (result.success) {
+      setEvents(events.filter(e => e.id !== eventToDelete))
+    } else {
+      setError(result.error || "Failed to delete event")
+    }
+    setIsDeleting(false)
+    setEventToDelete(null)
+  }
+
+  const handleOpenModal = (mode: "create" | "edit" | "clone", event?: Event) => {
+    setModalMode(mode)
+    if (event) {
+      setActiveEvent(event)
+      setRegType(event.reg_type)
+    } else {
+      setActiveEvent(null)
+      setRegType("individual")
+    }
+    setIsModalOpen(true)
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -144,7 +184,12 @@ export function EventManagerClient({
     formData.delete("banner_file")
     formData.delete("banner_base64")
 
-    const result = await createEventAction(formData)
+    let result
+    if (modalMode === "edit" && activeEvent) {
+      result = await updateEventAction(activeEvent.id, formData)
+    } else {
+      result = await createEventAction(formData)
+    }
 
     if (result.error) {
       setError(result.error)
@@ -153,7 +198,7 @@ export function EventManagerClient({
       setSuccess(result.success)
       
       // Inject details locally to avoid page reload delays
-      const newEvent: Event = {
+      const processedEvent: Event = {
         id: result.event.id,
         title: result.event.title,
         description: result.event.description,
@@ -172,7 +217,12 @@ export function EventManagerClient({
         categories: categories.find((c) => c.id === result.event.category_id)
       }
 
-      setEvents([newEvent, ...events])
+      if (modalMode === "edit") {
+        setEvents(events.map(e => e.id === processedEvent.id ? processedEvent : e))
+      } else {
+        setEvents([processedEvent, ...events])
+      }
+      
       setLoading(false)
       setIsModalOpen(false)
       // Reset form
@@ -199,42 +249,91 @@ export function EventManagerClient({
           <p className="text-sm text-muted-foreground">Configure registrations, parameters, and statuses.</p>
         </div>
         <button
-          onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/95 transition-all shadow-md shadow-primary/20"
+          onClick={() => handleOpenModal("create")}
+          className="flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/95 transition-all shadow-md shadow-primary/20"
         >
           <Plus className="h-4 w-4" />
           Create Event
         </button>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex items-center gap-2 border-b border-border pb-px overflow-x-auto">
-        {["all", "draft", "pending_approval", "published", "completed"].map((filter) => (
-          <button
-            key={filter}
-            onClick={() => setActiveFilter(filter)}
-            className={`px-4 py-3 min-h-[44px] text-xs font-semibold uppercase tracking-wider border-b-2 transition-all shrink-0 ${
-              activeFilter === filter
-                ? "border-primary text-primary"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {filter.replace("_", " ")}
-          </button>
-        ))}
+      {/* Analytics Summary */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="rounded-2xl border border-border bg-card p-4">
+          <p className="text-sm font-medium text-muted-foreground">Total Events</p>
+          <p className="text-2xl font-bold text-foreground mt-1">{totalEvents}</p>
+        </div>
+        <div className="rounded-2xl border border-border bg-card p-4">
+          <p className="text-sm font-medium text-muted-foreground">Published</p>
+          <p className="text-2xl font-bold text-foreground mt-1">{publishedEvents}</p>
+        </div>
+        <div className="rounded-2xl border border-border bg-card p-4">
+          <p className="text-sm font-medium text-muted-foreground">Upcoming</p>
+          <p className="text-2xl font-bold text-foreground mt-1">{upcomingEvents}</p>
+        </div>
       </div>
 
-      {/* Events List Grid */}
+      {/* Toolbar: Search, Filter Tabs, View Toggle */}
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row gap-4 justify-between">
+          <div className="relative w-full sm:max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search events by title or venue..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:border-primary transition-colors"
+            />
+          </div>
+          <div className="flex items-center gap-2 self-end sm:self-auto">
+            <div className="flex items-center bg-muted/50 rounded-lg p-1 border border-border">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`p-1.5 rounded-md transition-colors ${viewMode === "grid" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                title="Grid View"
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`p-1.5 rounded-md transition-colors ${viewMode === "list" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                title="List View"
+              >
+                <List className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 border-b border-border pb-px overflow-x-auto">
+          {["all", "draft", "pending_approval", "published", "completed"].map((filter) => (
+            <button
+              key={filter}
+              onClick={() => setActiveFilter(filter)}
+              className={`px-4 py-3 min-h-[44px] text-xs font-semibold uppercase tracking-wider border-b-2 transition-all shrink-0 ${
+                activeFilter === filter
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {filter.replace("_", " ")}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Events List Grid / List */}
       {filteredEvents.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-border p-12 text-center text-muted-foreground">
           No events found for this filter.
         </div>
-      ) : (
+      ) : viewMode === "grid" ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredEvents.map((event) => (
             <div
               key={event.id}
-              className="flex flex-col rounded-3xl border border-border bg-card/20 backdrop-blur-sm overflow-hidden group"
+              className="flex flex-col rounded-3xl border border-border bg-card/20 backdrop-blur-sm overflow-hidden group relative"
             >
               {/* Event Image Banner (Admin View) */}
               <div className="h-32 w-full relative overflow-hidden bg-gradient-to-br from-zinc-850 to-zinc-950 flex items-center justify-center">
@@ -248,6 +347,19 @@ export function EventManagerClient({
                   />
                 ) : null}
                 <div className="absolute inset-0 bg-background/40" />
+                
+                {/* Quick Actions (Hover) */}
+                <div className="absolute top-3 right-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                   <button onClick={() => handleOpenModal("edit", event)} className="p-1.5 rounded-full bg-background/80 backdrop-blur text-foreground hover:bg-primary hover:text-primary-foreground transition-colors" title="Edit Event">
+                     <Edit2 className="h-3.5 w-3.5" />
+                   </button>
+                   <button onClick={() => handleOpenModal("clone", event)} className="p-1.5 rounded-full bg-background/80 backdrop-blur text-foreground hover:bg-primary hover:text-primary-foreground transition-colors" title="Clone Event">
+                     <Copy className="h-3.5 w-3.5" />
+                   </button>
+                   <button onClick={() => setEventToDelete(event.id)} className="p-1.5 rounded-full bg-background/80 backdrop-blur text-red-500 hover:bg-red-500 hover:text-white transition-colors" title="Delete Event">
+                     <Trash2 className="h-3.5 w-3.5" />
+                   </button>
+                </div>
               </div>
               <div className="p-6 space-y-4 flex flex-col flex-1">
                 <div className="flex items-center justify-between">
@@ -292,18 +404,73 @@ export function EventManagerClient({
                   </div>
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-border/80">
+                <div className="mt-4 pt-4 border-t border-border/80 flex items-center gap-2">
                   <Link 
                     href={`/admin/events/${event.id}/attendance`} 
-                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary/10 text-primary py-2.5 text-sm font-semibold hover:bg-primary/20 transition-all"
+                    className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-primary/10 text-primary py-2.5 text-sm font-semibold hover:bg-primary/20 transition-all"
                   >
                     <ClipboardCheck className="h-4 w-4" />
-                    View Attendance
+                    Attendance
                   </Link>
                 </div>
               </div>
             </div>
           ))}
+        </div>
+      ) : (
+        <div className="rounded-2xl border border-border overflow-hidden">
+          <table className="w-full text-left text-sm whitespace-nowrap">
+            <thead className="bg-muted/50 border-b border-border">
+              <tr>
+                <th className="px-4 py-3 font-semibold text-muted-foreground">Event</th>
+                <th className="px-4 py-3 font-semibold text-muted-foreground">Date & Venue</th>
+                <th className="px-4 py-3 font-semibold text-muted-foreground">Status</th>
+                <th className="px-4 py-3 font-semibold text-muted-foreground text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {filteredEvents.map(event => (
+                <tr key={event.id} className="hover:bg-muted/20 transition-colors">
+                  <td className="px-4 py-3">
+                    <div className="font-semibold text-foreground">{event.title}</div>
+                    <div className="text-xs text-muted-foreground">{event.categories?.name || "Event"} • {event.reg_type}</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="text-foreground">{event.event_date} {event.event_time}</div>
+                    <div className="text-xs text-muted-foreground">{event.venue}</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <select
+                      value={event.status}
+                      onChange={(e) => handleStatusChange(event.id, e.target.value as any)}
+                      className="bg-transparent text-xs font-semibold border border-border rounded px-2 py-1 focus:outline-none focus:border-primary text-foreground"
+                    >
+                      <option value="draft">Draft</option>
+                      <option value="pending_approval">Pending Approval</option>
+                      <option value="published">Published</option>
+                      <option value="completed">Completed</option>
+                    </select>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <div className="flex items-center justify-end gap-1">
+                      <Link href={`/admin/events/${event.id}/attendance`} className="p-1.5 text-muted-foreground hover:text-primary transition-colors" title="Attendance">
+                        <ClipboardCheck className="h-4 w-4" />
+                      </Link>
+                      <button onClick={() => handleOpenModal("edit", event)} className="p-1.5 text-muted-foreground hover:text-foreground transition-colors" title="Edit">
+                        <Edit2 className="h-4 w-4" />
+                      </button>
+                      <button onClick={() => handleOpenModal("clone", event)} className="p-1.5 text-muted-foreground hover:text-foreground transition-colors" title="Clone">
+                        <Copy className="h-4 w-4" />
+                      </button>
+                      <button onClick={() => setEventToDelete(event.id)} className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors" title="Delete">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 
@@ -318,7 +485,9 @@ export function EventManagerClient({
               <X className="h-5 w-5" />
             </button>
 
-            <h2 className="text-xl font-bold text-foreground mb-6">Create New Event</h2>
+            <h2 className="text-xl font-bold text-foreground mb-6">
+              {modalMode === "edit" ? "Edit Event" : modalMode === "clone" ? "Clone Event" : "Create New Event"}
+            </h2>
 
             <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-4">
               {error && (
@@ -333,6 +502,7 @@ export function EventManagerClient({
                   name="title"
                   type="text"
                   required
+                  defaultValue={activeEvent?.title || ""}
                   className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none text-sm transition-all"
                   placeholder="E.g. Code Gladiators 2026"
                 />
@@ -344,13 +514,16 @@ export function EventManagerClient({
                   name="description"
                   required
                   rows={3}
+                  defaultValue={activeEvent?.description || ""}
                   className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none text-sm transition-all"
                   placeholder="Explain event details, guidelines, rules..."
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Event Banner Image</label>
+                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Event Banner Image {modalMode === "edit" && activeEvent?.banner_url && "(Leave empty to keep current)"}
+                </label>
                 <input
                   name="banner_file"
                   type="file"
@@ -366,6 +539,7 @@ export function EventManagerClient({
                   <select
                     name="category_id"
                     required
+                    defaultValue={activeEvent?.category_id || ""}
                     className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
                   >
                     {categories.map((c) => (
@@ -381,6 +555,7 @@ export function EventManagerClient({
                     name="venue"
                     type="text"
                     required
+                    defaultValue={activeEvent?.venue || ""}
                     className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none text-sm transition-all"
                     placeholder="E.g. Seminar Hall 2"
                   />
@@ -394,6 +569,7 @@ export function EventManagerClient({
                     name="event_date"
                     type="date"
                     required
+                    defaultValue={activeEvent?.event_date || ""}
                     className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
                   />
                 </div>
@@ -403,6 +579,7 @@ export function EventManagerClient({
                     name="event_time"
                     type="time"
                     required
+                    defaultValue={activeEvent?.event_time ? activeEvent.event_time.slice(0, 5) : ""}
                     className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
                   />
                 </div>
@@ -412,7 +589,7 @@ export function EventManagerClient({
                     name="capacity"
                     type="number"
                     inputMode="numeric"
-                    defaultValue={100}
+                    defaultValue={activeEvent?.capacity || 100}
                     required
                     className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
                   />
@@ -424,6 +601,7 @@ export function EventManagerClient({
                   <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Department (Optional)</label>
                   <select
                     name="department_id"
+                    defaultValue={activeEvent?.department_id || ""}
                     className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
                   >
                     <option value="">None (Platform-wide)</option>
@@ -436,6 +614,7 @@ export function EventManagerClient({
                   <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Club Hosting (Optional)</label>
                   <select
                     name="club_id"
+                    defaultValue={activeEvent?.club_id || ""}
                     className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
                   >
                     <option value="">None (Departmental)</option>
@@ -483,7 +662,7 @@ export function EventManagerClient({
                         name="min_team_size"
                         type="number"
                         inputMode="numeric"
-                        defaultValue={2}
+                        defaultValue={activeEvent?.min_team_size || 2}
                         required
                         className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
                       />
@@ -494,7 +673,7 @@ export function EventManagerClient({
                         name="max_team_size"
                         type="number"
                         inputMode="numeric"
-                        defaultValue={4}
+                        defaultValue={activeEvent?.max_team_size || 4}
                         required
                         className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
                       />
@@ -507,7 +686,7 @@ export function EventManagerClient({
                 <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status Draft / Publish</label>
                 <select
                   name="status"
-                  defaultValue="published"
+                  defaultValue={activeEvent?.status || "published"}
                   className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
                 >
                   <option value="draft">Save as Draft</option>
@@ -530,10 +709,48 @@ export function EventManagerClient({
                   className="flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow hover:bg-primary/95 transition-all disabled:opacity-50"
                 >
                   {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Submit Event
+                  {modalMode === "edit" ? "Save Changes" : modalMode === "clone" ? "Clone Event" : "Create Event"}
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {eventToDelete && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-3xl border border-border bg-card p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-4 text-red-500 mb-4">
+              <div className="p-3 rounded-full bg-red-500/10">
+                <Trash2 className="h-6 w-6" />
+              </div>
+              <h2 className="text-xl font-bold text-foreground">Delete Event</h2>
+            </div>
+            
+            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+              Are you sure you want to delete this event? This action cannot be undone. All registrations and associated data will be permanently removed.
+            </p>
+            
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setEventToDelete(null)}
+                disabled={isDeleting}
+                className="rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-muted transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteConfirm}
+                disabled={isDeleting}
+                className="flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-red-700 transition-all disabled:opacity-50"
+              >
+                {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                Yes, Delete
+              </button>
+            </div>
           </div>
         </div>
       )}
