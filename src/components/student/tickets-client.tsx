@@ -203,7 +203,7 @@ export function TicketsClient({ initialTickets }: TicketsClientProps) {
                   {qrUrl ? (
                     <div className="space-y-2 text-center">
                       <div className="rounded-2xl bg-white p-2">
-                        <img src={qrUrl} alt="QR Code" className="h-28 w-28" />
+                        <img src={qrUrl} alt="QR Code" loading="lazy" className="h-28 w-28" />
                       </div>
                       <p className="text-[10px] font-mono text-muted-foreground">{t.ticket_code}</p>
                     </div>

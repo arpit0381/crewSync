@@ -354,7 +354,7 @@ export function EventManagerClient({
         </div>
       ) : viewMode === "grid" ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredEvents.map((event) => (
+          {filteredEvents.map((event, index) => (
             <div
               key={event.id}
               className="flex flex-col rounded-3xl border border-border bg-card/20 backdrop-blur-sm overflow-hidden group relative"
@@ -366,6 +366,7 @@ export function EventManagerClient({
                     src={event.banner_url}
                     alt={event.title}
                     fill
+                    priority={index < 3}
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
@@ -835,6 +836,7 @@ export function EventManagerClient({
                <img 
                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(typeof window !== 'undefined' ? `${window.location.origin}/events/${qrEvent.id}` : '')}`} 
                  alt="QR Code"
+                 loading="lazy"
                  className="w-48 h-48"
                />
             </div>
