@@ -623,7 +623,7 @@ export function LandingClient({ events }: LandingClientProps) {
                 <p className="text-muted-foreground font-semibold">No active events found for this category.</p>
               </div>
             ) : (
-              filteredEvents.map((event) => {
+              filteredEvents.map((event, idx) => {
                 const categoryName = event.categories?.name || "Campus Event"
                 return (
                   <div
@@ -637,6 +637,7 @@ export function LandingClient({ events }: LandingClientProps) {
                           src={event.banner_url}
                           alt={event.title}
                           fill
+                          priority={idx < 2}
                           sizes="(max-width: 768px) 100vw, 33vw"
                           className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />

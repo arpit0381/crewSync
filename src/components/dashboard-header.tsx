@@ -4,6 +4,7 @@ import * as React from "react"
 import Image from "next/image"
 import { useTheme as useNextTheme } from "next-themes"
 import { useTheme, type ThemePack } from "@/components/theme-provider"
+import { NotificationBell } from "@/components/notification-bell"
 import { signOutAction } from "@/app/auth-actions"
 import { 
   Sun, 
@@ -74,6 +75,7 @@ export function DashboardHeader({ userEmail, userName, userRole, toggleSidebar }
       </div>
 
       <div className="flex items-center gap-4">
+        {userEmail && <NotificationBell />}
         {/* Theme Pack Switcher Selector */}
         <div className="relative">
           <button

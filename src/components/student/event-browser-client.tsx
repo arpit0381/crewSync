@@ -36,7 +36,7 @@ export function EventBrowserClient({ events, userRegistrations = [] }: EventBrow
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {events.map((event) => (
+        {events.map((event, idx) => (
           <div
             key={event.id}
             className="flex flex-col rounded-3xl border border-border bg-card/20 backdrop-blur-sm overflow-hidden hover:border-border transition-all group"
@@ -48,6 +48,7 @@ export function EventBrowserClient({ events, userRegistrations = [] }: EventBrow
                   src={event.banner_url}
                   alt={event.title}
                   fill
+                  priority={idx < 2}
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />

@@ -3,6 +3,7 @@
 import { createClient, createAdminClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import { uploadImageToCloudinary } from "@/lib/cloudinary"
+import { broadcastNotificationAction } from "./notification-actions"
 
 export async function createEventAction(formData: FormData) {
   const supabase = await createClient()
@@ -78,6 +79,15 @@ export async function createEventAction(formData: FormData) {
     return { error: error.message }
   }
 
+  // Trigger notification if published directly
+  if (status === "published") {
+    await broadcastNotificationAction(
+      `New Event: ${title}`,
+      `A new event "${title}" has been published! Check it out and register now.`,
+      "event"
+    )
+  }
+
   revalidatePath("/admin/events")
   revalidatePath("/")
   return { success: "Event created successfully", event }
@@ -151,6 +161,10 @@ export async function updateEventAction(eventId: string, formData: FormData) {
     return { error: error.message }
   }
 
+  // We can't easily know if the status CHANGED to published without checking previous state,
+  // but for simplicity, we will trigger it if it's published. Ideally we only trigger if previous wasn't published.
+  // We'll skip broadcast on update to avoid spam, unless it's done specifically via updateEventStatusAction.
+  
   revalidatePath("/admin/events")
   revalidatePath("/")
   return { success: "Event updated successfully", event }
@@ -168,6 +182,19 @@ export async function updateEventStatusAction(
 
   if (error) {
     return { error: error.message }
+  }
+
+  if (status === "published") {
+    // Fetch event title for notification
+    const adminClient = createAdminClient()
+    const { data: eventData } = await adminClient.from("events").select("title").eq("id", eventId).single()
+    if (eventData) {
+      await broadcastNotificationAction(
+        `New Event: ${eventData.title}`,
+        `A new event "${eventData.title}" has been published! Check it out and register now.`,
+        "event"
+      )
+    }
   }
 
   revalidatePath("/admin/events")

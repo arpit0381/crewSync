@@ -18,7 +18,8 @@ import {
   Building, 
   Flag,
   GitFork,
-  X
+  X,
+  Bell
 } from "lucide-react"
 
 interface SidebarItem {
@@ -67,6 +68,7 @@ export function DashboardSidebar({ role, isOpen, onClose }: DashboardSidebarProp
     { label: "Departments", href: "/admin/departments", icon: Building },
     { label: "Clubs", href: "/admin/clubs", icon: Flag },
     { label: "User Management", href: "/admin/users", icon: Users },
+    { label: "Notifications", href: "/admin/notifications", icon: Bell },
     { label: "System Settings", href: "/admin/settings", icon: Settings },
   ]
 
