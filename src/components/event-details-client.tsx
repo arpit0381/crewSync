@@ -100,7 +100,13 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, is
 
   const handleRegisterClick = () => {
     if (!isLoggedIn) {
-      window.location.href = `/register?redirect=${encodeURIComponent(`/events/${event.id}?action=register`)}`
+      const urlParams = new URLSearchParams(window.location.search)
+      const invite = urlParams.get("invite")
+      let redirectUrl = `/events/${event.id}?action=register`
+      if (invite) {
+        redirectUrl += `&invite=${invite}`
+      }
+      window.location.href = `/register?redirect=${encodeURIComponent(redirectUrl)}`
       return
     }
     setShowRegModal(true)
@@ -110,7 +116,13 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, is
     e.preventDefault()
 
     if (!isLoggedIn) {
-      window.location.href = `/register?redirect=${encodeURIComponent(`/events/${event.id}?action=register`)}`
+      const urlParams = new URLSearchParams(window.location.search)
+      const invite = urlParams.get("invite")
+      let redirectUrl = `/events/${event.id}?action=register`
+      if (invite) {
+        redirectUrl += `&invite=${invite}`
+      }
+      window.location.href = `/register?redirect=${encodeURIComponent(redirectUrl)}`
       return
     }
 

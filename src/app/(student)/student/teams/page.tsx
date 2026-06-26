@@ -21,6 +21,7 @@ export default async function StudentTeamsPage() {
             name,
             invite_code,
             captain_id,
+            event_id,
             min_members,
             max_members,
             events (
@@ -58,6 +59,7 @@ export default async function StudentTeamsPage() {
             invite_code: team.invite_code,
             captain_name: captain?.name || "Organizer",
             is_captain: team.captain_id === user.id,
+            event_id: team.event_id,
             event_title: team.events?.title || "Campus Event",
             members: members?.map((mem: any) => mem.profiles?.name || "Anonymous") || [],
             min_members: team.min_members || 1,

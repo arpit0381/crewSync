@@ -9,6 +9,7 @@ interface Team {
   invite_code: string
   captain_name: string
   is_captain: boolean
+  event_id: string
   event_title: string
   members: string[]
   min_members: number
@@ -28,7 +29,18 @@ export function TeamsClient({ teams }: TeamsClientProps) {
       setCopiedCode(code)
       setTimeout(() => setCopiedCode(null), 2000)
     } catch (err) {
-      console.error("Failed to copy", err)
+      console.error("Failed to copy code", err)
+    }
+  }
+
+  const handleCopyInviteLink = async (eventId: string, code: string) => {
+    const inviteUrl = `${window.location.origin}/events/${eventId}?action=register&invite=${code}`
+    try {
+      await navigator.clipboard.writeText(inviteUrl)
+      setCopiedCode(`link-${code}`)
+      setTimeout(() => setCopiedCode(null), 2000)
+    } catch (err) {
+      console.error("Failed to copy link", err)
     }
   }
 
@@ -51,7 +63,17 @@ export function TeamsClient({ teams }: TeamsClientProps) {
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="grid gap-6 md:grid-cols-2 relative">
+      {/* Toast Notification */}
+      {copiedCode && copiedCode.startsWith('link-') && (
+        <div className="fixed top-6 right-6 z-[100] animate-in slide-in-from-top-5 fade-in duration-300">
+          <div className="bg-primary text-primary-foreground font-bold px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-primary/20">
+            <CheckCircle2 className="h-5 w-5" />
+            <span>Invite link copied! Share it with your team.</span>
+          </div>
+        </div>
+      )}
+
       {teams.map((team) => {
         const isFull = team.members.length >= team.max_members
         const isQualified = team.members.length >= team.min_members
@@ -149,21 +171,32 @@ export function TeamsClient({ teams }: TeamsClientProps) {
                 )}
 
                 {team.is_captain && team.invite_code ? (
-                  <div className="bg-background border border-border rounded-xl px-3.5 py-2 flex items-center justify-between gap-3 flex-1 sm:flex-none">
-                    <div>
-                      <p className="text-[8px] text-muted-foreground uppercase font-semibold">Invite Code</p>
-                      <p className="text-sm font-black tracking-widest text-primary font-mono">{team.invite_code}</p>
+                  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <div className="bg-background border border-border rounded-xl px-3.5 py-2 flex items-center justify-between gap-3 flex-1">
+                      <div>
+                        <p className="text-[8px] text-muted-foreground uppercase font-semibold">Invite Code</p>
+                        <p className="text-sm font-black tracking-widest text-primary font-mono">{team.invite_code}</p>
+                      </div>
+                      <button
+                        onClick={() => handleCopy(team.invite_code)}
+                        className={`p-1.5 rounded-lg transition-all border ${
+                          copiedCode === team.invite_code 
+                            ? "bg-green-500/10 border-green-500/20 text-green-500" 
+                            : "bg-card border-border hover:border-primary/50 text-muted-foreground hover:text-foreground"
+                        }`}
+                        title="Copy Invite Code"
+                      >
+                        {copiedCode === team.invite_code ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                      </button>
                     </div>
                     <button
-                      onClick={() => handleCopy(team.invite_code)}
-                      className={`p-1.5 rounded-lg transition-all border ${
-                        copiedCode === team.invite_code 
-                          ? "bg-green-500/10 border-green-500/20 text-green-500" 
-                          : "bg-card border-border hover:border-primary/50 text-muted-foreground hover:text-foreground"
+                      onClick={() => handleCopyInviteLink(team.event_id, team.invite_code)}
+                      className={`bg-primary text-primary-foreground px-4 py-2 rounded-xl text-xs font-bold shadow hover:bg-primary/90 transition-all flex items-center justify-center gap-2 flex-1 sm:flex-none ${
+                        copiedCode === `link-${team.invite_code}` ? "bg-green-500 text-white" : ""
                       }`}
-                      title="Copy Invite Code"
                     >
-                      {copiedCode === team.invite_code ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                      {copiedCode === `link-${team.invite_code}` ? <CheckCircle2 className="h-4 w-4" /> : <Users className="h-4 w-4" />}
+                      {copiedCode === `link-${team.invite_code}` ? "Copied Link!" : "Invite Link"}
                     </button>
                   </div>
                 ) : (
