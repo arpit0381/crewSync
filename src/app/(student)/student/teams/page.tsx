@@ -1,8 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
-import { Users, Shield, Copy, Calendar, Award } from "lucide-react"
+import { TeamsClient } from "@/components/student/teams-client"
 
 export const dynamic = "force-dynamic"
-
 
 export default async function StudentTeamsPage() {
   let dbTeams: any[] = []
@@ -22,6 +21,8 @@ export default async function StudentTeamsPage() {
             name,
             invite_code,
             captain_id,
+            min_members,
+            max_members,
             events (
               title
             )
@@ -58,7 +59,9 @@ export default async function StudentTeamsPage() {
             captain_name: captain?.name || "Organizer",
             is_captain: team.captain_id === user.id,
             event_title: team.events?.title || "Campus Event",
-            members: members?.map((mem: any) => mem.profiles?.name || "Anonymous") || []
+            members: members?.map((mem: any) => mem.profiles?.name || "Anonymous") || [],
+            min_members: team.min_members || 1,
+            max_members: team.max_members || 1
           })
         }
       }
@@ -76,85 +79,7 @@ export default async function StudentTeamsPage() {
         <p className="text-sm text-muted-foreground">Manage team registration rosters, copy invite codes, and review crew roles.</p>
       </div>
 
-      {teams.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-border p-12 text-center text-muted-foreground bg-card/10">
-          <Users className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
-          <p>You are not registered in any team events yet.</p>
-          <p className="text-xs text-muted-foreground mt-1">Form or join a team during registration of sports or coding events.</p>
-        </div>
-      ) : (
-        <div className="grid gap-6 md:grid-cols-2">
-          {teams.map((team) => (
-            <div
-              key={team.id}
-              className="rounded-3xl border border-border bg-card/30 p-6 flex flex-col justify-between backdrop-blur-sm relative overflow-hidden"
-            >
-              <div className="space-y-4">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 border border-primary/20 px-2 py-0.5 text-[10px] font-bold text-primary uppercase tracking-wider">
-                      <Calendar className="h-3 w-3" />
-                      {team.event_title}
-                    </span>
-                    <h3 className="text-lg font-bold text-foreground leading-tight mt-1">{team.name}</h3>
-                  </div>
-
-                  {team.is_captain && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 px-2.5 py-0.5 text-[10px] font-bold text-yellow-400 uppercase tracking-wider">
-                      <Shield className="h-3 w-3" />
-                      Captain
-                    </span>
-                  )}
-                </div>
-
-                {/* Team Members */}
-                <div className="space-y-2">
-                  <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Crew Members ({team.members.length})</span>
-                  <ul className="grid grid-cols-2 gap-2">
-                    {team.members.map((member: string, i: number) => (
-                      <li key={i} className="flex items-center gap-1.5 text-xs text-foreground bg-background/40 px-3 py-2 rounded-xl border border-border">
-                        <div className="h-2 w-2 rounded-full bg-zinc-500 shrink-0" />
-                        <span className="truncate">{member}</span>
-                        {member === team.captain_name && (
-                          <span className="text-[9px] text-yellow-500 font-bold shrink-0">(C)</span>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              {/* Bottom Details/Actions */}
-              <div className="border-t border-border pt-4 mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div className="space-y-1">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Captain in charge</p>
-                  <p className="text-xs font-semibold text-foreground">{team.captain_name}</p>
-                </div>
-
-                {team.is_captain && team.invite_code ? (
-                  <div className="bg-background border border-border rounded-xl px-3.5 py-2 flex items-center justify-between gap-3 w-full sm:w-auto">
-                    <div>
-                      <p className="text-[8px] text-muted-foreground uppercase font-semibold">Invite Code</p>
-                      <p className="text-sm font-black tracking-widest text-primary font-mono">{team.invite_code}</p>
-                    </div>
-                    <button
-                      onClick={undefined} // Fallback trigger
-                      className="p-1.5 bg-card border border-border hover:border-border text-muted-foreground hover:text-foreground rounded-lg transition-all"
-                      title="Copy Invite Code"
-                    >
-                      <Copy className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="text-[10px] text-muted-foreground bg-background/20 px-3 py-1.5 rounded-lg border border-border">
-                    Invite code protected
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      <TeamsClient teams={teams} />
     </div>
   )
 }

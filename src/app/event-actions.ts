@@ -289,7 +289,9 @@ export async function registerForEventAction(
           name: teamDetails.teamName,
           event_id: finalEventId,
           captain_id: user.id,
-          invite_code: inviteCode
+          invite_code: inviteCode,
+          min_members: event.min_team_size,
+          max_members: event.max_team_size
         })
         .select()
         .single()
@@ -334,7 +336,7 @@ export async function registerForEventAction(
       // Find the team
       const { data: team, error: teamFindErr } = await supabase
         .from("teams")
-        .select("id, max_members:event_id(max_team_size)")
+        .select("id, max_members")
         .eq("invite_code", teamDetails.inviteCode)
         .eq("event_id", finalEventId)
         .single()
@@ -349,7 +351,7 @@ export async function registerForEventAction(
         .select("*", { count: "exact", head: true })
         .eq("team_id", team.id)
 
-      const maxLimit = (team as any).max_members?.max_team_size || event.max_team_size
+      const maxLimit = (team as any).max_members || event.max_team_size
 
       if (memberCount && memberCount >= maxLimit) {
         return { error: "Team is already full! Cannot join." }
