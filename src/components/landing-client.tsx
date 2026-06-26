@@ -502,6 +502,8 @@ export function LandingClient({ events }: LandingClientProps) {
                             src={displayEvents[currentSlide].banner_url!}
                             alt={displayEvents[currentSlide].title}
                             fill
+                            priority
+                            sizes="(max-width: 768px) 100vw, 60vw"
                             className="object-cover opacity-80 group-hover:scale-105 transition-transform duration-700"
                           />
                         ) : (

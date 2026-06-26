@@ -156,6 +156,7 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn }: EventDet
             src={event.banner_url}
             alt={event.title}
             fill
+            sizes="100vw"
             className="object-cover opacity-60"
             priority
           />
