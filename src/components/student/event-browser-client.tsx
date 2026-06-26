@@ -83,15 +83,9 @@ export function EventBrowserClient({ events, userRegistrations = [] }: EventBrow
                   <span className="truncate">{event.venue}</span>
                 </div>
                 <div className="pt-2">
-                  <div className="w-full bg-muted dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden">
-                    <div 
-                      className="bg-primary h-full transition-all" 
-                      style={{ width: `${Math.min(100, ((event.registrationsCount || 0) / event.capacity) * 100)}%` }}
-                    />
-                  </div>
                   <div className="flex justify-between text-[10px] font-bold text-muted-foreground mt-1.5 uppercase tracking-wider">
-                    <span>{event.registrationsCount || 0} Joined</span>
-                    <span>{event.capacity} Capacity</span>
+                    <span>{event.reg_type === "team" ? "Team event" : "Individual"}</span>
+                    <span>{event.capacity} Spots</span>
                   </div>
                 </div>
               </div>

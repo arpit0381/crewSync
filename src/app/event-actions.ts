@@ -224,13 +224,15 @@ export async function registerForEventAction(
     return { error: "This event is not accepting registrations." }
   }
 
-  // Check capacity
-  const { count: currentRegs } = await supabase
+  const adminSupabase = createAdminClient()
+
+  // Check capacity (bypassing RLS)
+  const { count: currentRegs } = await adminSupabase
     .from("registrations")
     .select("*", { count: "exact", head: true })
     .eq("event_id", finalEventId)
 
-  if (currentRegs && currentRegs >= event.capacity) {
+  if (currentRegs !== null && currentRegs >= event.capacity) {
     return { error: "Registration full! Capacity limit reached." }
   }
 
@@ -353,7 +355,7 @@ export async function registerForEventAction(
 
       const maxLimit = (team as any).max_members || event.max_team_size
 
-      if (memberCount && memberCount >= maxLimit) {
+      if (memberCount !== null && memberCount >= maxLimit) {
         return { error: "Team is already full! Cannot join." }
       }
 

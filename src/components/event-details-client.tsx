@@ -28,9 +28,11 @@ interface EventDetailsClientProps {
   event: EventDetails
   isRegistered: boolean
   isLoggedIn: boolean
+  isFull?: boolean
+  isClosed?: boolean
 }
 
-export function EventDetailsClient({ event, isRegistered, isLoggedIn }: EventDetailsClientProps) {
+export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, isClosed }: EventDetailsClientProps) {
   const [showRegModal, setShowRegModal] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
@@ -43,6 +45,12 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn }: EventDet
   const [teamName, setTeamName] = React.useState("")
   const [inviteCode, setInviteCode] = React.useState("")
   const [isCopied, setIsCopied] = React.useState(false)
+  const [toastMessage, setToastMessage] = React.useState<string | null>(null)
+
+  const showToast = (message: string) => {
+    setToastMessage(message)
+    setTimeout(() => setToastMessage(null), 4000)
+  }
 
   const handleShare = async () => {
     const url = window.location.href
@@ -72,15 +80,23 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn }: EventDet
   React.useEffect(() => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search)
-      if (urlParams.get("action") === "register" && isLoggedIn && !isSuccessfullyRegistered) {
+      const action = urlParams.get("action")
+      const invite = urlParams.get("invite")
+      
+      if (action === "register" && isLoggedIn && !isSuccessfullyRegistered) {
         setShowRegModal(true)
         
-        // Optionally clean up URL so refreshing doesn't keep opening it
+        if (invite && event.reg_type === "team") {
+          setTeamMode("join")
+          setInviteCode(invite)
+        }
+        
+        // Clean up URL
         const newUrl = window.location.pathname
         window.history.replaceState({}, "", newUrl)
       }
     }
-  }, [isLoggedIn, isSuccessfullyRegistered])
+  }, [isLoggedIn, isSuccessfullyRegistered, event.reg_type])
 
   const handleRegisterClick = () => {
     if (!isLoggedIn) {
@@ -122,9 +138,22 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn }: EventDet
       setSuccess(result.success)
       if (result.inviteCode) {
         setInviteCodeResult(result.inviteCode)
+        if (teamMode === "create") {
+          showToast("Awesome! Now invite more participants to your team.")
+        }
       }
       setIsSuccessfullyRegistered(true)
       setLoading(false)
+    }
+  }
+
+  const handleCopyInviteLink = async (code: string) => {
+    const inviteUrl = `${window.location.origin}/events/${event.id}?action=register&invite=${code}`
+    try {
+      await navigator.clipboard.writeText(inviteUrl)
+      showToast("Invite link copied! Share it with your team.")
+    } catch (err) {
+      console.error("Failed to copy link", err)
     }
   }
 
@@ -137,7 +166,17 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn }: EventDet
   }
 
   return (
-    <div className="pb-24 lg:pb-12 min-h-screen">
+    <div className="pb-24 lg:pb-12 min-h-screen relative">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed top-6 right-6 z-[100] animate-in slide-in-from-top-5 fade-in duration-300">
+          <div className="bg-primary text-primary-foreground font-bold px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-primary/20">
+            <CheckCircle className="h-5 w-5" />
+            <span>{toastMessage}</span>
+          </div>
+        </div>
+      )}
+
       {/* Back button */}
       <div className="pt-6 pb-4">
         <Link 
@@ -281,6 +320,16 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn }: EventDet
                     View your ticket
                   </Link>
                 </div>
+              ) : isClosed ? (
+                <div className="w-full flex items-center justify-center gap-2 rounded-2xl bg-zinc-800 text-zinc-400 py-4 font-bold text-lg cursor-not-allowed">
+                  <X className="h-5 w-5" />
+                  Registration Closed
+                </div>
+              ) : isFull ? (
+                <div className="w-full flex items-center justify-center gap-2 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 py-4 font-bold text-lg cursor-not-allowed">
+                  <X className="h-5 w-5" />
+                  Registration Full
+                </div>
               ) : (
                 <button
                   onClick={handleRegisterClick}
@@ -304,6 +353,14 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn }: EventDet
           >
             <CheckCircle className="mr-2 h-5 w-5" /> View Ticket
           </Link>
+        ) : isClosed ? (
+          <div className="w-full flex items-center justify-center rounded-xl bg-zinc-800 text-zinc-400 py-3.5 font-bold shadow-lg">
+            Registration Closed
+          </div>
+        ) : isFull ? (
+          <div className="w-full flex items-center justify-center rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 py-3.5 font-bold shadow-lg">
+            Registration Full
+          </div>
         ) : (
           <button
             onClick={handleRegisterClick}
@@ -344,11 +401,25 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn }: EventDet
                     <CheckCircle className="h-5 w-5" />
                     <span>{success}</span>
                   </div>
-                  {inviteCodeResult && (
-                    <div className="mt-2 bg-black/20 p-3 rounded-lg border border-green-500/20">
-                      <p className="text-xs text-green-400 mb-1">Share this Invite Code with your team:</p>
-                      <p className="text-lg font-mono font-bold tracking-widest text-white select-all">
-                        {inviteCodeResult}
+                  {inviteCodeResult && teamMode === "create" && (
+                    <div className="mt-4 bg-background p-4 rounded-xl border border-green-500/30 shadow-inner">
+                      <p className="text-xs text-foreground/80 mb-3 font-semibold uppercase tracking-wider flex items-center gap-2">
+                        <Users className="h-4 w-4 text-primary" /> Invite your crew members
+                      </p>
+                      
+                      <div className="flex items-center justify-between bg-muted/50 rounded-lg p-2 border border-border">
+                        <span className="text-xl font-mono font-black tracking-[0.2em] text-primary px-2 select-all">
+                          {inviteCodeResult}
+                        </span>
+                        <button 
+                          onClick={() => handleCopyInviteLink(inviteCodeResult)}
+                          className="bg-primary text-primary-foreground px-4 py-2 rounded-md text-xs font-bold shadow hover:bg-primary/90 transition-all flex items-center gap-1.5"
+                        >
+                          <Share2 className="h-3.5 w-3.5" /> Copy Link
+                        </button>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground mt-2">
+                        Anyone with the link can directly join your team!
                       </p>
                     </div>
                   )}

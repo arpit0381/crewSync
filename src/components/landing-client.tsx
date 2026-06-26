@@ -674,7 +674,7 @@ export function LandingClient({ events }: LandingClientProps) {
                           <span className="inline-flex items-center gap-1 font-bold text-foreground">
                             <Users className="h-3 w-3 text-primary" /> {event.reg_type === "team" ? "Team event" : "Individual"}
                           </span>
-                          <span className="font-semibold text-primary">{event.registrationsCount || 0} / {event.capacity} Joined</span>
+                          <span className="font-semibold text-muted-foreground">{event.capacity} Spots</span>
                         </div>
                       </div>
 

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { createClient, createAdminClient } from "@/lib/supabase/server"
 import { EventDetailsClient } from "@/components/event-details-client"
 
 export const dynamic = "force-dynamic"
@@ -45,6 +45,16 @@ export default async function EventDetailsPage({
     notFound()
   }
 
+  // 1.5 Fetch current registration count
+  const adminSupabase = createAdminClient()
+  const { count: currentRegs } = await adminSupabase
+    .from("registrations")
+    .select("*", { count: "exact", head: true })
+    .eq("event_id", id)
+    
+  const isFull = currentRegs !== null && currentRegs >= event.capacity
+  const isClosed = event.status !== "published"
+
   // 2. Check if user is logged in & registered
   const { data: { user } } = await supabase.auth.getUser()
   let isRegistered = false
@@ -67,7 +77,9 @@ export default async function EventDetailsPage({
       <EventDetailsClient 
         event={event as any} 
         isRegistered={isRegistered} 
-        isLoggedIn={!!user} 
+        isLoggedIn={!!user}
+        isFull={isFull}
+        isClosed={isClosed}
       />
     </main>
   )
