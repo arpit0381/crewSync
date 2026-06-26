@@ -21,6 +21,8 @@ interface RegistrationFull {
   department: string
   section: string
   team_name: string | null
+  team_id: string | null
+  is_captain: boolean
 }
 
 interface RegistrationsClientProps {
@@ -33,6 +35,7 @@ export function RegistrationsClient({ events, initialRegs }: RegistrationsClient
   const [loading, setLoading] = useState(false)
   const [selectedEventId, setSelectedEventId] = useState("all")
   const [searchQuery, setSearchQuery] = useState("")
+  const [viewMode, setViewMode] = useState<"list" | "teams">("list")
 
   const handleEventChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const eventId = e.target.value
@@ -135,6 +138,30 @@ export function RegistrationsClient({ events, initialRegs }: RegistrationsClient
                 <option key={evt.id} value={evt.id}>{evt.title}</option>
               ))}
             </select>
+            
+            <div className="flex bg-muted/30 border border-border p-1 rounded-xl">
+              <button
+                onClick={() => setViewMode("list")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  viewMode === "list" 
+                    ? "bg-background shadow-sm text-foreground" 
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                List
+              </button>
+              <button
+                onClick={() => setViewMode("teams")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 ${
+                  viewMode === "teams" 
+                    ? "bg-background shadow-sm text-foreground" 
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Users className="h-3.5 w-3.5" /> Teams
+              </button>
+            </div>
+
             {loading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
           </div>
         </div>
@@ -142,6 +169,64 @@ export function RegistrationsClient({ events, initialRegs }: RegistrationsClient
         {filteredRegs.length === 0 ? (
           <div className="p-8 text-center text-muted-foreground border border-dashed border-border rounded-2xl">
             {loading ? "Loading registrations..." : "No registrations found."}
+          </div>
+        ) : viewMode === "teams" ? (
+          <div className="space-y-6">
+            {Array.from(
+              filteredRegs.reduce((map, reg) => {
+                const key = reg.team_id || "individual"
+                if (!map.has(key)) map.set(key, [])
+                map.get(key)!.push(reg)
+                return map
+              }, new Map<string, RegistrationFull[]>())
+            ).map(([teamId, members]) => {
+              const teamName = teamId === "individual" ? "Individual Registrations" : members[0]?.team_name || "Unknown Team"
+              const captain = members.find(m => m.is_captain)
+              
+              return (
+                <div key={teamId} className="border border-border/50 rounded-2xl bg-card overflow-hidden">
+                  <div className="bg-muted/30 px-6 py-4 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                      <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+                        {teamId !== "individual" ? <Users className="h-5 w-5 text-primary" /> : <Ticket className="h-5 w-5 text-muted-foreground" />}
+                        {teamName}
+                      </h3>
+                      {teamId !== "individual" && captain && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Captain: <span className="font-semibold text-foreground">{captain.student_name}</span> ({captain.roll_number})
+                        </p>
+                      )}
+                    </div>
+                    <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold border border-primary/20">
+                      {members.length} {members.length === 1 ? "Member" : "Members"}
+                    </div>
+                  </div>
+                  
+                  <div className="divide-y divide-border/30">
+                    {members.map(member => (
+                      <div key={member.id} className="p-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-muted/10 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <div className={`h-8 w-8 rounded-full flex items-center justify-center font-bold text-xs ${member.is_captain ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+                            {member.student_name.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="font-semibold text-sm text-foreground flex items-center gap-2">
+                              {member.student_name}
+                              {member.is_captain && <span className="text-[9px] uppercase tracking-wider bg-primary/20 text-primary px-1.5 py-0.5 rounded">Captain</span>}
+                            </p>
+                            <p className="text-xs text-muted-foreground font-mono mt-0.5">{member.roll_number} • {member.department} {member.section !== "N/A" ? `(${member.section})` : ""}</p>
+                          </div>
+                        </div>
+                        <div className="text-xs text-muted-foreground text-right">
+                          <p className="font-mono">{member.phone}</p>
+                          <p className="truncate max-w-[200px]">{member.email}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
           </div>
         ) : (
           <>
@@ -195,6 +280,7 @@ export function RegistrationsClient({ events, initialRegs }: RegistrationsClient
                           <div className="flex items-center gap-1.5 text-xs text-primary font-semibold">
                             <Users className="h-3.5 w-3.5 shrink-0" />
                             <span className="truncate max-w-[120px]">{reg.team_name}</span>
+                            {reg.is_captain && <span className="bg-primary/20 px-1 py-0.5 rounded text-[8px] uppercase">Capt</span>}
                           </div>
                         ) : (
                           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -218,7 +304,10 @@ export function RegistrationsClient({ events, initialRegs }: RegistrationsClient
                 <div key={reg.id} className="rounded-2xl border border-border bg-card/40 p-4 space-y-3">
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="font-semibold text-foreground text-sm">{reg.student_name}</p>
+                      <p className="font-semibold text-foreground text-sm flex items-center gap-1">
+                        {reg.student_name}
+                        {reg.is_captain && <span className="bg-primary/20 text-primary px-1 py-0.5 rounded text-[8px] uppercase">Captain</span>}
+                      </p>
                       <p className="text-[10px] text-muted-foreground font-mono">{reg.roll_number}</p>
                     </div>
                     <span className="text-[10px] font-mono text-muted-foreground uppercase bg-background border border-border px-2 py-0.5 rounded-md">

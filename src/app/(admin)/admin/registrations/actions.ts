@@ -10,6 +10,7 @@ export async function getRegistrationsByEventAction(eventId: string) {
     .select(`
       id,
       created_at,
+      user_id,
       events (
         title,
         reg_type
@@ -23,7 +24,9 @@ export async function getRegistrationsByEventAction(eventId: string) {
         departments (name)
       ),
       teams (
-        name
+        id,
+        name,
+        captain_id
       )
     `)
     .order("created_at", { ascending: false })
@@ -50,7 +53,9 @@ export async function getRegistrationsByEventAction(eventId: string) {
     email: r.profiles?.email || "N/A",
     department: r.profiles?.departments?.name || "N/A",
     section: r.profiles?.section || "N/A",
-    team_name: r.teams?.name || null
+    team_name: r.teams?.name || null,
+    team_id: r.teams?.id || null,
+    is_captain: r.teams ? r.teams.captain_id === r.user_id : false
   }))
 
   return { data: formattedRegs }
