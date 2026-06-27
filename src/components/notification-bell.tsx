@@ -52,12 +52,14 @@ export function NotificationBell() {
     
     const supabase = createClient()
     let channel: any
+    let isMounted = true
 
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return
+      if (!user || !isMounted) return
 
+      // Use a more unique channel name just in case
       channel = supabase
-        .channel('realtime:notifications')
+        .channel(`user-notifications-${user.id}`)
         .on(
           'postgres_changes',
           {
@@ -75,6 +77,7 @@ export function NotificationBell() {
     })
 
     return () => {
+      isMounted = false
       if (channel) {
         supabase.removeChannel(channel)
       }
