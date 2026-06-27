@@ -213,7 +213,7 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, is
         <div className="flex flex-col md:flex-row gap-10 md:gap-16 items-start">
           
           {/* Left Column: Details */}
-          <div className="flex-1 w-full order-2 md:order-1 space-y-8">
+          <div className="flex-1 min-w-0 w-full order-2 md:order-1 space-y-8">
             {/* Title & Badges */}
             <div className="space-y-4">
               <div className="flex flex-wrap gap-2">
@@ -225,44 +225,44 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, is
                 </span>
               </div>
 
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.1]">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.1] break-words">
                 {event.title}
               </h1>
               
-              <div className="flex items-center gap-2 text-zinc-400 text-base md:text-lg">
+              <div className="flex items-center gap-2 text-zinc-400 text-base md:text-lg flex-wrap">
                 <span>Organized by</span>
-                <span className="text-zinc-200 font-medium">{event.clubs?.name || event.departments?.name || "Campus Administration"}</span>
+                <span className="text-zinc-200 font-medium break-words">{event.clubs?.name || event.departments?.name || "Campus Administration"}</span>
               </div>
             </div>
 
             {/* Quick Details Grid */}
             <div className="grid grid-cols-2 gap-x-6 gap-y-8 py-8 border-y border-zinc-900">
               <div className="flex items-start gap-3">
-                <Calendar className="h-5 w-5 text-primary mt-0.5" />
-                <div>
+                <Calendar className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                <div className="min-w-0">
                   <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-1">Date</p>
-                  <p className="text-sm font-medium text-zinc-200">{event.event_date}</p>
+                  <p className="text-sm font-medium text-zinc-200 truncate">{event.event_date}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Clock className="h-5 w-5 text-primary mt-0.5" />
-                <div>
+                <Clock className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                <div className="min-w-0">
                   <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-1">Time</p>
-                  <p className="text-sm font-medium text-zinc-200">{event.event_time}</p>
+                  <p className="text-sm font-medium text-zinc-200 truncate">{event.event_time}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-primary mt-0.5" />
-                <div>
+                <MapPin className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                <div className="min-w-0">
                   <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-1">Venue</p>
-                  <p className="text-sm font-medium text-zinc-200">{event.venue}</p>
+                  <p className="text-sm font-medium text-zinc-200 truncate">{event.venue}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Users className="h-5 w-5 text-primary mt-0.5" />
-                <div>
+                <Users className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                <div className="min-w-0">
                   <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-1">Capacity</p>
-                  <p className="text-sm font-medium text-zinc-200">{event.capacity} spots</p>
+                  <p className="text-sm font-medium text-zinc-200 truncate">{event.capacity} spots</p>
                 </div>
               </div>
             </div>
@@ -270,27 +270,27 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, is
             {/* Registration Action - Desktop */}
             <div className="hidden md:block pt-2">
               {isSuccessfullyRegistered ? (
-                 <Link href="/student/registrations" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-green-500/10 text-green-400 font-semibold border border-green-500/20 hover:bg-green-500/20 transition-colors w-auto">
-                   <CheckCircle className="h-5 w-5" />
-                   You're Registered - View Ticket
+                 <Link href="/student/registrations" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-green-500/10 text-green-400 font-semibold border border-green-500/20 hover:bg-green-500/20 transition-colors w-auto text-center max-w-full">
+                   <CheckCircle className="h-5 w-5 shrink-0" />
+                   <span className="truncate">You're Registered - View Ticket</span>
                  </Link>
               ) : isClosed ? (
-                 <div className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-zinc-900 text-zinc-500 font-semibold border border-zinc-800 cursor-not-allowed">
-                   <X className="h-5 w-5" />
-                   Registration Closed
+                 <div className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-zinc-900 text-zinc-500 font-semibold border border-zinc-800 cursor-not-allowed w-auto text-center max-w-full">
+                   <X className="h-5 w-5 shrink-0" />
+                   <span className="truncate">Registration Closed</span>
                  </div>
               ) : isFull ? (
-                 <div className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-red-500/10 text-red-400 font-semibold border border-red-500/20 cursor-not-allowed">
-                   <X className="h-5 w-5" />
-                   Registration Full
+                 <div className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-red-500/10 text-red-400 font-semibold border border-red-500/20 cursor-not-allowed w-auto text-center max-w-full">
+                   <X className="h-5 w-5 shrink-0" />
+                   <span className="truncate">Registration Full</span>
                  </div>
               ) : (
                  <button
                    onClick={handleRegisterClick}
-                   className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-2xl bg-primary text-primary-foreground font-bold text-lg hover:bg-primary/90 hover:-translate-y-0.5 transition-all shadow-xl shadow-primary/20 w-auto"
+                   className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-2xl bg-primary text-primary-foreground font-bold text-lg hover:bg-primary/90 hover:-translate-y-0.5 transition-all shadow-xl shadow-primary/20 w-auto max-w-full"
                  >
-                   <Ticket className="h-5 w-5" />
-                   Register Now
+                   <Ticket className="h-5 w-5 shrink-0" />
+                   <span className="truncate">Register Now</span>
                  </button>
               )}
             </div>
@@ -300,8 +300,8 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, is
                <h2 className="text-lg font-bold text-white mb-4">
                  About the Event
                </h2>
-               <div className="prose prose-invert max-w-none text-zinc-400 leading-relaxed text-sm md:text-base">
-                 <p className="whitespace-pre-wrap">{event.description}</p>
+               <div className="prose prose-invert max-w-none text-zinc-400 leading-relaxed text-sm md:text-base break-words">
+                 <p className="whitespace-pre-wrap break-words">{event.description}</p>
                </div>
             </div>
           </div>
