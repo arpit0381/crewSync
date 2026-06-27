@@ -96,7 +96,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Analytics Summary Cards */}
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-2xl border border-border bg-card/40 p-5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Events</p>

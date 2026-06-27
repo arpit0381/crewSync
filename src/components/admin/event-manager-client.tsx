@@ -282,7 +282,7 @@ export function EventManagerClient({
       </div>
 
       {/* Analytics Summary */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="rounded-2xl border border-border bg-card p-4">
           <p className="text-sm font-medium text-muted-foreground">Total Events</p>
           <p className="text-2xl font-bold text-foreground mt-1">{totalEvents}</p>

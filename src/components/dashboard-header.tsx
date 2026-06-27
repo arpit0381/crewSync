@@ -82,8 +82,8 @@ export function DashboardHeader({ userEmail, userName, userRole, toggleSidebar }
             onClick={() => setDropdownOpen(!dropdownOpen)}
             className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted transition-colors text-foreground"
           >
-            <Palette className="h-3.5 w-3.5 text-primary" />
-            <span className="capitalize">{themePack}</span>
+            <Palette className="h-3.5 w-3.5 text-primary shrink-0" />
+            <span className="capitalize hidden sm:inline">{themePack}</span>
           </button>
 
           {dropdownOpen && (
