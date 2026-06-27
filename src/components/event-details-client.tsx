@@ -179,7 +179,7 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, is
   }
 
   return (
-    <div className="pb-32 lg:pb-16 min-h-screen relative selection:bg-primary/30">
+    <div className="pb-32 lg:pb-16 min-h-screen relative selection:bg-primary/30 bg-black">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-6 right-6 z-[100] animate-in slide-in-from-top-5 fade-in duration-300">
@@ -190,207 +190,150 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, is
         </div>
       )}
 
-      {/* Back button */}
-      <div className="pt-8 pb-6">
+      {/* Top Bar */}
+      <div className="pt-8 pb-8 flex items-center justify-between max-w-5xl mx-auto px-4 md:px-6">
         <Link 
           href="/student/events" 
-          className="inline-flex items-center text-sm font-bold text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-full border border-white/5 transition-all"
+          className="inline-flex items-center text-sm font-medium text-zinc-400 hover:text-white transition-colors bg-zinc-900/50 hover:bg-zinc-900 px-4 py-2 rounded-full border border-zinc-800"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Events
         </Link>
+        <button
+          onClick={handleShare}
+          className="inline-flex items-center text-sm font-medium text-zinc-400 hover:text-white transition-colors bg-zinc-900/50 hover:bg-zinc-900 px-4 py-2 rounded-full border border-zinc-800"
+        >
+          {isCopied ? <Check className="mr-2 h-4 w-4 text-green-400" /> : <Share2 className="mr-2 h-4 w-4" />}
+          {isCopied ? "Copied" : "Share"}
+        </button>
       </div>
 
-      {/* Hero Header */}
-      <div className="relative w-full rounded-[2.5rem] overflow-hidden bg-zinc-950 border border-white/5 mb-10 shadow-2xl flex flex-col lg:flex-row items-stretch min-h-[400px]">
-        
-        {/* Blurred background */}
-        {event.banner_url ? (
-          <div className="absolute inset-0 z-0 pointer-events-none">
-            <Image
-              src={event.banner_url}
-              alt="background"
-              fill
-              className="object-cover opacity-20 blur-[80px] scale-110 mix-blend-screen"
-              priority
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent lg:bg-gradient-to-r lg:from-zinc-950 lg:via-zinc-950/80 lg:to-transparent" />
-          </div>
-        ) : (
-           <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-950 to-primary/10 z-0 pointer-events-none" />
-        )}
-
-        {/* Content Side */}
-        <div className="relative z-10 flex flex-col justify-end lg:justify-center p-8 md:p-12 lg:w-3/5 order-2 lg:order-1">
-            <div className="flex flex-wrap gap-3 mb-6">
-              <span className="inline-flex items-center rounded-full bg-primary/20 border border-primary/30 px-4 py-1.5 text-xs font-black text-primary uppercase tracking-widest backdrop-blur-md shadow-inner">
-                {event.categories?.name || "Event"}
-              </span>
-              <span className="inline-flex items-center rounded-full bg-white/10 border border-white/10 px-4 py-1.5 text-xs font-black text-zinc-300 uppercase tracking-widest backdrop-blur-md shadow-inner">
-                {event.reg_type === "team" ? "Team Event" : "Individual"}
-              </span>
-            </div>
-            
-            <h1 className="text-4xl md:text-5xl lg:text-7xl font-black text-white tracking-tighter mb-5 leading-[1.1] drop-shadow-xl">
-              {event.title}
-            </h1>
-            
-            <div className="flex items-center gap-3 text-zinc-400 font-medium text-lg mt-2 mb-8 bg-black/20 self-start px-5 py-2.5 rounded-full border border-white/5 backdrop-blur-sm">
-              <span>Organized by</span>
-              <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-              <span className="text-zinc-100 font-bold tracking-wide">
-                {event.clubs?.name || event.departments?.name || "Campus Administration"}
-              </span>
-            </div>
-
-            <div className="flex gap-4">
-              <button
-                onClick={handleShare}
-                className="flex items-center gap-3 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 text-white rounded-2xl px-6 py-4 transition-all font-bold shadow-xl group"
-              >
-                {isCopied ? (
-                  <Check className="h-5 w-5 text-green-400" />
-                ) : (
-                  <Share2 className="h-5 w-5 group-hover:-translate-y-0.5 group-hover:scale-110 transition-all text-zinc-300 group-hover:text-white" />
-                )}
-                <span>{isCopied ? "Copied Link!" : "Share Event"}</span>
-              </button>
-            </div>
-        </div>
-
-        {/* Poster Side */}
-        <div className="relative z-10 lg:w-2/5 p-6 md:p-8 lg:p-12 order-1 lg:order-2 flex items-center justify-center lg:justify-end">
-            {event.banner_url ? (
-                <div 
-                  className="relative w-full max-w-[280px] sm:max-w-xs lg:max-w-sm aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl shadow-black/50 border border-white/10 group cursor-pointer rotate-2 hover:rotate-0 transition-transform duration-500"
-                  onClick={() => setShowPosterModal(true)}
-                >
-                  <Image
-                    src={event.banner_url}
-                    alt={event.title}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-end pb-8 backdrop-blur-[2px]">
-                     <div className="bg-white/10 text-white rounded-full p-4 backdrop-blur-md border border-white/20 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 mb-3">
-                        <Maximize2 className="h-6 w-6" />
-                     </div>
-                     <span className="text-white font-bold text-sm tracking-widest uppercase">View Full Poster</span>
-                  </div>
-                </div>
-            ) : (
-               <div className="relative w-full max-w-sm aspect-[4/5] rounded-[2rem] bg-zinc-900/50 border border-white/5 flex flex-col items-center justify-center text-zinc-600">
-                  <div className="bg-zinc-800 p-4 rounded-full mb-3">
-                     <Image className="h-8 w-8 opacity-50" src="/placeholder.svg" alt="placeholder" width={32} height={32} />
-                  </div>
-                  <span className="font-bold tracking-wider uppercase text-sm">No Poster Available</span>
-               </div>
-            )}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Content */}
-        <div className="lg:col-span-2 space-y-8">
-          <section className="bg-zinc-950/40 backdrop-blur-2xl border border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
-            <h2 className="text-2xl font-black mb-8 flex items-center gap-4 text-white">
-              <div className="bg-primary/20 p-3 rounded-2xl text-primary border border-primary/20">
-                 <Info className="h-6 w-6" />
+      {/* Main Content Area - Minimal & Clean */}
+      <div className="max-w-5xl mx-auto px-4 md:px-6">
+        <div className="flex flex-col md:flex-row gap-10 md:gap-16 items-start">
+          
+          {/* Left Column: Details */}
+          <div className="flex-1 w-full order-2 md:order-1 space-y-8">
+            {/* Title & Badges */}
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-2">
+                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-zinc-900 text-zinc-300 border border-zinc-800">
+                  {event.categories?.name || "Event"}
+                </span>
+                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-zinc-900 text-zinc-300 border border-zinc-800">
+                  {event.reg_type === "team" ? `Team Event (${event.min_team_size}-${event.max_team_size})` : "Individual"}
+                </span>
               </div>
-              About the Event
-            </h2>
-            <div className="prose prose-invert prose-lg max-w-none prose-p:text-zinc-400 prose-p:leading-relaxed prose-headings:text-zinc-200">
-              <p className="whitespace-pre-wrap">
-                {event.description}
-              </p>
-            </div>
-          </section>
-        </div>
 
-        {/* Sidebar */}
-        <div className="space-y-6">
-          <div className="bg-zinc-950/40 backdrop-blur-2xl border border-white/5 rounded-[2.5rem] p-8 md:p-10 sticky top-8 shadow-2xl">
-            <h3 className="text-xl font-black mb-8 text-white flex items-center gap-3">
-               Event Details
-            </h3>
-            
-            <div className="space-y-7">
-              <div className="flex items-start gap-5">
-                <div className="bg-white/5 p-3.5 rounded-2xl border border-white/10 shrink-0">
-                  <Calendar className="h-6 w-6 text-primary" />
-                </div>
-                <div className="pt-1">
-                  <p className="text-sm text-zinc-500 font-bold uppercase tracking-wider mb-1">Date</p>
-                  <p className="font-black text-white text-lg">{event.event_date}</p>
-                </div>
-              </div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.1]">
+                {event.title}
+              </h1>
               
-              <div className="flex items-start gap-5">
-                <div className="bg-white/5 p-3.5 rounded-2xl border border-white/10 shrink-0">
-                  <Clock className="h-6 w-6 text-primary" />
-                </div>
-                <div className="pt-1">
-                  <p className="text-sm text-zinc-500 font-bold uppercase tracking-wider mb-1">Time</p>
-                  <p className="font-black text-white text-lg">{event.event_time}</p>
+              <div className="flex items-center gap-2 text-zinc-400 text-base md:text-lg">
+                <span>Organized by</span>
+                <span className="text-zinc-200 font-medium">{event.clubs?.name || event.departments?.name || "Campus Administration"}</span>
+              </div>
+            </div>
+
+            {/* Quick Details Grid */}
+            <div className="grid grid-cols-2 gap-x-6 gap-y-8 py-8 border-y border-zinc-900">
+              <div className="flex items-start gap-3">
+                <Calendar className="h-5 w-5 text-primary mt-0.5" />
+                <div>
+                  <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-1">Date</p>
+                  <p className="text-sm font-medium text-zinc-200">{event.event_date}</p>
                 </div>
               </div>
-
-              <div className="flex items-start gap-5">
-                <div className="bg-white/5 p-3.5 rounded-2xl border border-white/10 shrink-0">
-                  <MapPin className="h-6 w-6 text-primary" />
-                </div>
-                <div className="pt-1">
-                  <p className="text-sm text-zinc-500 font-bold uppercase tracking-wider mb-1">Venue</p>
-                  <p className="font-black text-white text-lg leading-tight">{event.venue}</p>
+              <div className="flex items-start gap-3">
+                <Clock className="h-5 w-5 text-primary mt-0.5" />
+                <div>
+                  <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-1">Time</p>
+                  <p className="text-sm font-medium text-zinc-200">{event.event_time}</p>
                 </div>
               </div>
-
-              <div className="flex items-start gap-5">
-                <div className="bg-white/5 p-3.5 rounded-2xl border border-white/10 shrink-0">
-                  <Users className="h-6 w-6 text-primary" />
+              <div className="flex items-start gap-3">
+                <MapPin className="h-5 w-5 text-primary mt-0.5" />
+                <div>
+                  <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-1">Venue</p>
+                  <p className="text-sm font-medium text-zinc-200">{event.venue}</p>
                 </div>
-                <div className="pt-1">
-                  <p className="text-sm text-zinc-500 font-bold uppercase tracking-wider mb-1">Registration Type</p>
-                  <p className="font-black text-white text-lg capitalize">
-                    {event.reg_type}
-                    {event.reg_type === "team" && <span className="block text-sm text-zinc-400 font-medium mt-1">({event.min_team_size}-{event.max_team_size} members)</span>}
-                  </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <Users className="h-5 w-5 text-primary mt-0.5" />
+                <div>
+                  <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-1">Capacity</p>
+                  <p className="text-sm font-medium text-zinc-200">{event.capacity} spots</p>
                 </div>
               </div>
             </div>
 
-            <div className="mt-10 pt-8 border-t border-white/10 hidden lg:block">
+            {/* Registration Action - Desktop */}
+            <div className="hidden md:block pt-2">
               {isSuccessfullyRegistered ? (
-                <div className="w-full flex flex-col items-center justify-center rounded-3xl bg-green-500/10 border border-green-500/20 p-6 text-green-400 text-center shadow-inner">
-                  <div className="bg-green-500/20 p-3 rounded-full mb-3">
-                    <CheckCircle className="h-8 w-8" />
-                  </div>
-                  <span className="font-black text-xl mb-1 text-green-300">You're Registered!</span>
-                  <Link href="/student/registrations" className="text-sm text-green-500 font-bold hover:text-green-300 transition-colors flex items-center gap-1 mt-2 bg-green-500/10 px-4 py-2 rounded-full">
-                    <Ticket className="h-4 w-4" /> View Ticket
-                  </Link>
-                </div>
+                 <Link href="/student/registrations" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-green-500/10 text-green-400 font-semibold border border-green-500/20 hover:bg-green-500/20 transition-colors w-auto">
+                   <CheckCircle className="h-5 w-5" />
+                   You're Registered - View Ticket
+                 </Link>
               ) : isClosed ? (
-                <div className="w-full flex flex-col items-center justify-center rounded-3xl bg-zinc-900 border border-zinc-800 text-zinc-500 p-6 font-bold text-lg cursor-not-allowed">
-                  <X className="h-8 w-8 mb-2 opacity-50" />
-                  Registration Closed
-                </div>
+                 <div className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-zinc-900 text-zinc-500 font-semibold border border-zinc-800 cursor-not-allowed">
+                   <X className="h-5 w-5" />
+                   Registration Closed
+                 </div>
               ) : isFull ? (
-                <div className="w-full flex flex-col items-center justify-center rounded-3xl bg-red-500/10 border border-red-500/20 text-red-400 p-6 font-bold text-lg cursor-not-allowed">
-                  <X className="h-8 w-8 mb-2 opacity-50" />
-                  Registration Full
-                </div>
+                 <div className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-red-500/10 text-red-400 font-semibold border border-red-500/20 cursor-not-allowed">
+                   <X className="h-5 w-5" />
+                   Registration Full
+                 </div>
               ) : (
-                <button
-                  onClick={handleRegisterClick}
-                  className="w-full flex items-center justify-center gap-3 rounded-3xl bg-primary hover:bg-primary/90 text-primary-foreground p-5 font-black text-xl transition-all shadow-xl shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-1"
-                >
-                  <Ticket className="h-6 w-6" />
-                  Register Now
-                </button>
+                 <button
+                   onClick={handleRegisterClick}
+                   className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-2xl bg-primary text-primary-foreground font-bold text-lg hover:bg-primary/90 hover:-translate-y-0.5 transition-all shadow-xl shadow-primary/20 w-auto"
+                 >
+                   <Ticket className="h-5 w-5" />
+                   Register Now
+                 </button>
               )}
             </div>
+
+            {/* About Section */}
+            <div className="pt-4 pb-10">
+               <h2 className="text-lg font-bold text-white mb-4">
+                 About the Event
+               </h2>
+               <div className="prose prose-invert max-w-none text-zinc-400 leading-relaxed text-sm md:text-base">
+                 <p className="whitespace-pre-wrap">{event.description}</p>
+               </div>
+            </div>
           </div>
+
+          {/* Right Column: Poster */}
+          <div className="w-full md:w-[320px] lg:w-[380px] shrink-0 order-1 md:order-2">
+             {event.banner_url ? (
+               <div 
+                 className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden border border-zinc-800/50 bg-zinc-950 group cursor-pointer shadow-2xl"
+                 onClick={() => setShowPosterModal(true)}
+               >
+                 <Image
+                   src={event.banner_url}
+                   alt={event.title}
+                   fill
+                   className="object-cover transition-transform duration-700 group-hover:scale-105"
+                   priority
+                 />
+                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                   <div className="bg-white/10 p-4 rounded-full backdrop-blur-md text-white shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                     <Maximize2 className="h-6 w-6" />
+                   </div>
+                 </div>
+               </div>
+             ) : (
+               <div className="w-full aspect-[4/5] rounded-3xl border border-zinc-800/50 bg-zinc-900/50 flex flex-col items-center justify-center text-zinc-600 shadow-2xl">
+                 <Image className="h-12 w-12 opacity-20 mb-4 grayscale" src="/placeholder.svg" alt="placeholder" width={48} height={48} />
+                 <span className="text-sm font-medium tracking-wide uppercase">No Poster Available</span>
+               </div>
+             )}
+          </div>
+
         </div>
       </div>
 
