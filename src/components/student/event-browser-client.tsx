@@ -20,6 +20,8 @@ interface Event {
   status: string
   categories?: { name: string; type: string }
   registrationsCount?: number
+  is_paid?: boolean
+  fee_amount?: number
 }
 
 interface EventBrowserClientProps {
@@ -57,9 +59,14 @@ export function EventBrowserClient({ events, userRegistrations = [] }: EventBrow
             </div>
             <div className="p-6 flex flex-col flex-1 space-y-4">
               <div className="flex items-center justify-between">
-                <span className="inline-flex items-center rounded-full bg-primary/10 border border-primary/20 px-2.5 py-0.5 text-xs font-semibold text-primary">
-                  {event.categories?.name || "Campus Event"}
-                </span>
+                <div className="flex gap-2">
+                  <span className="inline-flex items-center rounded-full bg-primary/10 border border-primary/20 px-2.5 py-0.5 text-xs font-semibold text-primary">
+                    {event.categories?.name || "Campus Event"}
+                  </span>
+                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${event.is_paid ? 'bg-amber-500/10 border border-amber-500/20 text-amber-500' : 'bg-green-500/10 border border-green-500/20 text-green-500'}`}>
+                    {event.is_paid ? `₹${event.fee_amount}` : "Free"}
+                  </span>
+                </div>
                 <span className="text-[10px] uppercase font-bold text-muted-foreground">
                   {event.reg_type}
                 </span>

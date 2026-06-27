@@ -37,6 +37,8 @@ export default async function StudentEventsPage() {
         max_team_size,
         status,
         categories(name, type),
+        is_paid,
+        fee_amount,
         registrations(count)
       `)
       .eq("status", "published")

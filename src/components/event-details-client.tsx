@@ -22,17 +22,22 @@ interface EventDetails {
   categories?: { name: string; type: string }
   departments?: { name: string } | null
   clubs?: { name: string } | null
+  is_paid?: boolean
+  fee_amount?: number
+  payment_qr_url?: string | null
+  payment_remarks?: string | null
 }
 
 interface EventDetailsClientProps {
   event: EventDetails
   isRegistered: boolean
+  registrationStatus?: string | null
   isLoggedIn: boolean
   isFull?: boolean
   isClosed?: boolean
 }
 
-export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, isClosed }: EventDetailsClientProps) {
+export function EventDetailsClient({ event, isRegistered, registrationStatus, isLoggedIn, isFull, isClosed }: EventDetailsClientProps) {
   const [showRegModal, setShowRegModal] = React.useState(false)
   const [showPosterModal, setShowPosterModal] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
@@ -40,6 +45,7 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, is
   const [success, setSuccess] = React.useState<string | null>(null)
   const [inviteCodeResult, setInviteCodeResult] = React.useState<string | null>(null)
   const [isSuccessfullyRegistered, setIsSuccessfullyRegistered] = React.useState(isRegistered)
+  const [currentRegStatus, setCurrentRegStatus] = React.useState<string | null>(registrationStatus || null)
 
   // Team registration variables
   const [teamMode, setTeamMode] = React.useState<"create" | "join">("create")
@@ -47,6 +53,10 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, is
   const [inviteCode, setInviteCode] = React.useState("")
   const [isCopied, setIsCopied] = React.useState(false)
   const [toastMessage, setToastMessage] = React.useState<string | null>(null)
+  
+  // Payment variables
+  const [paymentScreenshotFile, setPaymentScreenshotFile] = React.useState<File | null>(null)
+  const [transactionId, setTransactionId] = React.useState("")
 
   const showToast = (message: string) => {
     setToastMessage(message)
@@ -132,6 +142,56 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, is
     setSuccess(null)
     setInviteCodeResult(null)
 
+    let screenshotBase64 = undefined
+    if (event.is_paid && (event.reg_type === "individual" || teamMode === "create")) {
+      if (!paymentScreenshotFile) {
+        setError("Payment screenshot is required for paid events.")
+        setLoading(false)
+        return
+      }
+      
+      try {
+        screenshotBase64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = (e) => {
+            const img = new window.Image()
+            img.onload = () => {
+              const canvas = document.createElement("canvas")
+              const MAX_WIDTH = 800
+              const MAX_HEIGHT = 800
+              let width = img.width
+              let height = img.height
+  
+              if (width > height) {
+                if (width > MAX_WIDTH) {
+                  height *= MAX_WIDTH / width
+                  width = MAX_WIDTH
+                }
+              } else {
+                if (height > MAX_HEIGHT) {
+                  width *= MAX_HEIGHT / height
+                  height = MAX_HEIGHT
+                }
+              }
+              canvas.width = width
+              canvas.height = height
+              const ctx = canvas.getContext("2d")
+              ctx?.drawImage(img, 0, 0, width, height)
+              resolve(canvas.toDataURL("image/jpeg", 0.7))
+            }
+            img.onerror = reject
+            img.src = e.target?.result as string
+          }
+          reader.onerror = reject
+          reader.readAsDataURL(paymentScreenshotFile)
+        })
+      } catch(err) {
+        setError("Error processing screenshot.")
+        setLoading(false)
+        return
+      }
+    }
+
     const result = await registerForEventAction(
       event.id,
       event.reg_type,
@@ -141,7 +201,11 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, is
             teamName: teamMode === "create" ? teamName : undefined,
             inviteCode: teamMode === "join" ? inviteCode : undefined,
           }
-        : undefined
+        : undefined,
+      {
+        screenshotBase64,
+        transactionId
+      }
     )
 
     if (result.error) {
@@ -149,6 +213,7 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, is
       setLoading(false)
     } else if (result.success) {
       setSuccess(result.success)
+      showToast(result.success)
       if (result.inviteCode) {
         setInviteCodeResult(result.inviteCode)
         if (teamMode === "create") {
@@ -156,6 +221,7 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, is
         }
       }
       setIsSuccessfullyRegistered(true)
+      setCurrentRegStatus(result.paymentStatus || null)
       setLoading(false)
     }
   }
@@ -270,10 +336,17 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, is
             {/* Registration Action - Desktop */}
             <div className="hidden md:block pt-2">
               {isSuccessfullyRegistered ? (
-                 <Link href="/student/registrations" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-green-500/10 text-green-400 font-semibold border border-green-500/20 hover:bg-green-500/20 transition-colors w-auto text-center max-w-full">
-                   <CheckCircle className="h-5 w-5 shrink-0" />
-                   <span className="truncate">You're Registered - View Ticket</span>
-                 </Link>
+                currentRegStatus === "pending_verification" ? (
+                  <div className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-amber-500/10 text-amber-500 font-semibold border border-amber-500/20 w-auto text-center max-w-full">
+                    <Clock className="h-5 w-5 shrink-0" />
+                    <span className="truncate">Verification Pending</span>
+                  </div>
+                ) : (
+                  <Link href="/student/registrations" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-green-500/10 text-green-400 font-semibold border border-green-500/20 hover:bg-green-500/20 transition-colors w-auto text-center max-w-full">
+                    <CheckCircle className="h-5 w-5 shrink-0" />
+                    <span className="truncate">You're Registered - View Ticket</span>
+                  </Link>
+                )
               ) : isClosed ? (
                  <div className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-zinc-900 text-zinc-500 font-semibold border border-zinc-800 cursor-not-allowed w-auto text-center max-w-full">
                    <X className="h-5 w-5 shrink-0" />
@@ -340,12 +413,18 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, is
       {/* Floating Action Bar for Mobile */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 p-4 bg-zinc-950/90 backdrop-blur-2xl border-t border-white/10 z-40 pb-safe shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
         {isSuccessfullyRegistered ? (
-          <Link
-            href="/student/registrations"
-            className="w-full flex items-center justify-center rounded-2xl bg-green-500/15 border border-green-500/30 text-green-400 py-4 font-black text-lg transition-all"
-          >
-            <CheckCircle className="mr-2 h-6 w-6" /> View Ticket
-          </Link>
+          currentRegStatus === "pending_verification" ? (
+            <div className="w-full flex items-center justify-center rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-500 py-4 font-black text-lg">
+              <Clock className="mr-2 h-6 w-6 animate-pulse" /> Verification Pending
+            </div>
+          ) : (
+            <Link
+              href="/student/registrations"
+              className="w-full flex items-center justify-center rounded-2xl bg-green-500/15 border border-green-500/30 text-green-400 py-4 font-black text-lg transition-all"
+            >
+              <CheckCircle className="mr-2 h-6 w-6" /> View Ticket
+            </Link>
+          )
         ) : isClosed ? (
           <div className="w-full flex items-center justify-center rounded-2xl bg-zinc-900 text-zinc-500 py-4 font-black text-lg shadow-lg">
             Registration Closed
@@ -400,15 +479,15 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, is
       {/* Registration Modal */}
       {showRegModal && !isSuccessfullyRegistered && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-xl p-4">
-          <div className="w-full max-w-md bg-zinc-950 border border-white/10 rounded-[2rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
-            <div className="px-8 py-5 border-b border-white/5 flex items-center justify-between bg-zinc-900/50">
+          <div className="w-full max-w-md bg-zinc-950 border border-white/10 rounded-[2rem] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div className="px-8 py-5 border-b border-white/5 flex items-center justify-between bg-zinc-900/50 shrink-0">
               <h2 className="text-xl font-black text-white">Register for Event</h2>
               <button onClick={handleCloseModal} className="text-zinc-500 hover:text-white bg-white/5 hover:bg-white/10 p-2 rounded-full transition-colors">
                 <X className="h-5 w-5" />
               </button>
             </div>
             
-            <div className="p-8">
+            <div className="p-8 overflow-y-auto max-h-[calc(90vh-70px)]">
               <h3 className="text-2xl font-black mb-2 text-white leading-tight">{event.title}</h3>
               <p className="text-sm font-bold text-primary mb-8 tracking-wide uppercase">
                 {event.reg_type === "team" ? "Team Registration" : "Individual Registration"}
@@ -503,6 +582,54 @@ export function EventDetailsClient({ event, isRegistered, isLoggedIn, isFull, is
                           />
                         </div>
                       )}
+                    </div>
+                  )}
+
+                  {event.is_paid && (event.reg_type === "individual" || (event.reg_type === "team" && teamMode === "create")) && (
+                    <div className="space-y-4 bg-primary/10 border border-primary/20 p-5 rounded-2xl animate-in fade-in zoom-in duration-300">
+                      <div className="flex items-center justify-between border-b border-primary/20 pb-3">
+                         <h4 className="text-white font-bold">Registration Fee</h4>
+                         <span className="text-2xl font-black text-primary">₹{event.fee_amount}</span>
+                      </div>
+                      
+                      {event.payment_qr_url && (
+                        <div className="bg-white p-3 rounded-2xl w-48 mx-auto shadow-xl">
+                          <Image src={event.payment_qr_url} alt="UPI QR" width={200} height={200} className="w-full h-auto object-contain rounded-lg" />
+                        </div>
+                      )}
+                      
+                      {event.payment_remarks && (
+                        <p className="text-sm text-zinc-300 text-center font-medium bg-black/40 p-4 rounded-xl border border-white/5">{event.payment_remarks}</p>
+                      )}
+
+                      <div className="space-y-5 pt-4 border-t border-white/10">
+                         <div className="space-y-2.5">
+                           <label className="text-xs font-bold uppercase tracking-wider text-zinc-400 ml-1">Payment Screenshot *</label>
+                           <input
+                             type="file"
+                             accept="image/*"
+                             required
+                             onChange={(e) => setPaymentScreenshotFile(e.target.files?.[0] || null)}
+                             className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white text-sm focus:border-primary focus:outline-none transition-all"
+                           />
+                         </div>
+                         <div className="space-y-2.5">
+                           <label className="text-xs font-bold uppercase tracking-wider text-zinc-400 ml-1">Transaction ID / UTR (Optional)</label>
+                           <input
+                             type="text"
+                             value={transactionId}
+                             onChange={(e) => setTransactionId(e.target.value)}
+                             className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white text-sm focus:border-primary focus:outline-none transition-all"
+                             placeholder="e.g. 123456789012"
+                           />
+                         </div>
+                         <div className="flex items-start gap-2.5 text-xs text-amber-400 bg-amber-500/10 p-3.5 rounded-xl border border-amber-500/20 font-medium leading-relaxed">
+                           <Info className="h-4 w-4 shrink-0 mt-0.5" />
+                           <p>
+                             We will verify your registration. Once verified, you will get the ticket and a confirmation notification.
+                           </p>
+                         </div>
+                      </div>
                     </div>
                   )}
 

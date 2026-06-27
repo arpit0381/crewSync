@@ -10,36 +10,43 @@ export default async function StudentRegistrationsPage() {
     const { data: { user } } = await supabase.auth.getUser()
 
     if (user) {
-      // Fetch registrations join tickets
-      const { data: tickets } = await supabase
-        .from("tickets")
+      // Fetch registrations
+      const { data: regs } = await supabase
+        .from("registrations")
         .select(`
           id,
-          ticket_code,
-          registration:registration_id!inner (
+          created_at,
+          payment_status,
+          events:event_id (
             id,
-            created_at,
-            user_id,
-            events:event_id (
-              id,
-              title,
-              description,
-              venue,
-              event_date,
-              event_time,
-              categories(name, type)
-            )
-          )
+            title,
+            description,
+            venue,
+            event_date,
+            event_time,
+            categories(name, type)
+          ),
+          tickets(id, ticket_code)
         `)
-        .eq("registration.user_id", user.id)
+        .eq("user_id", user.id)
         .order("created_at", { ascending: false })
 
-      if (tickets && tickets.length > 0) {
-        dbTickets = tickets
+      if (regs && regs.length > 0) {
+        dbTickets = regs.map(reg => {
+          // Flatten it to look like the old structure for TicketsClient, or update TicketsClient
+          // We will update TicketsClient to handle this structure
+          return {
+            registration_id: reg.id,
+            created_at: reg.created_at,
+            payment_status: reg.payment_status,
+            ticket: (reg.tickets as any) || null,
+            event: reg.events
+          }
+        })
       }
     }
   } catch (err) {
-    console.warn("Using mock tickets due to DB connection:", err)
+    console.warn("Using mock registrations due to DB connection:", err)
   }
 
   const tickets = dbTickets

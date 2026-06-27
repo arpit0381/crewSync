@@ -3,39 +3,42 @@
 import * as React from "react"
 import QRCode from "qrcode"
 import jsPDF from "jspdf"
-import { Calendar, MapPin, Download, CheckCircle, Clock } from "lucide-react"
+import { Calendar, MapPin, Download, CheckCircle, Clock, X } from "lucide-react"
 
-interface TicketData {
-  id: string
-  ticket_code: string
-  registration: {
+interface RegistrationData {
+  registration_id: string
+  created_at: string
+  payment_status: string
+  ticket: {
     id: string
-    created_at: string
-    events: {
-      id: string
-      title: string
-      description: string
-      venue: string
-      event_date: string
-      event_time: string
-      categories?: { name: string; type: string }
-    }
+    ticket_code: string
+  } | null
+  event: {
+    id: string
+    title: string
+    description: string
+    venue: string
+    event_date: string
+    event_time: string
+    categories?: { name: string; type: string }
   }
 }
 
 interface TicketsClientProps {
-  initialTickets: TicketData[]
+  initialTickets: RegistrationData[]
 }
 
 export function TicketsClient({ initialTickets }: TicketsClientProps) {
-  const [tickets, setTickets] = React.useState<TicketData[]>(initialTickets)
+  const [tickets, setTickets] = React.useState<RegistrationData[]>(initialTickets)
   const [qrUrls, setQrUrls] = React.useState<{ [key: string]: string }>({})
 
   // Generate QR code data URLs on mount
   React.useEffect(() => {
     tickets.forEach(async (t) => {
+      if (!t.ticket) return
+      
       try {
-        const url = await QRCode.toDataURL(t.ticket_code, {
+        const url = await QRCode.toDataURL(t.ticket.ticket_code, {
           margin: 1,
           width: 256,
           color: {
@@ -43,22 +46,22 @@ export function TicketsClient({ initialTickets }: TicketsClientProps) {
             light: "#ffffff",
           },
         })
-        setQrUrls((prev) => ({ ...prev, [t.ticket_code]: url }))
+        setQrUrls((prev) => ({ ...prev, [t.ticket!.ticket_code]: url }))
       } catch (err) {
         console.error("Error generating QR:", err)
       }
     })
   }, [tickets])
 
-  const downloadPDF = (t: TicketData, qrUrl: string) => {
+  const downloadPDF = (t: RegistrationData, qrUrl: string) => {
     const doc = new jsPDF({
       orientation: "portrait",
       unit: "mm",
       format: "a5", // Elegant A5 card format
     })
 
-    const event = t.registration?.events
-    if (!event) return
+    const event = t.event
+    if (!event || !t.ticket) return
 
     // Background color styling
     doc.setFillColor(15, 15, 17) // Dark color background
@@ -85,7 +88,7 @@ export function TicketsClient({ initialTickets }: TicketsClientProps) {
     doc.setFontSize(9)
     doc.setFont("Helvetica", "normal")
     doc.setTextColor(150, 150, 150)
-    doc.text(`TICKET NO: ${t.ticket_code}`, 15, 40)
+    doc.text(`TICKET NO: ${t.ticket.ticket_code}`, 15, 40)
 
     // Event Title
     doc.setFontSize(16)
@@ -154,12 +157,12 @@ export function TicketsClient({ initialTickets }: TicketsClientProps) {
       ) : (
         <div className="grid gap-6 md:grid-cols-2">
           {tickets.map((t) => {
-            const event = t.registration.events
-            const qrUrl = qrUrls[t.ticket_code]
+            const event = t.event
+            const qrUrl = t.ticket ? qrUrls[t.ticket.ticket_code] : null
 
             return (
               <div
-                key={t.id}
+                key={t.registration_id}
                 className="flex flex-col md:flex-row rounded-3xl border border-border bg-card/30 overflow-hidden backdrop-blur-sm"
               >
                 {/* Event summary details */}
@@ -200,12 +203,32 @@ export function TicketsClient({ initialTickets }: TicketsClientProps) {
 
                 {/* QR Display column */}
                 <div className="border-t md:border-t-0 md:border-l border-border bg-background/40 p-6 flex flex-col items-center justify-center min-w-[160px]">
-                  {qrUrl ? (
+                  {t.payment_status === "pending_verification" ? (
+                    <div className="text-center space-y-3 p-2 animate-in fade-in duration-300">
+                      <div className="mx-auto bg-amber-500/10 p-3 rounded-full w-fit">
+                        <Clock className="h-6 w-6 text-amber-500 animate-pulse" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-amber-500 uppercase tracking-wider">Pending</p>
+                        <p className="text-[10px] text-muted-foreground mt-1 px-2">Payment verification in progress</p>
+                      </div>
+                    </div>
+                  ) : t.payment_status === "rejected" ? (
+                    <div className="text-center space-y-3 p-2 animate-in fade-in duration-300">
+                      <div className="mx-auto bg-red-500/10 p-3 rounded-full w-fit">
+                        <X className="h-6 w-6 text-red-500" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-red-500 uppercase tracking-wider">Rejected</p>
+                        <p className="text-[10px] text-muted-foreground mt-1 px-2">Payment screenshot was rejected. Please contact support.</p>
+                      </div>
+                    </div>
+                  ) : qrUrl ? (
                     <div className="space-y-2 text-center">
                       <div className="rounded-2xl bg-white p-2">
                         <img src={qrUrl} alt="QR Code" loading="lazy" className="h-28 w-28" />
                       </div>
-                      <p className="text-[10px] font-mono text-muted-foreground">{t.ticket_code}</p>
+                      <p className="text-[10px] font-mono text-muted-foreground">{t.ticket?.ticket_code}</p>
                     </div>
                   ) : (
                     <div className="text-muted-foreground text-xs text-center flex flex-col items-center gap-2">

@@ -21,6 +21,7 @@ export default async function AdminEventsPage() {
           id, title, description, banner_url, venue, event_date, event_time,
           capacity, reg_type, min_team_size, max_team_size, status,
           category_id, department_id, club_id, categories(name, type),
+          is_paid, fee_amount, payment_qr_url, payment_remarks,
           registrations(count)
         `)
         .order("created_at", { ascending: false }),

@@ -2,7 +2,7 @@
 
 import { createClient, createAdminClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
-import { uploadImageToCloudinary } from "@/lib/cloudinary"
+import { uploadImageToCloudinary, uploadBase64ToCloudinary } from "@/lib/cloudinary"
 import { broadcastNotificationAction } from "./notification-actions"
 
 export async function createEventAction(formData: FormData) {
@@ -23,6 +23,10 @@ export async function createEventAction(formData: FormData) {
   const departmentId = formData.get("department_id") as string || null
   const clubId = formData.get("club_id") as string || null
   const status = (formData.get("status") as any) || "draft"
+  
+  const isPaid = formData.get("is_paid") === "on" || formData.get("is_paid") === "true"
+  const feeAmount = parseFloat(formData.get("fee_amount") as string) || 0
+  const paymentRemarks = formData.get("payment_remarks") as string || null
 
   if (!title || !description || !categoryId || !venue || !date || !time) {
     return { error: "All required fields must be filled" }
@@ -46,9 +50,11 @@ export async function createEventAction(formData: FormData) {
     return { error: "Invalid Club ID." }
   }
 
-  // The file has already been uploaded by the client using the API route (bypassing Turbopack bug)
   const bannerUrlOverride = formData.get("banner_url_override") as string
   let bannerUrl = bannerUrlOverride || null
+
+  const paymentQrUrlOverride = formData.get("payment_qr_url_override") as string
+  let paymentQrUrl = paymentQrUrlOverride || null
 
   const adminClient = createAdminClient()
 
@@ -69,6 +75,10 @@ export async function createEventAction(formData: FormData) {
       department_id: finalDepartmentId,
       club_id: finalClubId,
       status,
+      is_paid: isPaid,
+      fee_amount: feeAmount,
+      payment_qr_url: paymentQrUrl,
+      payment_remarks: paymentRemarks,
       created_by: user.id,
       banner_url: bannerUrl
     })
@@ -112,6 +122,10 @@ export async function updateEventAction(eventId: string, formData: FormData) {
   const clubId = formData.get("club_id") as string || null
   const status = (formData.get("status") as any) || "draft"
 
+  const isPaid = formData.get("is_paid") === "on" || formData.get("is_paid") === "true"
+  const feeAmount = parseFloat(formData.get("fee_amount") as string) || 0
+  const paymentRemarks = formData.get("payment_remarks") as string || null
+
   if (!title || !description || !categoryId || !venue || !date || !time) {
     return { error: "All required fields must be filled" }
   }
@@ -124,6 +138,9 @@ export async function updateEventAction(eventId: string, formData: FormData) {
 
   const bannerUrlOverride = formData.get("banner_url_override") as string
   let bannerUrl = bannerUrlOverride || null
+
+  const paymentQrUrlOverride = formData.get("payment_qr_url_override") as string
+  let paymentQrUrl = paymentQrUrlOverride || null
 
   const adminClient = createAdminClient()
 
@@ -142,12 +159,19 @@ export async function updateEventAction(eventId: string, formData: FormData) {
     department_id: departmentId,
     club_id: clubId,
     status,
+    is_paid: isPaid,
+    fee_amount: feeAmount,
+    payment_remarks: paymentRemarks,
     updated_at: new Date().toISOString()
   }
 
   // Only update banner if a new one was provided
   if (bannerUrl) {
     payload.banner_url = bannerUrl
+  }
+  
+  if (paymentQrUrl) {
+    payload.payment_qr_url = paymentQrUrl
   }
 
   const { data: event, error } = await adminClient
@@ -224,7 +248,8 @@ export async function deleteEventAction(eventId: string) {
 export async function registerForEventAction(
   eventId: string,
   regType: "individual" | "team",
-  teamDetails?: { mode: "create" | "join"; teamName?: string; inviteCode?: string }
+  teamDetails?: { mode: "create" | "join"; teamName?: string; inviteCode?: string },
+  paymentDetails?: { screenshotBase64?: string; transactionId?: string }
 ) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -249,6 +274,15 @@ export async function registerForEventAction(
 
   if (event.status !== "published") {
     return { error: "This event is not accepting registrations." }
+  }
+
+  let paymentScreenshotUrl = null
+  if (event.is_paid && paymentDetails?.screenshotBase64) {
+    try {
+      paymentScreenshotUrl = await uploadBase64ToCloudinary(paymentDetails.screenshotBase64, "payments")
+    } catch (e) {
+      return { error: "Error uploading payment screenshot." }
+    }
   }
 
   const adminSupabase = createAdminClient()
@@ -278,28 +312,40 @@ export async function registerForEventAction(
   // 2. Individual Registration logic
   if (regType === "individual") {
     // Insert registration
+    const paymentStatus = event.is_paid ? "pending_verification" : "free"
+    
     const { data: reg, error: regErr } = await supabase
       .from("registrations")
       .insert({
         event_id: finalEventId,
-        user_id: user.id
+        user_id: user.id,
+        payment_status: paymentStatus,
+        payment_screenshot_url: paymentScreenshotUrl,
+        transaction_id: paymentDetails?.transactionId || null
       })
       .select()
       .single()
 
     if (regErr) return { error: regErr.message }
 
-    // Auto-generate a ticket for the user
-    const ticketCode = `CRS-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
-    const adminSupabase = createAdminClient()
-    await adminSupabase.from("tickets").insert({
-      ticket_code: ticketCode,
-      registration_id: reg.id
-    })
+    // Auto-generate a ticket for the user IF payment is not pending
+    if (paymentStatus === "free") {
+      const ticketCode = `CRS-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
+      const adminSupabase = createAdminClient()
+      await adminSupabase.from("tickets").insert({
+        ticket_code: ticketCode,
+        registration_id: reg.id
+      })
+    }
 
     revalidatePath("/student")
     revalidatePath("/")
-    return { success: "Registered successfully! Ticket generated." }
+    
+    if (paymentStatus === "pending_verification") {
+      return { success: "Registration submitted! We will verify your payment and generate your ticket soon.", paymentStatus }
+    }
+    
+    return { success: "Registered successfully! Ticket generated.", paymentStatus }
   }
 
   // 3. Team Registration logic
@@ -334,28 +380,39 @@ export async function registerForEventAction(
       })
 
       // Register the captain
+      const paymentStatus = event.is_paid ? "pending_verification" : "free"
       const { data: reg, error: regErr } = await supabase
         .from("registrations")
         .insert({
           event_id: finalEventId,
           user_id: user.id,
-          team_id: team.id
+          team_id: team.id,
+          payment_status: paymentStatus,
+          payment_screenshot_url: paymentScreenshotUrl,
+          transaction_id: paymentDetails?.transactionId || null
         })
         .select()
         .single()
 
       if (regErr) return { error: regErr.message }
 
-      // Auto-generate ticket
-      const ticketCode = `CRS-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
-      const adminSupabase = createAdminClient()
-      await adminSupabase.from("tickets").insert({
-        ticket_code: ticketCode,
-        registration_id: reg.id
-      })
+      // Auto-generate ticket if free
+      if (paymentStatus === "free") {
+        const ticketCode = `CRS-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
+        const adminSupabase = createAdminClient()
+        await adminSupabase.from("tickets").insert({
+          ticket_code: ticketCode,
+          registration_id: reg.id
+        })
+      }
 
       revalidatePath("/student")
-      return { success: `Team created successfully! Invite code: ${inviteCode}`, inviteCode }
+      
+      if (paymentStatus === "pending_verification") {
+        return { success: `Team created successfully! Invite code: ${inviteCode}. Payment is pending verification.`, inviteCode, paymentStatus }
+      }
+      
+      return { success: `Team created successfully! Invite code: ${inviteCode}`, inviteCode, paymentStatus }
     }
 
     // Mode B: Join an existing team
@@ -365,7 +422,7 @@ export async function registerForEventAction(
       // Find the team
       const { data: team, error: teamFindErr } = await supabase
         .from("teams")
-        .select("id, max_members")
+        .select("id, max_members, captain_id")
         .eq("invite_code", teamDetails.inviteCode)
         .eq("event_id", finalEventId)
         .single()
@@ -397,28 +454,48 @@ export async function registerForEventAction(
       if (joinErr) return { error: "You are already a member of this team." }
 
       // Create registration
+      // If joining a team, the captain's payment status dictates the team's status, but since captain has to pay full amount,
+      // the new member inherits the "pending" or "verified" state. We can query the captain's registration or just set it based on the event.
+      // Easiest is to see if the team is already verified.
+      const { data: captainReg } = await adminSupabase
+        .from("registrations")
+        .select("payment_status")
+        .eq("team_id", team.id)
+        .eq("user_id", team.captain_id)
+        .maybeSingle()
+        
+      const inheritedPaymentStatus = captainReg?.payment_status || (event.is_paid ? "pending_verification" : "free")
+
       const { data: reg, error: regErr } = await supabase
         .from("registrations")
         .insert({
           event_id: finalEventId,
           user_id: user.id,
-          team_id: team.id
+          team_id: team.id,
+          payment_status: inheritedPaymentStatus
         })
         .select()
         .single()
 
       if (regErr) return { error: regErr.message }
 
-      // Auto-generate ticket
-      const ticketCode = `CRS-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
-      const adminSupabase = createAdminClient()
-      await adminSupabase.from("tickets").insert({
-        ticket_code: ticketCode,
-        registration_id: reg.id
-      })
+      // Auto-generate ticket if the team is verified/free
+      if (inheritedPaymentStatus === "free" || inheritedPaymentStatus === "verified") {
+        const ticketCode = `CRS-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
+        const adminSupabase = createAdminClient()
+        await adminSupabase.from("tickets").insert({
+          ticket_code: ticketCode,
+          registration_id: reg.id
+        })
+      }
 
       revalidatePath("/student")
-      return { success: "Joined team and registered successfully!" }
+      
+      if (inheritedPaymentStatus === "pending_verification") {
+         return { success: "Joined team successfully! Waiting for Captain's payment verification to receive your ticket.", paymentStatus: inheritedPaymentStatus }
+      }
+      
+      return { success: "Joined team and registered successfully!", paymentStatus: inheritedPaymentStatus }
     }
   }
 

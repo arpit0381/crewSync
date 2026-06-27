@@ -15,20 +15,21 @@ const { createClient } = require('@supabase/supabase-js')
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY) // Use SERVICE ROLE to see everything
 
 async function test() {
-  const { data: regs, error: err1 } = await supabase.from('registrations').select('*')
-  console.log("All Registrations:", regs?.length)
-  console.log("Reg Error:", err1)
-
-  const { data: tickets, error: err2 } = await supabase.from('tickets').select('*')
-  console.log("All Tickets:", tickets?.length)
-  console.log("Ticket Error:", err2)
+  const { data: regs, error: err1 } = await supabase
+    .from('registrations')
+    .select(`
+      id,
+      created_at,
+      payment_status,
+      payment_screenshot_url,
+      transaction_id,
+      profiles(name, roll_number, email, phone),
+      events(title, fee_amount)
+    `)
+    .in("payment_status", ["pending_verification", "rejected"])
   
-  if (regs && regs.length > 0) {
-    console.log("Sample Reg:", regs[0])
-  }
-  if (tickets && tickets.length > 0) {
-    console.log("Sample Ticket:", tickets[0])
-  }
+  console.log("Pending Regs with joins:", regs)
+  console.log("Error:", err1)
 }
 
 test()

@@ -19,7 +19,8 @@ import {
   Flag,
   GitFork,
   X,
-  Bell
+  Bell,
+  CreditCard
 } from "lucide-react"
 
 interface SidebarItem {
@@ -61,6 +62,7 @@ export function DashboardSidebar({ role, isOpen, onClose }: DashboardSidebarProp
     { label: "Dashboard", href: "/admin", icon: Home },
     { label: "Events", href: "/admin/events", icon: Calendar },
     { label: "Registrations", href: "/admin/registrations", icon: Ticket },
+    { label: "Payments", href: "/admin/payments", icon: CreditCard },
     { label: "Attendance Scan", href: "/admin/attendance", icon: CheckSquare },
     { label: "Sports Tourneys", href: "/admin/sports", icon: Trophy },
     { label: "Esports Tourneys", href: "/admin/esports", icon: Gamepad },

@@ -58,6 +58,8 @@ interface Event {
   reg_type: "individual" | "team"
   categories?: { name: string; type: string } | null
   registrationsCount?: number
+  is_paid?: boolean
+  fee_amount?: number
 }
 
 interface LandingClientProps {
@@ -647,9 +649,14 @@ export function LandingClient({ events }: LandingClientProps) {
                         </div>
                       )}
                       <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500" />
-                      <span className="absolute top-4 left-4 z-10 text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/20 px-2.5 py-1 rounded-full bg-background/80 backdrop-blur-sm">
-                        {categoryName}
-                      </span>
+                      <div className="absolute top-4 left-4 right-4 z-10 flex justify-between items-center">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/20 px-2.5 py-1 rounded-full bg-background/80 backdrop-blur-sm">
+                          {categoryName}
+                        </span>
+                        <span className={`text-[10px] font-bold uppercase tracking-wider border px-2.5 py-1 rounded-full bg-background/80 backdrop-blur-sm ${event.is_paid ? 'border-amber-500/20 text-amber-500' : 'border-green-500/20 text-green-500'}`}>
+                          {event.is_paid ? `₹${event.fee_amount}` : "Free"}
+                        </span>
+                      </div>
                     </div>
 
                     <div className="p-6 flex flex-1 flex-col justify-between space-y-4">

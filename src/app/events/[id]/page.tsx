@@ -35,7 +35,11 @@ export default async function EventDetailsPage({
       status,
       categories(name, type),
       departments(name),
-      clubs(name)
+      clubs(name),
+      is_paid,
+      fee_amount,
+      payment_qr_url,
+      payment_remarks
     `)
     .eq("id", id)
     .single()
@@ -58,17 +62,19 @@ export default async function EventDetailsPage({
   // 2. Check if user is logged in & registered
   const { data: { user } } = await supabase.auth.getUser()
   let isRegistered = false
+  let registrationStatus: string | null = null
 
   if (user) {
     const { data: reg } = await supabase
       .from("registrations")
-      .select("id")
+      .select("id, payment_status")
       .eq("event_id", id)
       .eq("user_id", user.id)
       .single()
 
     if (reg) {
       isRegistered = true
+      registrationStatus = reg.payment_status
     }
   }
 
@@ -77,6 +83,7 @@ export default async function EventDetailsPage({
       <EventDetailsClient 
         event={event as any} 
         isRegistered={isRegistered} 
+        registrationStatus={registrationStatus}
         isLoggedIn={!!user}
         isFull={isFull}
         isClosed={isClosed}

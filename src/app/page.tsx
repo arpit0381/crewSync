@@ -17,6 +17,8 @@ async function getPublishedEvents() {
         capacity,
         reg_type,
         categories(name, type),
+        is_paid,
+        fee_amount,
         registrations(count)
       `)
       .eq("status", "published")

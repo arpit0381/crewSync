@@ -41,6 +41,10 @@ interface Event {
   department_id?: string | null
   club_id?: string | null
   registrationsCount?: number
+  is_paid?: boolean
+  fee_amount?: number
+  payment_qr_url?: string | null
+  payment_remarks?: string | null
 }
 
 interface EventManagerClientProps {
@@ -71,8 +75,8 @@ export function EventManagerClient({
   const [isDeleting, setIsDeleting] = React.useState(false)
   const [qrEvent, setQrEvent] = React.useState<Event | null>(null)
   
-  // Registration type state for conditional fields
   const [regType, setRegType] = React.useState<"individual" | "team">("individual")
+  const [isPaid, setIsPaid] = React.useState(false)
 
   const filteredEvents = React.useMemo(() => {
     return events.filter((e) => {
@@ -118,9 +122,11 @@ export function EventManagerClient({
     if (event) {
       setActiveEvent(event)
       setRegType(event.reg_type)
+      setIsPaid(event.is_paid || false)
     } else {
       setActiveEvent(null)
       setRegType("individual")
+      setIsPaid(false)
     }
     setIsModalOpen(true)
   }
@@ -197,6 +203,66 @@ export function EventManagerClient({
     formData.delete("banner_file")
     formData.delete("banner_base64")
 
+    // QR Image Upload logic
+    const paymentQrFile = formData.get("payment_qr_file") as File
+    if (paymentQrFile && paymentQrFile.size > 0) {
+      const qrBase64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          const img = new window.Image()
+          img.onload = () => {
+            const canvas = document.createElement("canvas")
+            const MAX_WIDTH = 800
+            const MAX_HEIGHT = 800
+            let width = img.width
+            let height = img.height
+
+            if (width > height) {
+              if (width > MAX_WIDTH) {
+                height *= MAX_WIDTH / width
+                width = MAX_WIDTH
+              }
+            } else {
+              if (height > MAX_HEIGHT) {
+                width *= MAX_HEIGHT / height
+                height = MAX_HEIGHT
+              }
+            }
+            canvas.width = width
+            canvas.height = height
+            const ctx = canvas.getContext("2d")
+            ctx?.drawImage(img, 0, 0, width, height)
+            resolve(canvas.toDataURL("image/jpeg", 0.7))
+          }
+          img.onerror = reject
+          img.src = e.target?.result as string
+        }
+        reader.onerror = reject
+        reader.readAsDataURL(paymentQrFile)
+      })
+      
+      try {
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ base64: qrBase64, folder: "qrs" })
+        })
+        const uploadData = await uploadRes.json()
+        if (uploadData.url) {
+          formData.set("payment_qr_url_override", uploadData.url)
+        } else if (uploadData.error) {
+          setError("QR Upload failed: " + uploadData.error)
+          setLoading(false)
+          return
+        }
+      } catch (err: any) {
+        setError("QR Upload failed: " + err.message)
+        setLoading(false)
+        return
+      }
+    }
+    formData.delete("payment_qr_file")
+
     let result
     if (modalMode === "edit" && activeEvent) {
       result = await updateEventAction(activeEvent.id, formData)
@@ -227,6 +293,10 @@ export function EventManagerClient({
         category_id: result.event.category_id,
         department_id: result.event.department_id,
         club_id: result.event.club_id,
+        is_paid: result.event.is_paid,
+        fee_amount: result.event.fee_amount,
+        payment_qr_url: result.event.payment_qr_url,
+        payment_remarks: result.event.payment_remarks,
         categories: categories.find((c) => c.id === result.event.category_id),
         registrationsCount: modalMode === "edit" ? activeEvent?.registrationsCount : 0
       }
@@ -593,6 +663,63 @@ export function EventManagerClient({
                 />
               </div>
 
+              <div className="border-t border-border/80 pt-4 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="block text-sm font-bold text-foreground">Paid Event</label>
+                    <p className="text-xs text-muted-foreground">Does this event require a registration fee?</p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      name="is_paid" 
+                      className="sr-only peer"
+                      checked={isPaid}
+                      onChange={(e) => setIsPaid(e.target.checked)}
+                    />
+                    <div className="w-11 h-6 bg-muted peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  </label>
+                </div>
+
+                {isPaid && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in duration-200 bg-primary/5 p-4 rounded-xl border border-primary/20">
+                    <div>
+                      <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Fee Amount (₹)</label>
+                      <input
+                        name="fee_amount"
+                        type="number"
+                        inputMode="numeric"
+                        defaultValue={activeEvent?.fee_amount || 0}
+                        required={isPaid}
+                        className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
+                        placeholder="e.g., 250"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        UPI QR Code Image {modalMode === "edit" && activeEvent?.payment_qr_url && "(Leave empty to keep)"}
+                      </label>
+                      <input
+                        name="payment_qr_file"
+                        type="file"
+                        accept="image/*"
+                        required={isPaid && !activeEvent?.payment_qr_url}
+                        className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-2.5 text-foreground focus:border-primary focus:outline-none text-xs transition-all"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Payment Instructions / UPI ID</label>
+                      <input
+                        name="payment_remarks"
+                        type="text"
+                        defaultValue={activeEvent?.payment_remarks || ""}
+                        className="mt-1 block w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none text-sm transition-all"
+                        placeholder="e.g., Pay to crewarena@ybl or Any other remarks"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
