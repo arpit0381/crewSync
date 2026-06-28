@@ -49,12 +49,13 @@ export function NotificationsClient() {
     
     const supabase = createClient()
     let channel: any
+    let isMounted = true
 
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return
+      if (!user || !isMounted) return
 
       channel = supabase
-        .channel('realtime:notifications-page')
+        .channel(`realtime:notifications-page-${user.id}`)
         .on(
           'postgres_changes',
           {
@@ -72,6 +73,7 @@ export function NotificationsClient() {
     })
 
     return () => {
+      isMounted = false
       if (channel) {
         supabase.removeChannel(channel)
       }
