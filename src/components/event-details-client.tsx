@@ -331,6 +331,15 @@ export function EventDetailsClient({ event, isRegistered, registrationStatus, is
                   <p className="text-sm font-medium text-zinc-200 truncate">{event.capacity} spots</p>
                 </div>
               </div>
+              <div className="flex items-start gap-3">
+                <Ticket className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-1">Entry Fee</p>
+                  <p className="text-sm font-medium text-zinc-200 truncate">
+                    {event.is_paid ? `₹${event.fee_amount}` : "Free"}
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Registration Action - Desktop */}

@@ -4,7 +4,7 @@ import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { createEventAction, updateEventStatusAction, deleteEventAction, updateEventAction } from "@/app/event-actions"
-import { Calendar, MapPin, Users, Plus, X, Loader2, Check, ArrowRight, ClipboardCheck, Trash2, Search, LayoutGrid, List, Filter, Edit2, Copy, Archive, Share2, QrCode } from "lucide-react"
+import { Calendar, MapPin, Users, Plus, X, Loader2, Check, ArrowRight, ClipboardCheck, Trash2, Search, LayoutGrid, List, Filter, Edit2, Copy, Archive, Share2, QrCode, Ticket } from "lucide-react"
 
 interface Category {
   id: string
@@ -503,6 +503,12 @@ export function EventManagerClient({
                         : "Individual Registrations"}
                     </span>
                   </div>
+                  <div className="flex items-center gap-2">
+                    <Ticket className="h-3.5 w-3.5 text-primary shrink-0" />
+                    <span>
+                      {event.is_paid ? `Paid (₹${event.fee_amount})` : "Free"}
+                    </span>
+                  </div>
                   <div className="pt-2">
                     <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
                       <div 
@@ -547,7 +553,7 @@ export function EventManagerClient({
                 <tr key={event.id} className="hover:bg-muted/20 transition-colors">
                   <td className="px-4 py-3">
                     <div className="font-semibold text-foreground">{event.title}</div>
-                    <div className="text-xs text-muted-foreground">{event.categories?.name || "Event"} • {event.reg_type}</div>
+                    <div className="text-xs text-muted-foreground">{event.categories?.name || "Event"} • {event.reg_type} • {event.is_paid ? `₹${event.fee_amount}` : "Free"}</div>
                   </td>
                   <td className="px-4 py-3">
                     <div className="text-foreground">{event.event_date} {event.event_time}</div>
