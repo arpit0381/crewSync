@@ -43,5 +43,19 @@ export default async function LandingPage() {
   const dbEvents = await getPublishedEvents()
   const events = dbEvents || []
 
-  return <LandingClient events={events as any} />
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const userEmail = user?.email || undefined
+  const userRole = user?.user_metadata?.role || undefined
+  const userName = user?.user_metadata?.name || undefined
+
+  return (
+    <LandingClient 
+      events={events as any} 
+      userEmail={userEmail}
+      userRole={userRole}
+      userName={userName}
+    />
+  )
 }

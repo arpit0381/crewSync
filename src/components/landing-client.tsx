@@ -64,6 +64,9 @@ interface Event {
 
 interface LandingClientProps {
   events: Event[]
+  userEmail?: string
+  userRole?: string
+  userName?: string
 }
 
 // Simple Counter Component for stats
@@ -122,9 +125,16 @@ function AnimatedCounter({ value, suffix = "" }: { value: number; suffix?: strin
   )
 }
 
-export function LandingClient({ events }: LandingClientProps) {
+export function LandingClient({ events, userEmail, userRole, userName }: LandingClientProps) {
   const { setTheme, resolvedTheme } = useNextTheme()
   const { themePack, setThemePack } = useTheme()
+
+  const dashboardUrl = React.useMemo(() => {
+    if (userRole === "student") return "/student"
+    if (userRole === "tournament_admin") return "/tournament"
+    if (userRole === "scanner") return "/admin/attendance"
+    return "/admin"
+  }, [userRole])
   const [dropdownOpen, setDropdownOpen] = React.useState(false)
   const [mounted, setMounted] = React.useState(false)
 
@@ -339,18 +349,34 @@ export function LandingClient({ events }: LandingClientProps) {
 
               {/* Desktop CTAs */}
               <div className="hidden md:flex items-center gap-2">
-                <Link
-                  href="/login"
-                  className="text-xs font-bold hover:text-primary transition-colors px-3 py-2.5 rounded-xl"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/register"
-                  className="text-xs font-bold bg-primary text-primary-foreground px-5 py-2.5 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] hover:bg-primary/95 transition-all"
-                >
-                  Get Started
-                </Link>
+                {userEmail ? (
+                  <>
+                    <span className="text-xs text-muted-foreground mr-2">
+                      Hi, <span className="font-semibold text-foreground">{userName || "User"}</span>
+                    </span>
+                    <Link
+                      href={dashboardUrl}
+                      className="text-xs font-bold bg-primary text-primary-foreground px-5 py-2.5 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] hover:bg-primary/95 transition-all flex items-center gap-1.5"
+                    >
+                      Go to Dashboard <ArrowRight className="h-3 w-3" />
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      className="text-xs font-bold hover:text-primary transition-colors px-3 py-2.5 rounded-xl"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/register"
+                      className="text-xs font-bold bg-primary text-primary-foreground px-5 py-2.5 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] hover:bg-primary/95 transition-all"
+                    >
+                      Get Started
+                    </Link>
+                  </>
+                )}
               </div>
 
               {/* Mobile Menu Toggle */}
@@ -380,19 +406,38 @@ export function LandingClient({ events }: LandingClientProps) {
                     <a href="#attendance" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/10 hover:text-primary transition-colors">Check-in</a>
                   </nav>
                   
-                  <div className="grid grid-cols-2 gap-2 pt-4 border-t border-border/50">
-                    <Link
-                      href="/login"
-                      className="flex items-center justify-center text-xs font-bold border border-border bg-card/50 px-4 py-3 rounded-xl transition-all"
-                    >
-                      Sign In
-                    </Link>
-                    <Link
-                      href="/register"
-                      className="flex items-center justify-center text-xs font-bold bg-primary text-primary-foreground px-4 py-3 rounded-xl shadow-lg shadow-primary/20 transition-all"
-                    >
-                      Get Started
-                    </Link>
+                  <div className="pt-4 border-t border-border/50">
+                    {userEmail ? (
+                      <div className="flex flex-col gap-2">
+                        <div className="text-xs text-center text-muted-foreground py-1">
+                          Signed in as <span className="font-semibold text-foreground">{userName || userEmail}</span>
+                        </div>
+                        <Link
+                          href={dashboardUrl}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center justify-center text-xs font-bold bg-primary text-primary-foreground px-4 py-3 rounded-xl shadow-lg shadow-primary/20 transition-all"
+                        >
+                          Go to Dashboard
+                        </Link>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-2">
+                        <Link
+                          href="/login"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center justify-center text-xs font-bold border border-border bg-card/50 px-4 py-3 rounded-xl transition-all"
+                        >
+                          Sign In
+                        </Link>
+                        <Link
+                          href="/register"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center justify-center text-xs font-bold bg-primary text-primary-foreground px-4 py-3 rounded-xl shadow-lg shadow-primary/20 transition-all"
+                        >
+                          Get Started
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -430,12 +475,21 @@ export function LandingClient({ events }: LandingClientProps) {
                 Explore Events
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
-              <Link
-                href="/register"
-                className="flex items-center justify-center gap-2 rounded-xl border border-border bg-card/60 backdrop-blur-sm px-6 py-3.5 text-sm font-semibold hover:bg-muted/55 transition-all text-foreground"
-              >
-                Create Account
-              </Link>
+              {userEmail ? (
+                <Link
+                  href={dashboardUrl}
+                  className="flex items-center justify-center gap-2 rounded-xl border border-border bg-card/60 backdrop-blur-sm px-6 py-3.5 text-sm font-semibold hover:bg-muted/55 transition-all text-foreground"
+                >
+                  Go to Dashboard
+                </Link>
+              ) : (
+                <Link
+                  href="/register"
+                  className="flex items-center justify-center gap-2 rounded-xl border border-border bg-card/60 backdrop-blur-sm px-6 py-3.5 text-sm font-semibold hover:bg-muted/55 transition-all text-foreground"
+                >
+                  Create Account
+                </Link>
+              )}
             </div>
 
             {/* Key badges */}
@@ -861,8 +915,14 @@ export function LandingClient({ events }: LandingClientProps) {
             <div className="md:col-span-2 space-y-4 text-center md:text-left">
               <h4 className="font-extrabold text-foreground text-sm uppercase tracking-wider">Platform</h4>
               <ul className="space-y-3 text-sm font-medium text-muted-foreground">
-                <li><Link href="/register" className="hover:text-primary transition-colors flex items-center justify-center md:justify-start gap-2"><ArrowRight className="h-3 w-3" /> Create Account</Link></li>
-                <li><Link href="/login" className="hover:text-primary transition-colors flex items-center justify-center md:justify-start gap-2"><ArrowRight className="h-3 w-3" /> Sign In</Link></li>
+                {userEmail ? (
+                  <li><Link href={dashboardUrl} className="hover:text-primary transition-colors flex items-center justify-center md:justify-start gap-2"><ArrowRight className="h-3 w-3" /> Go to Dashboard</Link></li>
+                ) : (
+                  <>
+                    <li><Link href="/register" className="hover:text-primary transition-colors flex items-center justify-center md:justify-start gap-2"><ArrowRight className="h-3 w-3" /> Create Account</Link></li>
+                    <li><Link href="/login" className="hover:text-primary transition-colors flex items-center justify-center md:justify-start gap-2"><ArrowRight className="h-3 w-3" /> Sign In</Link></li>
+                  </>
+                )}
                 <li><Link href="/docs" className="hover:text-primary transition-colors flex items-center justify-center md:justify-start gap-2"><ArrowRight className="h-3 w-3" /> Organizer Guide</Link></li>
               </ul>
             </div>
