@@ -54,10 +54,16 @@ export function TeamsClient({ teams }: TeamsClientProps) {
 
   if (teams.length === 0) {
     return (
-      <div className="rounded-3xl border border-dashed border-border p-12 text-center text-muted-foreground bg-card/10">
-        <Users className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
-        <p>You are not registered in any team events yet.</p>
-        <p className="text-xs text-muted-foreground mt-1">Form or join a team during registration of sports or coding events.</p>
+      <div className="rounded-3xl border border-dashed border-border p-12 text-center text-muted-foreground bg-card/10 flex flex-col items-center justify-center space-y-4">
+        <img 
+          src="/icons/undraw_content-team_1p7b.svg" 
+          alt="no teams illustration" 
+          className="w-44 h-44 object-contain opacity-75"
+        />
+        <div>
+          <p className="font-semibold text-foreground">You are not registered in any team events yet.</p>
+          <p className="text-xs text-muted-foreground mt-1">Form or join a team during registration of sports or coding events.</p>
+        </div>
       </div>
     )
   }

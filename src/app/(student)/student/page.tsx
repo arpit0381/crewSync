@@ -36,7 +36,7 @@ export default async function StudentDashboardPage() {
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
-      <div className="relative rounded-3xl bg-card border border-border p-6 md:p-8 overflow-hidden">
+      <div className="relative rounded-3xl bg-card border border-border p-6 md:p-8 overflow-hidden flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="absolute -top-[40%] -right-[10%] w-64 h-64 bg-primary/10 rounded-full blur-[60px]" />
         <div className="relative z-10 space-y-2 max-w-xl">
           <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
@@ -54,6 +54,13 @@ export default async function StudentDashboardPage() {
               Browse Events
             </Link>
           </div>
+        </div>
+        <div className="hidden md:block relative w-48 h-32 shrink-0 z-10">
+          <img 
+            src="/icons/undraw_reviewing-design_payz.svg" 
+            alt="reviewing design illustration" 
+            className="w-full h-full object-contain"
+          />
         </div>
       </div>
 

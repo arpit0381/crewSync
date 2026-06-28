@@ -226,12 +226,18 @@ export function CertificatesClient({ initialCertificates, studentName }: Certifi
 
       {/* Empty State */}
       {filtered.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-border p-16 text-center">
-          <Award className="h-14 w-14 mx-auto text-muted-foreground stroke-[1.2] mb-3" />
-          <p className="text-lg font-bold text-foreground">No Certificates Yet</p>
-          <p className="text-xs text-muted-foreground mt-2 max-w-md mx-auto">
-            Certificates will appear here after you attend events and organizers publish certificate designs. Keep participating!
-          </p>
+        <div className="rounded-3xl border border-dashed border-border p-16 text-center flex flex-col items-center justify-center space-y-4">
+          <img 
+            src="/icons/undraw_reading-time_jva3.svg" 
+            alt="no certificates illustration" 
+            className="w-44 h-44 object-contain opacity-75"
+          />
+          <div>
+            <p className="text-lg font-bold text-foreground">No Certificates Yet</p>
+            <p className="text-xs text-muted-foreground mt-2 max-w-md mx-auto">
+              Certificates will appear here after you attend events and organizers publish certificate designs. Keep participating!
+            </p>
+          </div>
         </div>
       ) : viewMode === "grid" ? (
         /* ─── Grid View ──────────────────────────────────────────── */

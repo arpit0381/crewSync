@@ -150,9 +150,16 @@ export function TicketsClient({ initialTickets }: TicketsClientProps) {
       </div>
 
       {tickets.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-border p-12 text-center text-muted-foreground">
-          <p>You have not registered for any events yet.</p>
-          <p className="text-xs text-muted-foreground mt-1">Go to Upcoming Events page to join.</p>
+        <div className="rounded-3xl border border-dashed border-border p-12 text-center text-muted-foreground flex flex-col items-center justify-center space-y-4">
+          <img 
+            src="/icons/undraw_reading-time_jva3.svg" 
+            alt="no tickets illustration" 
+            className="w-44 h-44 object-contain opacity-75"
+          />
+          <div>
+            <p className="font-semibold text-foreground">You have not registered for any events yet.</p>
+            <p className="text-xs text-muted-foreground mt-1">Go to Upcoming Events page to join.</p>
+          </div>
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2">

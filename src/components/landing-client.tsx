@@ -654,6 +654,62 @@ export function LandingClient({ events, userEmail, userRole, userName }: Landing
           </div>
         </section>
 
+        {/* Features Section */}
+        <section id="features" className="py-20 space-y-16">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-bold text-primary">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Features Suite</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Everything you need to synchronize campus life</h2>
+            <p className="text-xs sm:text-sm text-muted-foreground">Automated workflows built for students, club heads, and administrative coordinators alike.</p>
+          </div>
+
+          <div className="space-y-20">
+            {/* Feature 1: Devs/Hackathons */}
+            <div className="grid md:grid-cols-12 gap-8 items-center">
+              <div className="md:col-span-5 space-y-4 text-left">
+                <span className="text-xs font-extrabold text-primary uppercase tracking-wider">For Developers & Innovators</span>
+                <h3 className="text-2xl font-bold text-foreground">Launch Hackathons & Seminars</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Easily register teams, track coding event timelines, copy instant compiler links, 
+                  and collaborate on-the-fly. Built for student programmers.
+                </p>
+              </div>
+              <div className="md:col-span-7 flex justify-center">
+                <div className="relative w-full max-w-md h-64 bg-card/45 border border-border p-6 rounded-3xl overflow-hidden flex items-center justify-center shadow-lg">
+                  <img 
+                    src="/icons/undraw_web-developer_gxaa.svg" 
+                    alt="Web developer illustration" 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Feature 2: Attendance / Checking-in */}
+            <div className="grid md:grid-cols-12 gap-8 items-center">
+              <div className="md:col-span-7 flex justify-center">
+                <div className="relative w-full max-w-md h-64 bg-card/45 border border-border p-6 rounded-3xl overflow-hidden flex items-center justify-center shadow-lg">
+                  <img 
+                    src="/icons/undraw_reviewing-design_payz.svg" 
+                    alt="Attendance checking illustration" 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </div>
+              <div className="md:col-span-5 space-y-4 text-left">
+                <span className="text-xs font-extrabold text-primary uppercase tracking-wider">Fast Event Operations</span>
+                <h3 className="text-2xl font-bold text-foreground">Digital Ticket QR Check-ins</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Gate checkers scan student QR code tickets to mark real-time attendance, auto-releasing 
+                  PDF verified certificates instantly to the student's dashboard profile.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Event Discovery Section */}
         <section id="discovery" className="py-16 space-y-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -837,29 +893,39 @@ export function LandingClient({ events, userEmail, userRole, userName }: Landing
 
         {/* Call to Action Banner */}
         <section className="py-16 my-8">
-          <div className="rounded-3xl border border-primary/20 bg-gradient-to-r from-primary/10 via-background to-violet-500/5 p-8 md:p-12 text-center relative overflow-hidden flex flex-col items-center justify-center space-y-6">
+          <div className="rounded-3xl border border-primary/20 bg-gradient-to-r from-primary/10 via-background to-violet-500/5 p-8 md:p-12 relative overflow-hidden grid md:grid-cols-12 gap-8 items-center">
             <div className="absolute inset-0 z-0 pointer-events-none bg-radial-[circle_at_center,transparent_40%,var(--background)] opacity-60" />
             
-            <div className="space-y-2 relative z-10">
-              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Ready to join the action?</h2>
-              <p className="text-xs sm:text-sm text-muted-foreground max-w-xl mx-auto">
-                Join thousands of students discovering and participating in the best campus events.
-              </p>
+            <div className="space-y-6 relative z-10 md:col-span-7 text-center md:text-left">
+              <div className="space-y-2">
+                <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Ready to join the action?</h2>
+                <p className="text-xs sm:text-sm text-muted-foreground max-w-xl">
+                  Join thousands of students discovering, forming teams, and participating in the best campus events.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center gap-3 justify-center md:justify-start">
+                <Link
+                  href="/register"
+                  className="w-full sm:w-auto bg-primary text-primary-foreground font-bold text-xs px-6 py-3.5 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] hover:bg-primary/95 transition-all text-center"
+                >
+                  Start Organizing
+                </Link>
+                <Link
+                  href="#discovery"
+                  className="w-full sm:w-auto border border-border bg-card/80 px-6 py-3.5 text-xs font-semibold hover:bg-muted/80 rounded-xl transition-all text-center"
+                >
+                  Explore Events
+                </Link>
+              </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center gap-3 relative z-10">
-              <Link
-                href="/register"
-                className="w-full sm:w-auto bg-primary text-primary-foreground font-bold text-xs px-6 py-3.5 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] hover:bg-primary/95 transition-all"
-              >
-                Start Organizing
-              </Link>
-              <Link
-                href="#discovery"
-                className="w-full sm:w-auto border border-border bg-card/80 px-6 py-3.5 text-xs font-semibold hover:bg-muted/80 rounded-xl transition-all"
-              >
-                Explore Events
-              </Link>
+            <div className="hidden md:flex md:col-span-5 justify-center relative z-10">
+              <img 
+                src="/icons/undraw_conference-call_jgi5.svg" 
+                alt="conference call illustration" 
+                className="w-full max-w-xs h-48 object-contain"
+              />
             </div>
           </div>
         </section>
