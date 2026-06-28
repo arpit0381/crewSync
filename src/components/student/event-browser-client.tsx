@@ -55,7 +55,6 @@ export function EventBrowserClient({ events, userRegistrations = [] }: EventBrow
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               ) : null}
-              <div className="absolute inset-0 bg-background/40" />
             </div>
             <div className="p-6 flex flex-col flex-1 space-y-4">
               <div className="flex items-center justify-between">

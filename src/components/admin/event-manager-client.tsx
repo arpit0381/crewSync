@@ -441,7 +441,7 @@ export function EventManagerClient({
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 ) : null}
-                <div className="absolute inset-0 bg-background/40" />
+                <div className="absolute inset-0 bg-black/20" />
                 
                 {/* Quick Actions (Always visible on mobile, hover on desktop) */}
                 <div className="absolute top-3 right-3 flex items-center gap-2 flex-wrap justify-end max-w-[80%] opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
