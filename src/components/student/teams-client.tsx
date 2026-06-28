@@ -82,7 +82,7 @@ export function TeamsClient({ teams }: TeamsClientProps) {
         return (
           <div
             key={team.id}
-            className="rounded-3xl border border-border bg-card/30 p-6 flex flex-col justify-between backdrop-blur-sm relative overflow-hidden group hover:border-primary/30 transition-all"
+            className="rounded-3xl border border-border bg-card/85 p-6 flex flex-col justify-between relative overflow-hidden group hover:border-primary/30 transition-all"
           >
             <div className="space-y-4">
               <div className="flex items-start justify-between">

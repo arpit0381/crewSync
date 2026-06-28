@@ -163,7 +163,7 @@ export function TicketsClient({ initialTickets }: TicketsClientProps) {
             return (
               <div
                 key={t.registration_id}
-                className="flex flex-col md:flex-row rounded-3xl border border-border bg-card/30 overflow-hidden backdrop-blur-sm"
+                className="flex flex-col md:flex-row rounded-3xl border border-border bg-card/85 overflow-hidden"
               >
                 {/* Event summary details */}
                 <div className="flex-1 p-6 space-y-4">

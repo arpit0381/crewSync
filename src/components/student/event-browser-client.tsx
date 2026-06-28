@@ -41,7 +41,7 @@ export function EventBrowserClient({ events, userRegistrations = [] }: EventBrow
         {events.map((event, idx) => (
           <div
             key={event.id}
-            className="flex flex-col rounded-3xl border border-border bg-card/20 backdrop-blur-sm overflow-hidden hover:border-border transition-all group"
+            className="flex flex-col rounded-3xl border border-border bg-card/85 overflow-hidden hover:border-border transition-all group"
           >
             {/* Event Image Banner (Student View) */}
             <div className="h-40 w-full relative overflow-hidden bg-gradient-to-br from-zinc-850 to-zinc-950 flex items-center justify-center">

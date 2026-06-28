@@ -56,7 +56,7 @@ export default async function CertificateVerificationPage({ params }: PageProps)
         </div>
 
         {valid && certificate ? (
-          <div className="rounded-3xl border border-border bg-card/20 backdrop-blur-sm overflow-hidden">
+          <div className="rounded-3xl border border-border bg-card/85 overflow-hidden">
             {/* Status Banner */}
             <div className="bg-emerald-500/10 border-b border-emerald-500/20 px-6 py-4 flex items-center gap-3">
               <CheckCircle2 className="h-6 w-6 text-emerald-400 shrink-0" />
@@ -99,7 +99,7 @@ export default async function CertificateVerificationPage({ params }: PageProps)
             </div>
           </div>
         ) : (
-          <div className="rounded-3xl border border-border bg-card/20 backdrop-blur-sm p-8 text-center space-y-4">
+          <div className="rounded-3xl border border-border bg-card/85 p-8 text-center space-y-4">
             <div className="h-16 w-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto">
               <XCircle className="h-8 w-8 text-red-400" />
             </div>

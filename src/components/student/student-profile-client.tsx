@@ -68,7 +68,7 @@ export function StudentProfileClient({ profile, departments, clubs }: StudentPro
 
       <div className="grid gap-6 md:grid-cols-3">
         {/* Left Card: Basic Profile */}
-        <div className="md:col-span-2 rounded-3xl border border-border bg-card/20 backdrop-blur-sm p-6 space-y-6">
+        <div className="md:col-span-2 rounded-3xl border border-border bg-card/85 p-6 space-y-6">
           <div className="flex items-center gap-4 border-b border-border pb-6">
             <div className="h-16 w-16 rounded-2xl border border-border/50 overflow-hidden shrink-0 shadow-md bg-muted flex items-center justify-center">
               <img
@@ -131,7 +131,7 @@ export function StudentProfileClient({ profile, departments, clubs }: StudentPro
         </div>
 
         {/* Right Card: Statistics Summary */}
-        <div className="rounded-3xl border border-border bg-card/20 backdrop-blur-sm p-6 flex flex-col justify-between">
+        <div className="rounded-3xl border border-border bg-card/85 p-6 flex flex-col justify-between">
           <div className="space-y-4">
             <h2 className="text-lg font-bold text-foreground border-b border-border pb-3">Campus Statistics</h2>
             
@@ -171,7 +171,7 @@ export function StudentProfileClient({ profile, departments, clubs }: StudentPro
       {/* Recent Activity Sections */}
       <div className="grid gap-6 md:grid-cols-2 mt-6">
         {/* Recent Registrations */}
-        <div className="rounded-3xl border border-border bg-card/20 backdrop-blur-sm p-6 space-y-4">
+        <div className="rounded-3xl border border-border bg-card/85 p-6 space-y-4">
           <div className="flex items-center justify-between border-b border-border pb-3">
             <h2 className="text-lg font-bold text-foreground">Recent Registrations</h2>
           </div>
@@ -206,7 +206,7 @@ export function StudentProfileClient({ profile, departments, clubs }: StudentPro
         </div>
 
         {/* Recent Certificates */}
-        <div className="rounded-3xl border border-border bg-card/20 backdrop-blur-sm p-6 space-y-4">
+        <div className="rounded-3xl border border-border bg-card/85 p-6 space-y-4">
           <div className="flex items-center justify-between border-b border-border pb-3">
             <h2 className="text-lg font-bold text-foreground">Recent Certificates</h2>
           </div>

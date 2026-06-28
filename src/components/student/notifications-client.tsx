@@ -173,7 +173,7 @@ export function NotificationsClient() {
         )}
       </div>
 
-      <div className="rounded-3xl border border-border bg-card/20 backdrop-blur-sm overflow-hidden shadow-sm">
+      <div className="rounded-3xl border border-border bg-card/85 overflow-hidden shadow-sm">
         {notifications.length === 0 ? (
           <div className="p-16 text-center">
             <div className="mx-auto h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">

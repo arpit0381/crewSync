@@ -427,7 +427,7 @@ export function EventManagerClient({
           {filteredEvents.map((event, index) => (
             <div
               key={event.id}
-              className="flex flex-col rounded-3xl border border-border bg-card/20 backdrop-blur-sm overflow-hidden group relative"
+              className="flex flex-col rounded-3xl border border-border bg-card/85 overflow-hidden group relative"
             >
               {/* Event Image Banner (Admin View) */}
               <div className="h-32 w-full relative overflow-hidden bg-gradient-to-br from-zinc-850 to-zinc-950 flex items-center justify-center">
@@ -445,19 +445,19 @@ export function EventManagerClient({
                 
                 {/* Quick Actions (Always visible on mobile, hover on desktop) */}
                 <div className="absolute top-3 right-3 flex items-center gap-2 flex-wrap justify-end max-w-[80%] opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
-                   <button onClick={() => handleOpenModal("edit", event)} className="p-1.5 rounded-full bg-background/80 backdrop-blur text-foreground hover:bg-primary hover:text-primary-foreground transition-colors" title="Edit Event">
+                   <button onClick={() => handleOpenModal("edit", event)} className="p-1.5 rounded-full bg-background text-foreground hover:bg-primary hover:text-primary-foreground transition-colors border border-border/50 shadow-sm" title="Edit Event">
                      <Edit2 className="h-3.5 w-3.5" />
                    </button>
-                   <button onClick={() => handleOpenModal("clone", event)} className="p-1.5 rounded-full bg-background/80 backdrop-blur text-foreground hover:bg-primary hover:text-primary-foreground transition-colors" title="Clone Event">
+                   <button onClick={() => handleOpenModal("clone", event)} className="p-1.5 rounded-full bg-background text-foreground hover:bg-primary hover:text-primary-foreground transition-colors border border-border/50 shadow-sm" title="Clone Event">
                      <Copy className="h-3.5 w-3.5" />
                    </button>
-                   <button onClick={() => handleCopyLink(event.id)} className="p-1.5 rounded-full bg-background/80 backdrop-blur text-foreground hover:bg-primary hover:text-primary-foreground transition-colors" title="Copy Link">
+                   <button onClick={() => handleCopyLink(event.id)} className="p-1.5 rounded-full bg-background text-foreground hover:bg-primary hover:text-primary-foreground transition-colors border border-border/50 shadow-sm" title="Copy Link">
                      <Share2 className="h-3.5 w-3.5" />
                    </button>
-                   <button onClick={() => setQrEvent(event)} className="p-1.5 rounded-full bg-background/80 backdrop-blur text-foreground hover:bg-primary hover:text-primary-foreground transition-colors" title="Show QR Code">
+                   <button onClick={() => setQrEvent(event)} className="p-1.5 rounded-full bg-background text-foreground hover:bg-primary hover:text-primary-foreground transition-colors border border-border/50 shadow-sm" title="Show QR Code">
                      <QrCode className="h-3.5 w-3.5" />
                    </button>
-                   <button onClick={() => setEventToDelete(event.id)} className="p-1.5 rounded-full bg-background/80 backdrop-blur text-red-500 hover:bg-red-500 hover:text-white transition-colors" title="Delete Event">
+                   <button onClick={() => setEventToDelete(event.id)} className="p-1.5 rounded-full bg-background text-red-500 hover:bg-red-500 hover:text-white transition-colors border border-border/50 shadow-sm" title="Delete Event">
                      <Trash2 className="h-3.5 w-3.5" />
                    </button>
                 </div>

@@ -134,7 +134,7 @@ export function PaymentsClient({ initialPayments }: PaymentsClientProps) {
 
       {/* Metrics Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="relative overflow-hidden rounded-3xl border border-border bg-card/40 p-6 backdrop-blur-sm">
+        <div className="relative overflow-hidden rounded-3xl border border-border bg-card/85 p-6">
           <div className="absolute right-4 top-4 text-emerald-500 bg-emerald-500/10 p-2 rounded-xl">
             <CreditCard className="h-5 w-5" />
           </div>
@@ -143,7 +143,7 @@ export function PaymentsClient({ initialPayments }: PaymentsClientProps) {
           <p className="text-[10px] text-muted-foreground mt-1">From verified registrations</p>
         </div>
 
-        <div className="relative overflow-hidden rounded-3xl border border-border bg-card/40 p-6 backdrop-blur-sm">
+        <div className="relative overflow-hidden rounded-3xl border border-border bg-card/85 p-6">
           <div className="absolute right-4 top-4 text-amber-500 bg-amber-500/10 p-2 rounded-xl">
             <Clock className="h-5 w-5" />
           </div>
@@ -152,7 +152,7 @@ export function PaymentsClient({ initialPayments }: PaymentsClientProps) {
           <p className="text-[10px] text-muted-foreground mt-1">Requires immediate review</p>
         </div>
 
-        <div className="relative overflow-hidden rounded-3xl border border-border bg-card/40 p-6 backdrop-blur-sm">
+        <div className="relative overflow-hidden rounded-3xl border border-border bg-card/85 p-6">
           <div className="absolute right-4 top-4 text-primary bg-primary/10 p-2 rounded-xl">
             <Check className="h-5 w-5" />
           </div>
@@ -161,7 +161,7 @@ export function PaymentsClient({ initialPayments }: PaymentsClientProps) {
           <p className="text-[10px] text-muted-foreground mt-1">Approved registration tickets</p>
         </div>
 
-        <div className="relative overflow-hidden rounded-3xl border border-border bg-card/40 p-6 backdrop-blur-sm">
+        <div className="relative overflow-hidden rounded-3xl border border-border bg-card/85 p-6">
           <div className="absolute right-4 top-4 text-red-500 bg-red-500/10 p-2 rounded-xl">
             <ShieldAlert className="h-5 w-5" />
           </div>
@@ -207,7 +207,7 @@ export function PaymentsClient({ initialPayments }: PaymentsClientProps) {
       </div>
 
       {/* Main Section with Tabs */}
-      <div className="rounded-3xl border border-border bg-card/20 backdrop-blur-sm p-6 space-y-6">
+      <div className="rounded-3xl border border-border bg-card/85 p-6 space-y-6">
         
         {/* Navigation Tabs and Search */}
         <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 border-b border-border pb-4">
