@@ -135,6 +135,15 @@ export function DashboardHeader({ userEmail, userName, userRole, toggleSidebar }
 
         {/* User profile dropdown and signout */}
         <div className="flex items-center gap-3 border-l border-border pl-4">
+          {userEmail && (
+            <div className="relative h-8 w-8 overflow-hidden rounded-lg border border-border/30 shrink-0 shadow-sm bg-muted flex items-center justify-center">
+              <img
+                src={`https://api.dicebear.com/10.x/bottts-neutral/svg?seed=${encodeURIComponent(userEmail)}`}
+                alt="user avatar"
+                className="h-full w-full object-cover"
+              />
+            </div>
+          )}
           <div className="hidden flex-col text-right md:flex">
             <span className="text-xs font-semibold text-foreground truncate max-w-[120px]">
               {userName || "User"}

@@ -70,8 +70,12 @@ export function StudentProfileClient({ profile, departments, clubs }: StudentPro
         {/* Left Card: Basic Profile */}
         <div className="md:col-span-2 rounded-3xl border border-border bg-card/20 backdrop-blur-sm p-6 space-y-6">
           <div className="flex items-center gap-4 border-b border-border pb-6">
-            <div className="h-16 w-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
-              <User className="h-8 w-8" />
+            <div className="h-16 w-16 rounded-2xl border border-border/50 overflow-hidden shrink-0 shadow-md bg-muted flex items-center justify-center">
+              <img
+                src={`https://api.dicebear.com/10.x/bottts-neutral/svg?seed=${encodeURIComponent(profile.email || profile.name || 'guest')}`}
+                alt="user avatar"
+                className="h-full w-full object-cover"
+              />
             </div>
             <div>
               <h2 className="text-xl font-bold text-foreground leading-tight">{profile.name}</h2>

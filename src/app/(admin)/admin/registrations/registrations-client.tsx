@@ -206,8 +206,12 @@ export function RegistrationsClient({ events, initialRegs }: RegistrationsClient
                     {members.map(member => (
                       <div key={member.id} className="p-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-muted/10 transition-colors">
                         <div className="flex items-center gap-3">
-                          <div className={`h-8 w-8 rounded-full flex items-center justify-center font-bold text-xs ${member.is_captain ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
-                            {member.student_name.charAt(0).toUpperCase()}
+                          <div className={`h-8 w-8 rounded-full border ${member.is_captain ? 'border-primary' : 'border-border'} bg-muted flex items-center justify-center shrink-0 overflow-hidden shadow-sm`}>
+                            <img
+                              src={`https://api.dicebear.com/10.x/bottts-neutral/svg?seed=${encodeURIComponent(member.email || member.student_name)}`}
+                              alt="avatar"
+                              className="h-full w-full object-cover"
+                            />
                           </div>
                           <div>
                             <p className="font-semibold text-sm text-foreground flex items-center gap-2">

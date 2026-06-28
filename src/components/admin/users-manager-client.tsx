@@ -141,8 +141,12 @@ export function UsersManagerClient({ initialUsers }: UsersManagerClientProps) {
                   <tr key={user.id} className="hover:bg-card/10 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-lg bg-background border border-border flex items-center justify-center text-primary font-bold text-xs uppercase shrink-0">
-                          {user.name.substring(0, 2)}
+                        <div className="h-8 w-8 rounded-lg bg-muted border border-border flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
+                          <img
+                            src={`https://api.dicebear.com/10.x/bottts-neutral/svg?seed=${encodeURIComponent(user.email || user.name)}`}
+                            alt="avatar"
+                            className="h-full w-full object-cover"
+                          />
                         </div>
                         <span className="font-semibold text-foreground truncate max-w-[150px]">{user.name}</span>
                       </div>
@@ -207,8 +211,12 @@ export function UsersManagerClient({ initialUsers }: UsersManagerClientProps) {
               <div key={user.id} className="rounded-2xl border border-border bg-card/40 p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-lg bg-background border border-border flex items-center justify-center text-primary font-bold text-xs uppercase shrink-0">
-                      {user.name.substring(0, 2)}
+                    <div className="h-9 w-9 rounded-lg bg-muted border border-border flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
+                      <img
+                        src={`https://api.dicebear.com/10.x/bottts-neutral/svg?seed=${encodeURIComponent(user.email || user.name)}`}
+                        alt="avatar"
+                        className="h-full w-full object-cover"
+                      />
                     </div>
                     <div>
                       <p className="font-semibold text-sm text-foreground">{user.name}</p>
