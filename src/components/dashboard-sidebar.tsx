@@ -115,7 +115,7 @@ export function DashboardSidebar({ role, isOpen, onClose }: DashboardSidebarProp
 
       <aside
         className={`fixed bottom-0 top-0 left-0 z-50 flex w-64 flex-col border-r border-border bg-card/60 backdrop-blur-xl transition-transform duration-300 md:sticky md:translate-x-0 ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          isOpen ? "translate-x-0" : "-translate-x-full invisible md:visible"
         }`}
       >
         <div className="flex h-16 items-center justify-between px-6 md:justify-center">
