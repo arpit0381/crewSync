@@ -38,12 +38,12 @@ export function AnalyticsCharts({ trendData = [], deptData = [] }: AnalyticsChar
   return (
     <div className="grid gap-6 md:grid-cols-2">
       {/* 1. Area Chart: Registrations vs Check-Ins */}
-      <div className="rounded-3xl border border-border bg-card/20 p-6 space-y-4">
+      <div className="rounded-3xl border border-border bg-card/20 p-6 space-y-4 min-w-0 overflow-hidden">
         <div className="space-y-1">
           <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">Registration vs Attendance Trends</h3>
           <p className="text-xs text-muted-foreground">Cumulative metrics count recorded this week.</p>
         </div>
-        <div className="h-72 w-full">
+        <div className="h-72 w-full relative">
           <ResponsiveContainer width="100%" height={288} minWidth={0} minHeight={0}>
             <AreaChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
@@ -93,12 +93,12 @@ export function AnalyticsCharts({ trendData = [], deptData = [] }: AnalyticsChar
       </div>
 
       {/* 2. Bar Chart: Department-wise split */}
-      <div className="rounded-3xl border border-border bg-card/20 p-6 space-y-4">
+      <div className="rounded-3xl border border-border bg-card/20 p-6 space-y-4 min-w-0 overflow-hidden">
         <div className="space-y-1">
           <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">Department Participation</h3>
           <p className="text-xs text-muted-foreground">Distribution of registered students across courses.</p>
         </div>
-        <div className="h-72 w-full">
+        <div className="h-72 w-full relative">
           <ResponsiveContainer width="100%" height={288} minWidth={0} minHeight={0}>
             <BarChart data={deptData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />

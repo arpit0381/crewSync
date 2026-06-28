@@ -144,7 +144,7 @@ export default async function AdminDashboardPage() {
       {/* Main Grid split */}
       <div className="grid gap-6 md:grid-cols-3">
         {/* Left 2 cols: Recent Event Statuses */}
-        <div className="md:col-span-2 rounded-2xl border border-border bg-card/20 p-6 space-y-4">
+        <div className="md:col-span-2 rounded-2xl border border-border bg-card/20 p-6 space-y-4 min-w-0 overflow-hidden">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-foreground">Live Event Statuses</h2>
             <Link href="/admin/events" className="text-xs font-semibold text-primary hover:underline">
@@ -196,7 +196,7 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Right col: Administrative Actions */}
-        <div className="rounded-2xl border border-border bg-card/20 p-6 space-y-4">
+        <div className="rounded-2xl border border-border bg-card/20 p-6 space-y-4 min-w-0 overflow-hidden">
           <h2 className="text-lg font-bold text-foreground">Administrative Actions</h2>
           <div className="grid gap-2">
             <Link
