@@ -101,3 +101,18 @@ export async function broadcastNotificationAction(title: string, message: string
 
   return { success: true, count: inserted }
 }
+
+export async function deleteNotificationsAction(notificationIds: string[]) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: "Unauthorized" }
+
+  const { error } = await supabase
+    .from("notifications")
+    .delete()
+    .eq("user_id", user.id)
+    .in("id", notificationIds)
+
+  if (error) return { error: error.message }
+  return { success: true }
+}

@@ -95,6 +95,7 @@ export function NotificationBell() {
   }, [])
 
   const unreadCount = notifications.filter(n => !n.read_at).length
+  const unreadNotifications = notifications.filter(n => !n.read_at).slice(0, 5)
 
   const handleMarkAllRead = async () => {
     const res = await markAllNotificationsAsReadAction()
@@ -145,37 +146,35 @@ export function NotificationBell() {
           <div className="overflow-y-auto flex-1 p-2">
             {loading ? (
               <div className="p-8 flex justify-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>
-            ) : notifications.length === 0 ? (
-              <div className="p-8 text-center text-sm text-muted-foreground">You have no notifications.</div>
+            ) : unreadNotifications.length === 0 ? (
+              <div className="p-8 text-center text-sm text-muted-foreground">You have no new notifications.</div>
             ) : (
               <div className="space-y-1">
-                {notifications.map((n) => (
+                {unreadNotifications.map((n) => (
                   <div 
                     key={n.id} 
-                    className={`p-3 rounded-xl flex gap-3 transition-colors ${!n.read_at ? 'bg-primary/5 hover:bg-primary/10' : 'hover:bg-card/80'}`}
+                    className="p-3 rounded-xl flex gap-3 transition-colors bg-primary/5 hover:bg-primary/10"
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
-                        <h4 className={`text-sm truncate ${!n.read_at ? 'font-bold text-foreground' : 'font-medium text-foreground/80'}`}>
+                        <h4 className="text-sm truncate font-bold text-foreground">
                           {n.title}
                         </h4>
                         <span className="text-[10px] text-muted-foreground whitespace-nowrap pt-0.5">
                           {formatTime(n.created_at)}
                         </span>
                       </div>
-                      <p className={`text-xs mt-1 line-clamp-2 ${!n.read_at ? 'text-foreground/80' : 'text-muted-foreground'}`}>
+                      <p className="text-xs mt-1 line-clamp-2 text-foreground/80">
                         {n.message}
                       </p>
                     </div>
-                    {!n.read_at && (
-                      <button 
-                        onClick={(e) => handleMarkRead(n.id, e)}
-                        className="mt-1 h-5 w-5 shrink-0 rounded-full bg-background border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors"
-                        title="Mark as read"
-                      >
-                        <Check className="h-3 w-3" />
-                      </button>
-                    )}
+                    <button 
+                      onClick={(e) => handleMarkRead(n.id, e)}
+                      className="mt-1 h-5 w-5 shrink-0 rounded-full bg-background border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors"
+                      title="Mark as read"
+                    >
+                      <Check className="h-3 w-3" />
+                    </button>
                   </div>
                 ))}
               </div>
