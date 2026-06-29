@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Bell, Check, Loader2 } from "lucide-react"
 import { getNotificationsAction, markAllNotificationsAsReadAction, markNotificationAsReadAction } from "@/app/notification-actions"
 import { createClient } from "@/lib/supabase/client"
@@ -11,6 +12,7 @@ export function NotificationBell() {
   const [isOpen, setIsOpen] = React.useState(false)
   const [loading, setLoading] = React.useState(true)
   const popoverRef = React.useRef<HTMLDivElement>(null)
+  const router = useRouter()
 
   const playNotificationSound = React.useCallback(() => {
     try {
@@ -150,11 +152,19 @@ export function NotificationBell() {
               <div className="p-8 text-center text-sm text-muted-foreground">You have no new notifications.</div>
             ) : (
               <div className="space-y-1">
-                {unreadNotifications.map((n) => (
-                  <div 
-                    key={n.id} 
-                    className="p-3 rounded-xl flex gap-3 transition-colors bg-primary/5 hover:bg-primary/10"
-                  >
+                {unreadNotifications.map((n) => {
+                  const isFeedback = n.type === "feedback" && n.event_id
+                  return (
+                    <div 
+                      key={n.id} 
+                      onClick={() => {
+                        if (isFeedback) {
+                          setIsOpen(false)
+                          router.push(`/student/notifications?feedback=${n.event_id}`)
+                        }
+                      }}
+                      className={`p-3 rounded-xl flex gap-3 transition-colors bg-primary/5 hover:bg-primary/10 ${isFeedback ? "cursor-pointer hover:bg-yellow-500/[0.02]" : ""}`}
+                    >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <h4 className="text-sm truncate font-bold text-foreground">
@@ -176,7 +186,8 @@ export function NotificationBell() {
                       <Check className="h-3 w-3" />
                     </button>
                   </div>
-                ))}
+                )
+              })}
               </div>
             )}
           </div>
