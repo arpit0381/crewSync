@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Bell, Check, Info, AlertTriangle, Calendar, CheckCircle2, Trash2, Star, MessageSquare, X } from "lucide-react"
 import { getNotificationsAction, markAllNotificationsAsReadAction, markNotificationAsReadAction, deleteNotificationsAction } from "@/app/notification-actions"
-import { submitFeedbackAction } from "@/app/feedback-actions"
+import { submitFeedbackAction, getEventDetailsAction } from "@/app/feedback-actions"
 import { createClient } from "@/lib/supabase/client"
 import { Loader } from "@/components/loader"
 
@@ -19,6 +19,31 @@ export function NotificationsClient() {
   const [submittingFeedback, setSubmittingFeedback] = React.useState(false)
   const [feedbackError, setFeedbackError] = React.useState<string | null>(null)
   const [feedbackSuccess, setFeedbackSuccess] = React.useState(false)
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search)
+      const eventId = params.get("feedback")
+      if (eventId) {
+        const loadEventDetails = async () => {
+          const res = await getEventDetailsAction(eventId)
+          if (res.success && res.title) {
+            setFeedbackEvent({
+              id: eventId,
+              title: res.title,
+              notificationId: ""
+            })
+            setFeedbackRating(5)
+            setFeedbackHoverRating(null)
+            setFeedbackText("")
+            setFeedbackError(null)
+            setFeedbackSuccess(false)
+          }
+        }
+        loadEventDetails()
+      }
+    }
+  }, [])
 
   const playNotificationSound = React.useCallback(() => {
     try {
@@ -225,13 +250,35 @@ export function NotificationsClient() {
                 return (
                   <div 
                     key={n.id} 
+                    onClick={(e) => {
+                      const target = e.target as HTMLElement
+                      if (
+                        target.tagName === "INPUT" || 
+                        target.closest("button") || 
+                        target.closest("a")
+                      ) {
+                        return
+                      }
+                      if (n.type === "feedback" && n.event_id) {
+                        setFeedbackEvent({
+                          id: n.event_id,
+                          title: n.title.replace("Share Feedback: ", "").replace("Feedback Request: ", ""),
+                          notificationId: n.id
+                        })
+                        setFeedbackRating(5)
+                        setFeedbackHoverRating(null)
+                        setFeedbackText("")
+                        setFeedbackError(null)
+                        setFeedbackSuccess(false)
+                      }
+                    }}
                     className={`p-6 transition-colors flex gap-4 items-start ${
                       isSelected 
                         ? 'bg-primary/5 border-l-2 border-primary pl-5.5' 
                         : !n.read_at 
                           ? 'bg-primary/5 hover:bg-primary/10 border-l-2 border-transparent' 
                           : 'hover:bg-card/40 border-l-2 border-transparent'
-                    }`}
+                    } ${n.type === "feedback" ? "cursor-pointer hover:bg-yellow-500/[0.02] hover:bg-card/50" : ""}`}
                   >
                     {/* Checkbox */}
                     <input 

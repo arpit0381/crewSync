@@ -74,18 +74,28 @@ export default async function CertificateVerificationPage({ params }: PageProps)
                 </div>
               </div>
 
-              {/* Details */}
-              <div className="space-y-4">
-                <DetailRow label="Student Name" value={(certificate.profiles as any)?.name || "—"} />
-                <DetailRow label="Roll Number" value={(certificate.profiles as any)?.roll_number || "—"} />
-                <DetailRow label="Department" value={(certificate.profiles as any)?.departments?.name || "—"} />
-                <DetailRow label="Event" value={(certificate.events as any)?.title || "—"} />
-                <DetailRow label="Event Date" value={formatCertDate((certificate.events as any)?.event_date || "")} />
-                <DetailRow label="Venue" value={(certificate.events as any)?.venue || "—"} />
-                <DetailRow label="Certificate Type" value={getCertTypeLabel(certificate.cert_type)} highlight />
-                <DetailRow label="Certificate Number" value={certificate.certificate_number || "—"} mono />
-                <DetailRow label="Issue Date" value={formatCertDate(certificate.generated_at)} />
-              </div>
+              {/* Safe relation data extraction */}
+              {(() => {
+                const event = Array.isArray(certificate.events) ? certificate.events[0] : certificate.events
+                const profile = Array.isArray(certificate.profiles) ? certificate.profiles[0] : certificate.profiles
+                const department = profile?.departments 
+                  ? (Array.isArray(profile.departments) ? profile.departments[0] : profile.departments) 
+                  : null
+
+                return (
+                  <div className="space-y-4">
+                    <DetailRow label="Student Name" value={profile?.name || "—"} />
+                    <DetailRow label="Roll Number" value={profile?.roll_number || "—"} />
+                    <DetailRow label="Department" value={department?.name || "—"} />
+                    <DetailRow label="Event" value={event?.title || "—"} />
+                    <DetailRow label="Event Date" value={formatCertDate(event?.event_date || "")} />
+                    <DetailRow label="Venue" value={event?.venue || "—"} />
+                    <DetailRow label="Certificate Type" value={getCertTypeLabel(certificate.cert_type)} highlight />
+                    <DetailRow label="Certificate Number" value={certificate.certificate_number || "—"} mono />
+                    <DetailRow label="Issue Date" value={formatCertDate(certificate.generated_at)} />
+                  </div>
+                )
+              })()}
 
               {/* Footer */}
               <div className="pt-4 border-t border-border text-center">

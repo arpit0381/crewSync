@@ -128,3 +128,19 @@ export async function getFeedbackStatsAction(eventId: string) {
     return { error: err.message || "An unexpected error occurred." }
   }
 }
+
+export async function getEventDetailsAction(eventId: string) {
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from("events")
+      .select("title")
+      .eq("id", eventId)
+      .single()
+
+    if (error) return { error: error.message }
+    return { success: true, title: data.title }
+  } catch (err: any) {
+    return { error: err.message || "An unexpected error occurred." }
+  }
+}

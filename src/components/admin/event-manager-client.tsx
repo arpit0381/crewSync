@@ -373,6 +373,15 @@ export function EventManagerClient({
     }
   }
 
+  const handleCopyFeedbackLink = (eventId: string) => {
+    if (typeof window !== "undefined") {
+      const link = `${window.location.origin}/student/notifications?feedback=${eventId}`
+      navigator.clipboard.writeText(link)
+      setSuccess("Feedback link copied to clipboard!")
+      setTimeout(() => setSuccess(null), 3000)
+    }
+  }
+
   return (
     <div className="space-y-6 relative">
       {/* Global Notifications */}
@@ -510,9 +519,14 @@ export function EventManagerClient({
                      <Star className="h-3.5 w-3.5 fill-yellow-500/20" />
                    </button>
                    {event.status === "completed" && (
-                     <button onClick={() => setRequestFeedbackEventId(event.id)} className="p-1.5 rounded-full bg-background text-blue-500 hover:bg-blue-500 hover:text-white transition-colors border border-border/50 shadow-sm" title="Request Feedback Broadcast">
-                       <MessageSquare className="h-3.5 w-3.5" />
-                     </button>
+                     <>
+                       <button onClick={() => setRequestFeedbackEventId(event.id)} className="p-1.5 rounded-full bg-background text-blue-500 hover:bg-blue-500 hover:text-white transition-colors border border-border/50 shadow-sm" title="Request Feedback Broadcast">
+                         <MessageSquare className="h-3.5 w-3.5" />
+                       </button>
+                       <button onClick={() => handleCopyFeedbackLink(event.id)} className="p-1.5 rounded-full bg-background text-emerald-500 hover:bg-emerald-500 hover:text-white transition-colors border border-border/50 shadow-sm" title="Copy Direct Feedback Link">
+                         <Share2 className="h-3.5 w-3.5" />
+                       </button>
+                     </>
                    )}
                    <button onClick={() => setEventToDelete(event.id)} className="p-1.5 rounded-full bg-background text-red-500 hover:bg-red-500 hover:text-white transition-colors border border-border/50 shadow-sm" title="Delete Event">
                      <Trash2 className="h-3.5 w-3.5" />
@@ -660,9 +674,14 @@ export function EventManagerClient({
                         <Star className="h-4 w-4 fill-yellow-500/20" />
                       </button>
                       {event.status === "completed" && (
-                        <button onClick={() => setRequestFeedbackEventId(event.id)} className="p-1.5 text-muted-foreground hover:text-blue-500 transition-colors" title="Request Feedback">
-                          <MessageSquare className="h-4 w-4" />
-                        </button>
+                        <>
+                          <button onClick={() => setRequestFeedbackEventId(event.id)} className="p-1.5 text-muted-foreground hover:text-blue-500 transition-colors" title="Request Feedback">
+                            <MessageSquare className="h-4 w-4" />
+                          </button>
+                          <button onClick={() => handleCopyFeedbackLink(event.id)} className="p-1.5 text-muted-foreground hover:text-emerald-500 transition-colors" title="Copy Feedback Link">
+                            <Share2 className="h-4 w-4" />
+                          </button>
+                        </>
                       )}
                       <button onClick={() => setEventToDelete(event.id)} className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors" title="Delete">
                         <Trash2 className="h-4 w-4" />
