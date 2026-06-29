@@ -4,12 +4,29 @@ import { TicketsClient } from "@/components/dynamic-imports"
 
 export default async function StudentRegistrationsPage() {
   let dbTickets: any[] = []
+  let profileName = "Student"
+  let profileRoll = "N/A"
+  let profileEmail = ""
 
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("name, roll_number, email")
+        .eq("id", user.id)
+        .maybeSingle()
+
+      if (profile) {
+        profileName = profile.name
+        profileRoll = profile.roll_number || "N/A"
+        profileEmail = profile.email || user.email || ""
+      } else {
+        profileEmail = user.email || ""
+      }
+
       // Fetch registrations
       const { data: regs } = await supabase
         .from("registrations")
@@ -51,5 +68,12 @@ export default async function StudentRegistrationsPage() {
 
   const tickets = dbTickets
 
-  return <TicketsClient initialTickets={tickets} />
+  return (
+    <TicketsClient 
+      initialTickets={tickets} 
+      userName={profileName}
+      userRoll={profileRoll}
+      userEmail={profileEmail}
+    />
+  )
 }

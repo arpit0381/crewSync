@@ -51,59 +51,77 @@ export default function ForgotPasswordPage() {
         </div>
 
         <div className="mt-8 bg-card/60 backdrop-blur-xl border border-border/80 p-8 rounded-3xl shadow-2xl">
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {error && (
-              <div className="p-4 rounded-xl bg-red-950/40 border border-red-900/50 text-red-400 text-sm text-center">
-                {error}
-              </div>
-            )}
-
-            {success && (
-              <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-900/50 text-emerald-400 text-sm text-center">
+          {success ? (
+            <div className="text-center space-y-4 py-4 animate-in fade-in duration-300">
+              <img 
+                src="/icons/undraw_comment-sent_8c4r.svg" 
+                alt="email sent illustration" 
+                className="w-44 h-44 mx-auto object-contain"
+              />
+              <h3 className="text-lg font-bold text-foreground">Reset Link Sent</h3>
+              <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
                 {success}
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="email" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Email address
-              </label>
-              <div className="mt-2">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
-                  placeholder="name@college.edu"
-                />
+              </p>
+              <div className="pt-2">
+                <Link
+                  href="/login"
+                  className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground hover:bg-primary/95 transition-all shadow-md shadow-primary/20"
+                >
+                  Back to Sign In
+                </Link>
               </div>
             </div>
-
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="relative flex w-full items-center justify-center rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-lg hover:bg-primary/95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all disabled:opacity-50"
-              >
-                {loading ? (
-                  <Loader2 className="animate-spin h-5 w-5 mr-2" />
-                ) : (
-                  "Send Reset Link"
+          ) : (
+            <>
+              <form className="space-y-6" onSubmit={handleSubmit}>
+                {error && (
+                  <div className="p-4 rounded-xl bg-red-950/40 border border-red-900/50 text-red-400 text-sm text-center">
+                    {error}
+                  </div>
                 )}
-              </button>
-            </div>
-          </form>
 
-          <div className="mt-6 text-center text-xs">
-            <Link
-              href="/login"
-              className="font-semibold text-primary hover:text-primary/80 transition-colors"
-            >
-              Back to sign in
-            </Link>
-          </div>
+                <div>
+                  <label htmlFor="email" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Email address
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      required
+                      className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
+                      placeholder="name@college.edu"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="relative flex w-full items-center justify-center rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-lg hover:bg-primary/95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all disabled:opacity-50"
+                  >
+                    {loading ? (
+                      <Loader2 className="animate-spin h-5 w-5 mr-2" />
+                    ) : (
+                      "Send Reset Link"
+                    )}
+                  </button>
+                </div>
+              </form>
+
+              <div className="mt-6 text-center text-xs">
+                <Link
+                  href="/login"
+                  className="font-semibold text-primary hover:text-primary/80 transition-colors"
+                >
+                  Back to sign in
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

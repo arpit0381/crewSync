@@ -37,26 +37,38 @@ export default async function TournamentDashboardPage() {
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">Tournament Management</h1>
-          <p className="text-sm text-muted-foreground">Control sports and esports brackets, scheduling, and live standings.</p>
+      <div className="relative rounded-3xl bg-card border border-border p-6 md:p-8 overflow-hidden flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="absolute -top-[40%] -right-[10%] w-64 h-64 bg-primary/10 rounded-full blur-[60px] pointer-events-none" />
+        <div className="relative z-10 space-y-2 max-w-xl">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+            Tournament Management
+          </h1>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Control sports and esports brackets, scheduling, and live standings. Manage teams, rosters, matches, and update live scores instantly.
+          </p>
+          <div className="pt-2 flex gap-3">
+            <Link
+              href="/tournament/matches?action=schedule"
+              className="inline-flex items-center gap-2 rounded-xl bg-card border border-border px-4 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-all"
+            >
+              <Calendar className="h-4 w-4" />
+              Schedule Match
+            </Link>
+            <Link
+              href="/admin/events?action=new"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/95 transition-all shadow-md shadow-primary/20"
+            >
+              <Plus className="h-4 w-4" />
+              New Tournament
+            </Link>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Link
-            href="/tournament/matches?action=schedule"
-            className="flex items-center gap-2 rounded-xl bg-card border border-border px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-muted transition-all"
-          >
-            <Calendar className="h-4 w-4" />
-            Schedule Match
-          </Link>
-          <Link
-            href="/admin/events?action=new"
-            className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/95 transition-all shadow-md shadow-primary/20"
-          >
-            <Plus className="h-4 w-4" />
-            New Tournament
-          </Link>
+        <div className="hidden md:block relative w-48 h-32 shrink-0 z-10">
+          <img 
+            src="/icons/undraw_work-time_1ogn.svg" 
+            alt="Work scheduling timeline illustration" 
+            className="w-full h-full object-contain"
+          />
         </div>
       </div>
 

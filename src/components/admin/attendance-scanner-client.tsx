@@ -308,10 +308,14 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
             ) : scannerActive ? (
               <div id="qr-reader" className="w-full h-full [&_video]:object-cover [&_video]:w-full [&_video]:h-full border-none" />
             ) : (
-              <div className="absolute inset-0 flex flex-col items-center justify-center space-y-2 text-muted-foreground p-6 bg-background">
-                <Camera className="h-12 w-12 mx-auto stroke-[1.5]" />
-                <p className="text-sm font-medium">Camera is disabled</p>
-                <p className="text-xs">Select an event and start the scanner.</p>
+              <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4 text-muted-foreground p-6 bg-background select-none">
+                <img 
+                  src="/icons/undraw_qr-code-scan_bewe.svg" 
+                  alt="QR code scan illustration" 
+                  className="w-48 h-48 object-contain opacity-75 mb-2"
+                />
+                <p className="text-sm font-semibold text-foreground">Camera is disabled</p>
+                <p className="text-xs text-muted-foreground">Select an event gate above and start the scanner.</p>
               </div>
             )}
             

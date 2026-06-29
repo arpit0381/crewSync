@@ -175,12 +175,16 @@ export function NotificationsClient() {
 
       <div className="rounded-3xl border border-border bg-card/85 overflow-hidden shadow-sm">
         {notifications.length === 0 ? (
-          <div className="p-16 text-center">
-            <div className="mx-auto h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <Bell className="h-8 w-8 text-primary/60" />
+          <div className="p-16 text-center select-none flex flex-col items-center justify-center space-y-4">
+            <img 
+              src="/icons/undraw_comment-sent_8c4r.svg" 
+              alt="No notifications illustration" 
+              className="w-44 h-44 object-contain opacity-75"
+            />
+            <div>
+              <h3 className="text-lg font-bold text-foreground">You're all caught up!</h3>
+              <p className="text-xs text-muted-foreground mt-1">You don't have any notifications yet.</p>
             </div>
-            <h3 className="text-lg font-bold">You're all caught up!</h3>
-            <p className="text-muted-foreground mt-1">You don't have any notifications yet.</p>
           </div>
         ) : (
           <>

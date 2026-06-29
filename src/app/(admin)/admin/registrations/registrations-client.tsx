@@ -167,8 +167,25 @@ export function RegistrationsClient({ events, initialRegs }: RegistrationsClient
         </div>
 
         {filteredRegs.length === 0 ? (
-          <div className="p-8 text-center text-muted-foreground border border-dashed border-border rounded-2xl">
-            {loading ? "Loading registrations..." : "No registrations found."}
+          <div className="p-12 text-center text-muted-foreground border border-dashed border-border rounded-2xl bg-card/10 flex flex-col items-center justify-center space-y-4 select-none">
+            {loading ? (
+              <div className="flex flex-col items-center gap-2 py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-xs">Loading registrations...</p>
+              </div>
+            ) : (
+              <>
+                <img 
+                  src="/icons/undraw_data-input_ot3j.svg" 
+                  alt="No registrations found" 
+                  className="w-44 h-44 object-contain opacity-75"
+                />
+                <div>
+                  <p className="font-semibold text-foreground">No registrations found</p>
+                  <p className="text-xs text-muted-foreground mt-1">Try modifying your filters or search terms.</p>
+                </div>
+              </>
+            )}
           </div>
         ) : viewMode === "teams" ? (
           <div className="space-y-6">

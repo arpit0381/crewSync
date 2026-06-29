@@ -692,7 +692,7 @@ export function LandingClient({ events, userEmail, userRole, userName }: Landing
               <div className="md:col-span-7 flex justify-center">
                 <div className="relative w-full max-w-md h-64 bg-card/45 border border-border p-6 rounded-3xl overflow-hidden flex items-center justify-center shadow-lg">
                   <img 
-                    src="/icons/undraw_reviewing-design_payz.svg" 
+                    src="/icons/undraw_qr-code-scan_bewe.svg" 
                     alt="Attendance checking illustration" 
                     className="w-full h-full object-contain"
                   />
@@ -922,8 +922,8 @@ export function LandingClient({ events, userEmail, userRole, userName }: Landing
 
             <div className="hidden md:flex md:col-span-5 justify-center relative z-10">
               <img 
-                src="/icons/undraw_conference-call_jgi5.svg" 
-                alt="conference call illustration" 
+                src="/icons/undraw_social-media-interactions_5rls.svg" 
+                alt="social media interactions illustration" 
                 className="w-full max-w-xs h-48 object-contain"
               />
             </div>

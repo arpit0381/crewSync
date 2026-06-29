@@ -160,6 +160,15 @@ export function StudentProfileClient({ profile, departments, clubs }: StudentPro
                 <span className="text-lg font-bold text-foreground">{profile.stats?.teams || 0}</span>
               </div>
             </div>
+
+            {/* Premium Illustration */}
+            <div className="pt-2 hidden sm:block relative w-full h-28 select-none">
+              <img 
+                src="/icons/undraw_recruiter-suggestions_afdd.svg" 
+                alt="Profile achievements and suggestions" 
+                className="w-full h-full object-contain opacity-80"
+              />
+            </div>
           </div>
 
           <div className="border-t border-border pt-4 mt-6 text-[10px] text-muted-foreground text-center leading-relaxed">

@@ -118,36 +118,57 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f0f11_1px,transparent_1px),linear-gradient(to_bottom,#0f0f11_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-60" />
       </div>
 
-      <div className="relative z-10 w-full max-w-md space-y-8">
-        <div className="text-center">
-          <div className="mx-auto relative h-14 w-14 overflow-hidden rounded-2xl border border-border/30 shadow-xl group hover:border-primary/50 transition-all duration-300 bg-card">
-            <img src="/icons/icon-192x192.png" alt="Crew Sync Logo" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110" />
+      <div className="relative z-10 w-full max-w-4xl lg:grid lg:grid-cols-12 gap-12 items-center">
+        {/* Left Column: Form */}
+        <div className="lg:col-span-6 w-full space-y-8">
+          <div className="text-center lg:text-left">
+            <div className="mx-auto lg:mx-0 relative h-14 w-14 overflow-hidden rounded-2xl border border-border/30 shadow-xl group hover:border-primary/50 transition-all duration-300 bg-card">
+              <img src="/icons/icon-192x192.png" alt="Crew Sync Logo" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110" />
+            </div>
+            <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
+              Welcome back to Crew Sync
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              One Sync. Every Event.
+            </p>
           </div>
-          <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
-            Welcome back to Crew Sync
-          </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            One Sync. Every Event.
-          </p>
+
+          <div className="bg-card/60 backdrop-blur-xl border border-border/80 p-8 rounded-3xl shadow-2xl">
+            <React.Suspense fallback={
+              <div className="flex justify-center py-6">
+                <Loader2 className="animate-spin h-6 w-6 text-primary" />
+              </div>
+            }>
+              <LoginForm />
+            </React.Suspense>
+
+            <div className="mt-6 text-center text-xs">
+              <span className="text-muted-foreground">Don't have an account? </span>
+              <Link
+                href="/register"
+                className="font-semibold text-primary hover:text-primary/80 transition-colors"
+              >
+                Sign up for free
+              </Link>
+            </div>
+          </div>
         </div>
 
-        <div className="mt-8 bg-card/60 backdrop-blur-xl border border-border/80 p-8 rounded-3xl shadow-2xl">
-          <React.Suspense fallback={
-            <div className="flex justify-center py-6">
-              <Loader2 className="animate-spin h-6 w-6 text-primary" />
-            </div>
-          }>
-            <LoginForm />
-          </React.Suspense>
-
-          <div className="mt-6 text-center text-xs">
-            <span className="text-muted-foreground">Don't have an account? </span>
-            <Link
-              href="/register"
-              className="font-semibold text-primary hover:text-primary/80 transition-colors"
-            >
-              Sign up for free
-            </Link>
+        {/* Right Column: Illustration (Large screens only) */}
+        <div className="hidden lg:flex lg:col-span-6 flex-col items-center justify-center p-8 text-center space-y-6 select-none border border-border/40 bg-card/25 backdrop-blur-md rounded-3xl relative overflow-hidden">
+          <div className="absolute -top-[30%] -right-[30%] w-60 h-60 bg-primary/10 rounded-full blur-[80px] pointer-events-none" />
+          <div className="relative w-full max-w-[280px] h-72">
+            <img 
+              src="/icons/undraw_biometric-login_v832.svg" 
+              alt="Secure biometric login" 
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-xl font-bold text-foreground">Secure Verification</h3>
+            <p className="text-xs text-muted-foreground max-w-xs mx-auto leading-relaxed">
+              Access your college events, hackathons, and certificates securely via decentralized campus sync keys.
+            </p>
           </div>
         </div>
       </div>

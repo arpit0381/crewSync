@@ -62,12 +62,24 @@ export function NotificationsManagerClient() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3">
-          <Bell className="h-8 w-8 text-primary" />
-          Broadcast Notifications
-        </h1>
-        <p className="text-muted-foreground mt-2">Send platform-wide notifications to all active students.</p>
+      <div className="relative rounded-3xl bg-card border border-border p-6 md:p-8 overflow-hidden flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="absolute -top-[40%] -right-[10%] w-64 h-64 bg-primary/10 rounded-full blur-[60px] pointer-events-none" />
+        <div className="relative z-10 space-y-2 max-w-xl">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl flex items-center gap-3">
+            <Bell className="h-7 w-7 text-primary animate-pulse" />
+            Broadcast Notifications
+          </h1>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Send platform-wide announcements, emergency alerts, or event check-in reminders to all registered student accounts instantly.
+          </p>
+        </div>
+        <div className="hidden md:block relative w-44 h-28 shrink-0 z-10">
+          <img 
+            src="/icons/undraw_social-media-post_tg7l.svg" 
+            alt="Broadcasting notifications illustration" 
+            className="w-full h-full object-contain"
+          />
+        </div>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-2">

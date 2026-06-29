@@ -60,176 +60,197 @@ export default function RegisterPage() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f0f11_1px,transparent_1px),linear-gradient(to_bottom,#0f0f11_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-60" />
       </div>
 
-      <div className="relative z-10 w-full max-w-md space-y-8">
-        <div className="text-center">
-          <div className="mx-auto relative h-14 w-14 overflow-hidden rounded-2xl border border-border/30 shadow-xl group hover:border-primary/50 transition-all duration-300 bg-card">
-            <img src="/icons/icon-192x192.png" alt="Crew Sync Logo" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110" />
+      <div className="relative z-10 w-full max-w-4xl lg:grid lg:grid-cols-12 gap-12 items-center">
+        {/* Left Column: Form */}
+        <div className="lg:col-span-6 w-full space-y-8">
+          <div className="text-center lg:text-left">
+            <div className="mx-auto lg:mx-0 relative h-14 w-14 overflow-hidden rounded-2xl border border-border/30 shadow-xl group hover:border-primary/50 transition-all duration-300 bg-card">
+              <img src="/icons/icon-192x192.png" alt="Crew Sync Logo" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110" />
+            </div>
+            <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
+              Create your account
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Join your campus sync today
+            </p>
           </div>
-          <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
-            Create your account
-          </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Join your campus sync today
-          </p>
+
+          <div className="bg-card/60 backdrop-blur-xl border border-border/80 p-8 rounded-3xl shadow-2xl">
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              {error && (
+                <div className="p-4 rounded-xl bg-red-950/40 border border-red-900/50 text-red-400 text-sm text-center">
+                  {error}
+                </div>
+              )}
+
+              {success && (
+                <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-900/50 text-emerald-400 text-sm text-center">
+                  {success}
+                </div>
+              )}
+
+              <div>
+                <label htmlFor="name" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Full Name
+                </label>
+                <div className="mt-1">
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    required
+                    className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
+                    placeholder="Arpit Bajpai"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="roll_number" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Roll Number
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      id="roll_number"
+                      name="roll_number"
+                      type="text"
+                      className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
+                      placeholder="23BCA101"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="mobile" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Mobile Number
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      id="mobile"
+                      name="mobile"
+                      type="tel"
+                      className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
+                      placeholder="9876543210"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="department_id" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Department
+                  </label>
+                  <div className="mt-1">
+                    <select
+                      id="department_id"
+                      name="department_id"
+                      required
+                      className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
+                    >
+                      <option value="">Select Department</option>
+                      {departments.map((dept) => (
+                        <option key={dept.id} value={dept.id}>{dept.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="section" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Section
+                  </label>
+                  <div className="mt-1">
+                    <select
+                      id="section"
+                      name="section"
+                      required
+                      className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
+                    >
+                      <option value="">Select Section</option>
+                      {Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)).map((letter) => (
+                        <option key={letter} value={letter}>Section {letter}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="email" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Email address
+                </label>
+                <div className="mt-1">
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
+                    placeholder="name@college.edu"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Password
+                </label>
+                <div className="mt-1">
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="relative flex w-full items-center justify-center rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-lg hover:bg-primary/95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all disabled:opacity-50"
+                >
+                  {loading ? (
+                    <Loader2 className="animate-spin h-5 w-5 mr-2" />
+                  ) : (
+                    "Create Account"
+                  )}
+                </button>
+              </div>
+            </form>
+
+            <div className="mt-6 text-center text-xs">
+              <span className="text-muted-foreground">Already have an account? </span>
+              <Link
+                href={loginUrl}
+                className="font-semibold text-primary hover:text-primary/80 transition-colors"
+              >
+                Sign in
+              </Link>
+            </div>
+          </div>
         </div>
 
-        <div className="mt-8 bg-card/60 backdrop-blur-xl border border-border/80 p-8 rounded-3xl shadow-2xl">
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            {error && (
-              <div className="p-4 rounded-xl bg-red-950/40 border border-red-900/50 text-red-400 text-sm text-center">
-                {error}
-              </div>
-            )}
-
-            {success && (
-              <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-900/50 text-emerald-400 text-sm text-center">
-                {success}
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="name" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Full Name
-              </label>
-              <div className="mt-1">
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
-                  placeholder="Arpit Bajpai"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="roll_number" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Roll Number
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="roll_number"
-                    name="roll_number"
-                    type="text"
-                    className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
-                    placeholder="23BCA101"
-                  />
-                </div>
-              </div>
-              <div>
-                <label htmlFor="mobile" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Mobile Number
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="mobile"
-                    name="mobile"
-                    type="tel"
-                    className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
-                    placeholder="9876543210"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="department_id" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Department
-                </label>
-                <div className="mt-1">
-                  <select
-                    id="department_id"
-                    name="department_id"
-                    required
-                    className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
-                  >
-                    <option value="">Select Department</option>
-                    {departments.map((dept) => (
-                      <option key={dept.id} value={dept.id}>{dept.name}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label htmlFor="section" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Section
-                </label>
-                <div className="mt-1">
-                  <select
-                    id="section"
-                    name="section"
-                    required
-                    className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
-                  >
-                    <option value="">Select Section</option>
-                    {Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)).map((letter) => (
-                      <option key={letter} value={letter}>Section {letter}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="email" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Email address
-              </label>
-              <div className="mt-1">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
-                  placeholder="name@college.edu"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Password
-              </label>
-              <div className="mt-1">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
-                  placeholder="••••••••"
-                />
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="relative flex w-full items-center justify-center rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-lg hover:bg-primary/95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all disabled:opacity-50"
-              >
-                {loading ? (
-                  <Loader2 className="animate-spin h-5 w-5 mr-2" />
-                ) : (
-                  "Create Account"
-                )}
-              </button>
-            </div>
-          </form>
-
-          <div className="mt-6 text-center text-xs">
-            <span className="text-muted-foreground">Already have an account? </span>
-            <Link
-              href={loginUrl}
-              className="font-semibold text-primary hover:text-primary/80 transition-colors"
-            >
-              Sign in
-            </Link>
+        {/* Right Column: Illustration (Large screens only) */}
+        <div className="hidden lg:flex lg:col-span-6 flex-col items-center justify-center p-8 text-center space-y-6 select-none border border-border/40 bg-card/25 backdrop-blur-md rounded-3xl relative overflow-hidden">
+          <div className="absolute -top-[30%] -right-[30%] w-60 h-60 bg-primary/10 rounded-full blur-[80px] pointer-events-none" />
+          <div className="relative w-full max-w-[280px] h-72">
+            <img 
+              src="/icons/undraw_biometric-login_v832.svg" 
+              alt="Secure biometric registration" 
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-xl font-bold text-foreground">Secure Identity Sync</h3>
+            <p className="text-xs text-muted-foreground max-w-xs mx-auto leading-relaxed">
+              Create a unified campus record. One simple sync provides access to hackathons, tournament tickets, live check-ins, and verified PDF achievements.
+            </p>
           </div>
         </div>
       </div>

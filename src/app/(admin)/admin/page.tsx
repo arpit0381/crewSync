@@ -79,19 +79,31 @@ export default async function AdminDashboardPage() {
   return (
     <div className="space-y-6 min-w-0 w-full overflow-x-hidden">
       {/* Top Banner & Quick Action */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">Admin Overview</h1>
-          <p className="text-sm text-muted-foreground">Real-time statistics for college events and tournaments.</p>
+      <div className="relative rounded-3xl bg-card border border-border p-6 md:p-8 overflow-hidden flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="absolute -top-[40%] -right-[10%] w-64 h-64 bg-primary/10 rounded-full blur-[60px] pointer-events-none" />
+        <div className="relative z-10 space-y-2 max-w-xl">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+            Admin Overview
+          </h1>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Real-time statistics, registrations, attendance rates, and departments overview for college events and tournaments.
+          </p>
+          <div className="pt-2">
+            <Link
+              href="/admin/events"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground hover:bg-primary/95 transition-all shadow-md shadow-primary/20"
+            >
+              <Plus className="h-4 w-4" />
+              Create Event
+            </Link>
+          </div>
         </div>
-        <div>
-          <Link
-            href="/admin/events"
-            className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/95 transition-all shadow-md shadow-primary/20"
-          >
-            <Plus className="h-4 w-4" />
-            Create Event
-          </Link>
+        <div className="hidden md:block relative w-44 h-28 shrink-0 z-10">
+          <img 
+            src="/icons/undraw_charts_31si.svg" 
+            alt="Overview analytics charts illustration" 
+            className="w-full h-full object-contain"
+          />
         </div>
       </div>
 
