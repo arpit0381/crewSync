@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache"
 import { generateCertificateNumber, generateVerificationUrl } from "@/lib/certificate-utils"
 
 // ─── Email Helper ───────────────────────────────────────────────────
-async function sendResendEmail({
+export async function sendResendEmail({
   to,
   subject,
   html,

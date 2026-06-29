@@ -58,6 +58,7 @@ function LoginForm() {
             type="email"
             autoComplete="email"
             required
+            suppressHydrationWarning
             className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
             placeholder="name@college.edu"
           />
@@ -85,6 +86,7 @@ function LoginForm() {
             type="password"
             autoComplete="current-password"
             required
+            suppressHydrationWarning
             className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
             placeholder="••••••••"
           />
@@ -95,6 +97,7 @@ function LoginForm() {
         <button
           type="submit"
           disabled={loading}
+          suppressHydrationWarning
           className="relative flex w-full items-center justify-center rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-lg hover:bg-primary/95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all disabled:opacity-50"
         >
           {loading ? (

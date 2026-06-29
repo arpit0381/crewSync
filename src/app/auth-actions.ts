@@ -2,6 +2,7 @@
 
 import { createClient, createAdminClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
+import { sendResendEmail } from "@/app/certificate-actions"
 
 export async function signInAction(formData: FormData) {
   const email = formData.get("email") as string
@@ -115,16 +116,70 @@ export async function resetPasswordAction(formData: FormData) {
     return { error: "Email is required" }
   }
 
-  const supabase = await createClient()
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/auth/callback?next=/reset-password`,
-  })
+  try {
+    const adminClient = createAdminClient()
+    
+    // Generate the recovery link via Supabase Auth Admin API (without sending email)
+    const { data, error } = await adminClient.auth.admin.generateLink({
+      type: 'recovery',
+      email: email,
+      options: {
+        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/auth/callback?next=/reset-password`,
+      }
+    })
 
-  if (error) {
-    return { error: error.message }
+    if (error) {
+      return { error: error.message }
+    }
+
+    const actionLink = data?.properties?.action_link
+
+    if (!actionLink) {
+      return { error: "Failed to generate password recovery link." }
+    }
+
+    // Build the premium HTML template
+    const subject = "Reset Your Password - Crew Sync"
+    const html = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #0b0b0f; color: #f4f4f5; padding: 40px 20px; max-width: 600px; margin: 0 auto; border-radius: 24px; border: 1px solid #1f1f2e; text-align: center;">
+        <div style="margin-bottom: 24px;">
+          <span style="font-size: 24px; font-weight: 800; letter-spacing: 0.05em; color: #ffffff;">
+            CREW <span style="color: #3b82f6;">SYNC</span>
+          </span>
+        </div>
+        <h2 style="font-size: 20px; font-weight: 700; color: #ffffff; margin-bottom: 12px;">Reset Your Password</h2>
+        <p style="font-size: 14px; color: #a1a1aa; line-height: 1.6; margin-bottom: 30px; max-width: 480px; margin-left: auto; margin-right: auto;">
+          You requested to reset your password for your Crew Sync account. Click the button below to secure your account and set a new password.
+        </p>
+        <div style="margin-bottom: 30px;">
+          <a href="${actionLink}" style="display: inline-block; background-color: #3b82f6; color: #ffffff; font-weight: 700; font-size: 14px; padding: 14px 32px; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); transition: all 0.2s ease;">
+            Reset Password
+          </a>
+        </div>
+        <p style="font-size: 11px; color: #71717a; line-height: 1.6; max-width: 400px; margin: 0 auto 16px;">
+          If you did not request a password reset, you can safely ignore this email. The link will expire in 24 hours.
+        </p>
+        <div style="border-top: 1px solid #1f1f2e; padding-top: 20px; font-size: 11px; color: #71717a;">
+          Crew Sync Campus Portal • Built by Arpit Bajpai
+        </div>
+      </div>
+    `
+
+    // Send the email via Resend
+    const res = await sendResendEmail({
+      to: email,
+      subject,
+      html
+    })
+
+    if (res.error) {
+      return { error: res.error }
+    }
+
+    return { success: "Password reset link sent to your email!" }
+  } catch (err: any) {
+    return { error: err.message || "An unexpected error occurred." }
   }
-
-  return { success: "Password reset link sent to your email!" }
 }
 
 export async function updatePasswordAction(formData: FormData) {
