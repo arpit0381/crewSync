@@ -4,7 +4,9 @@ import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { createEventAction, updateEventStatusAction, deleteEventAction, updateEventAction } from "@/app/event-actions"
-import { Calendar, MapPin, Users, Plus, X, Loader2, Check, ArrowRight, ClipboardCheck, Trash2, Search, LayoutGrid, List, Filter, Edit2, Copy, Archive, Share2, QrCode, Ticket } from "lucide-react"
+import { requestEventFeedbackAction } from "@/app/notification-actions"
+import { getFeedbackStatsAction } from "@/app/feedback-actions"
+import { Calendar, MapPin, Users, Plus, X, Loader2, Check, ArrowRight, ClipboardCheck, Trash2, Search, LayoutGrid, List, Filter, Edit2, Copy, Archive, Share2, QrCode, Ticket, Star, MessageSquare } from "lucide-react"
 
 interface Category {
   id: string
@@ -77,6 +79,14 @@ export function EventManagerClient({
   
   const [regType, setRegType] = React.useState<"individual" | "team">("individual")
   const [isPaid, setIsPaid] = React.useState(false)
+
+  // Feedback states
+  const [feedbackStatsEvent, setFeedbackStatsEvent] = React.useState<{ id: string; title: string } | null>(null)
+  const [feedbackStats, setFeedbackStats] = React.useState<any>(null)
+  const [loadingFeedbackStats, setLoadingFeedbackStats] = React.useState(false)
+  const [feedbackStatsError, setFeedbackStatsError] = React.useState<string | null>(null)
+  const [requestFeedbackEventId, setRequestFeedbackEventId] = React.useState<string | null>(null)
+  const [requestingFeedback, setRequestingFeedback] = React.useState(false)
 
   const filteredEvents = React.useMemo(() => {
     return events.filter((e) => {
@@ -324,6 +334,45 @@ export function EventManagerClient({
     }
   }
 
+  const handleRequestFeedback = async (eventId: string) => {
+    setRequestingFeedback(true)
+    setError(null)
+    setSuccess(null)
+    try {
+      const result = await requestEventFeedbackAction(eventId)
+      if (result.error) {
+        setError(result.error)
+      } else {
+        setSuccess(`Successfully sent feedback requests to ${result.count} participants.`)
+        setTimeout(() => setSuccess(null), 4000)
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to send feedback requests.")
+    } finally {
+      setRequestingFeedback(false)
+      setRequestFeedbackEventId(null)
+    }
+  }
+
+  const handleOpenFeedbackStats = async (eventId: string, eventTitle: string) => {
+    setFeedbackStatsEvent({ id: eventId, title: eventTitle })
+    setLoadingFeedbackStats(true)
+    setFeedbackStatsError(null)
+    setFeedbackStats(null)
+    try {
+      const result = await getFeedbackStatsAction(eventId)
+      if (result.error) {
+        setFeedbackStatsError(result.error)
+      } else {
+        setFeedbackStats(result.stats)
+      }
+    } catch (err: any) {
+      setFeedbackStatsError(err.message || "Failed to load feedback details.")
+    } finally {
+      setLoadingFeedbackStats(false)
+    }
+  }
+
   return (
     <div className="space-y-6 relative">
       {/* Global Notifications */}
@@ -457,6 +506,14 @@ export function EventManagerClient({
                    <button onClick={() => setQrEvent(event)} className="p-1.5 rounded-full bg-background text-foreground hover:bg-primary hover:text-primary-foreground transition-colors border border-border/50 shadow-sm" title="Show QR Code">
                      <QrCode className="h-3.5 w-3.5" />
                    </button>
+                   <button onClick={() => handleOpenFeedbackStats(event.id, event.title)} className="p-1.5 rounded-full bg-background text-yellow-500 hover:bg-yellow-500 hover:text-black transition-colors border border-border/50 shadow-sm" title="View Feedback Ratings">
+                     <Star className="h-3.5 w-3.5 fill-yellow-500/20" />
+                   </button>
+                   {event.status === "completed" && (
+                     <button onClick={() => setRequestFeedbackEventId(event.id)} className="p-1.5 rounded-full bg-background text-blue-500 hover:bg-blue-500 hover:text-white transition-colors border border-border/50 shadow-sm" title="Request Feedback Broadcast">
+                       <MessageSquare className="h-3.5 w-3.5" />
+                     </button>
+                   )}
                    <button onClick={() => setEventToDelete(event.id)} className="p-1.5 rounded-full bg-background text-red-500 hover:bg-red-500 hover:text-white transition-colors border border-border/50 shadow-sm" title="Delete Event">
                      <Trash2 className="h-3.5 w-3.5" />
                    </button>
@@ -599,6 +656,14 @@ export function EventManagerClient({
                       <button onClick={() => setQrEvent(event)} className="p-1.5 text-muted-foreground hover:text-foreground transition-colors" title="QR Code">
                         <QrCode className="h-4 w-4" />
                       </button>
+                      <button onClick={() => handleOpenFeedbackStats(event.id, event.title)} className="p-1.5 text-muted-foreground hover:text-yellow-500 transition-colors" title="View Feedback">
+                        <Star className="h-4 w-4 fill-yellow-500/20" />
+                      </button>
+                      {event.status === "completed" && (
+                        <button onClick={() => setRequestFeedbackEventId(event.id)} className="p-1.5 text-muted-foreground hover:text-blue-500 transition-colors" title="Request Feedback">
+                          <MessageSquare className="h-4 w-4" />
+                        </button>
+                      )}
                       <button onClick={() => setEventToDelete(event.id)} className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors" title="Delete">
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -981,6 +1046,186 @@ export function EventManagerClient({
               <Share2 className="h-4 w-4" />
               Copy Direct Link
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Request Feedback Confirmation Modal */}
+      {requestFeedbackEventId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="relative w-full max-w-sm rounded-3xl border border-border bg-card p-6 shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col items-center text-center select-none">
+            <button
+              onClick={() => setRequestFeedbackEventId(null)}
+              disabled={requestingFeedback}
+              className="absolute top-4 right-4 rounded-lg p-1.5 hover:bg-muted text-muted-foreground transition-colors cursor-pointer"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <div className="p-3 rounded-full bg-blue-500/10 border border-blue-500/20 mb-4 text-blue-400">
+              <MessageSquare className="h-8 w-8" />
+            </div>
+            <h2 className="text-xl font-bold text-foreground mb-2">Request Feedback</h2>
+            <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
+              This will send a feedback request notification to all students registered for this event. Are you sure you want to broadcast?
+            </p>
+            
+            <div className="flex gap-3 w-full">
+              <button
+                onClick={() => setRequestFeedbackEventId(null)}
+                disabled={requestingFeedback}
+                className="flex-1 rounded-xl border border-border px-4 py-2.5 text-xs font-semibold text-foreground hover:bg-muted transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleRequestFeedback(requestFeedbackEventId)}
+                disabled={requestingFeedback}
+                className="flex-1 rounded-xl bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground hover:bg-primary/95 transition-all shadow-md shadow-primary/20 disabled:opacity-50 cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                {requestingFeedback ? (
+                  <>
+                    <Loader2 className="h-4.5 w-4.5 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  "Broadcast"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Feedback Analytics Modal */}
+      {feedbackStatsEvent && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="relative w-full max-w-2xl rounded-3xl border border-border bg-card p-6 shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh] select-none">
+            {/* Header */}
+            <div className="flex items-start justify-between border-b border-border pb-4 mb-4 pr-6">
+              <div>
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-yellow-500 bg-yellow-500/10 border border-yellow-500/20 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                  <Star className="h-3 w-3 fill-yellow-500" /> Event Reviews
+                </span>
+                <h2 className="text-xl font-bold text-foreground mt-2 leading-tight">Feedback Analytics</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">{feedbackStatsEvent.title}</p>
+              </div>
+              <button
+                onClick={() => setFeedbackStatsEvent(null)}
+                className="absolute top-4 right-4 rounded-lg p-1.5 hover:bg-muted text-muted-foreground transition-colors cursor-pointer"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Content body */}
+            <div className="flex-1 overflow-y-auto space-y-6 pr-2 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
+              {loadingFeedbackStats ? (
+                <div className="flex flex-col items-center justify-center py-20 text-muted-foreground gap-2">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  <p className="text-xs font-semibold">Fetching feedback analytics...</p>
+                </div>
+              ) : feedbackStatsError ? (
+                <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-medium text-center">
+                  {feedbackStatsError}
+                </div>
+              ) : feedbackStats && feedbackStats.count === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 text-muted-foreground text-center space-y-4">
+                  <Star className="h-12 w-12 text-zinc-700 stroke-[1.5]" />
+                  <div>
+                    <p className="font-semibold text-foreground">No feedback submitted yet</p>
+                    <p className="text-xs text-muted-foreground mt-1">Send a broadcast notification requesting feedback once the event completes.</p>
+                  </div>
+                </div>
+              ) : feedbackStats ? (
+                <>
+                  {/* Top Stats Overview */}
+                  <div className="grid gap-4 sm:grid-cols-3">
+                    <div className="rounded-2xl border border-border bg-muted/20 p-4 flex flex-col items-center justify-center text-center">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Average Rating</span>
+                      <span className="text-4xl font-extrabold text-foreground mt-1 flex items-center gap-1">
+                        {feedbackStats.averageRating}
+                        <Star className="h-6 w-6 text-yellow-400 fill-yellow-400 filter drop-shadow-[0_0_4px_rgba(250,204,21,0.3)]" />
+                      </span>
+                      <span className="text-[10px] text-muted-foreground mt-1 font-semibold">Out of 5.0 Stars</span>
+                    </div>
+
+                    <div className="rounded-2xl border border-border bg-muted/20 p-4 flex flex-col items-center justify-center text-center">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Total Submissions</span>
+                      <span className="text-4xl font-extrabold text-foreground mt-1">
+                        {feedbackStats.count}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground mt-1 font-semibold">Reviews collected</span>
+                    </div>
+
+                    {/* Simple Bar Distribution */}
+                    <div className="rounded-2xl border border-border bg-muted/20 p-4 flex flex-col justify-center sm:col-span-1">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 text-center">Distribution</span>
+                      <div className="space-y-1">
+                        {[5, 4, 3, 2, 1].map((r) => {
+                          const count = feedbackStats.distribution[r] || 0
+                          const percentage = feedbackStats.count > 0 ? (count / feedbackStats.count) * 100 : 0
+                          return (
+                            <div key={r} className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
+                              <span className="w-2">{r}★</span>
+                              <div className="flex-1 h-2 bg-background border border-border/50 rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-yellow-400" 
+                                  style={{ width: `${percentage}%` }}
+                                />
+                              </div>
+                              <span className="w-4 text-right">{count}</span>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Individual Comments */}
+                  <div className="space-y-3">
+                    <h3 className="text-sm font-bold text-foreground">Participant Comments ({feedbackStats.count})</h3>
+                    <div className="space-y-3">
+                      {feedbackStats.feedbacks.map((f: any) => (
+                        <div key={f.id} className="rounded-2xl border border-border bg-card/40 p-4 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <span className="text-xs font-bold text-foreground">{f.studentName}</span>
+                              <span className="text-[10px] text-muted-foreground ml-2">({f.studentRoll} • {f.studentDept})</span>
+                            </div>
+                            <div className="flex gap-0.5">
+                              {Array.from({ length: 5 }).map((_, i) => (
+                                <Star 
+                                  key={i} 
+                                  className={`h-3 w-3 ${i < f.rating ? "text-yellow-400 fill-yellow-400" : "text-zinc-700"}`} 
+                                />
+                              ))}
+                            </div>
+                          </div>
+                          {f.text ? (
+                            <p className="text-xs text-muted-foreground leading-relaxed italic">"{f.text}"</p>
+                          ) : (
+                            <p className="text-[10px] text-muted-foreground/40 italic font-mono">No comment left.</p>
+                          )}
+                          <div className="text-[9px] text-muted-foreground/60 text-right">
+                            {new Date(f.createdAt).toLocaleDateString()}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              ) : null}
+            </div>
+
+            {/* Footer */}
+            <div className="border-t border-border pt-4 mt-4 flex justify-end">
+              <button
+                onClick={() => setFeedbackStatsEvent(null)}
+                className="rounded-xl border border-border bg-background px-5 py-2.5 text-xs font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer"
+              >
+                Close View
+              </button>
+            </div>
           </div>
         </div>
       )}

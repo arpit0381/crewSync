@@ -1,8 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { Bell, Check, Info, AlertTriangle, Calendar, CheckCircle2, Trash2 } from "lucide-react"
+import { Bell, Check, Info, AlertTriangle, Calendar, CheckCircle2, Trash2, Star, MessageSquare, X } from "lucide-react"
 import { getNotificationsAction, markAllNotificationsAsReadAction, markNotificationAsReadAction, deleteNotificationsAction } from "@/app/notification-actions"
+import { submitFeedbackAction } from "@/app/feedback-actions"
 import { createClient } from "@/lib/supabase/client"
 import { Loader } from "@/components/loader"
 
@@ -10,6 +11,14 @@ export function NotificationsClient() {
   const [notifications, setNotifications] = React.useState<any[]>([])
   const [loading, setLoading] = React.useState(true)
   const [selectedIds, setSelectedIds] = React.useState<string[]>([])
+
+  const [feedbackEvent, setFeedbackEvent] = React.useState<{ id: string; title: string; notificationId: string } | null>(null)
+  const [feedbackRating, setFeedbackRating] = React.useState(5)
+  const [feedbackHoverRating, setFeedbackHoverRating] = React.useState<number | null>(null)
+  const [feedbackText, setFeedbackText] = React.useState("")
+  const [submittingFeedback, setSubmittingFeedback] = React.useState(false)
+  const [feedbackError, setFeedbackError] = React.useState<string | null>(null)
+  const [feedbackSuccess, setFeedbackSuccess] = React.useState(false)
 
   const playNotificationSound = React.useCallback(() => {
     try {
@@ -138,6 +147,7 @@ export function NotificationsClient() {
     switch (type) {
       case "event": return <Calendar className="h-5 w-5 text-blue-500" />
       case "alert": return <AlertTriangle className="h-5 w-5 text-red-500" />
+      case "feedback": return <Star className="h-5 w-5 text-yellow-500 fill-yellow-500/20" />
       default: return <Info className="h-5 w-5 text-primary" />
     }
   }
@@ -250,6 +260,28 @@ export function NotificationsClient() {
                       <p className={`mt-2 leading-relaxed ${!n.read_at ? 'text-foreground/90' : 'text-muted-foreground'}`}>
                         {n.message}
                       </p>
+                      
+                      {n.type === "feedback" && n.event_id && (
+                        <div className="mt-3">
+                          <button
+                            onClick={() => {
+                              setFeedbackEvent({
+                                id: n.event_id,
+                                title: n.title.replace("Share Feedback: ", "").replace("Feedback Request: ", ""),
+                                notificationId: n.id
+                              })
+                              setFeedbackRating(5)
+                              setFeedbackHoverRating(null)
+                              setFeedbackText("")
+                              setFeedbackError(null)
+                              setFeedbackSuccess(false)
+                            }}
+                            className="inline-flex items-center gap-1.5 rounded-xl bg-yellow-500/10 border border-yellow-500/20 px-4 py-2 text-xs font-semibold text-yellow-500 hover:bg-yellow-500/20 transition-all cursor-pointer shadow-sm hover:scale-[1.01]"
+                          >
+                            <Star className="h-4 w-4 fill-yellow-500/20" /> Rate & Share Feedback
+                          </button>
+                        </div>
+                      )}
                     </div>
                     
                     <div className="flex items-center gap-2 shrink-0 ml-2">
@@ -277,6 +309,156 @@ export function NotificationsClient() {
           </>
         )}
       </div>
+
+      {/* Feedback Modal */}
+      {feedbackEvent && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="w-full max-w-md rounded-3xl border border-border bg-card p-6 shadow-2xl relative overflow-hidden animate-in fade-in zoom-in-95 duration-200 select-none">
+            {/* Background Glow */}
+            <div className="absolute -top-[20%] -right-[20%] w-48 h-48 bg-yellow-500/10 rounded-full blur-[60px] pointer-events-none" />
+
+            <button
+              onClick={() => setFeedbackEvent(null)}
+              className="absolute top-4 right-4 p-2 rounded-full hover:bg-muted text-muted-foreground transition-colors cursor-pointer"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            {feedbackSuccess ? (
+              <div className="text-center space-y-4 py-6 animate-in fade-in duration-300">
+                <div className="h-16 w-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto text-emerald-400">
+                  <CheckCircle2 className="h-10 w-10" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-lg font-bold text-foreground">Thank You!</h3>
+                  <p className="text-xs text-muted-foreground max-w-xs mx-auto leading-relaxed">
+                    Your feedback for <strong>{feedbackEvent.title}</strong> has been submitted successfully. Your review helps us shape better experiences!
+                  </p>
+                </div>
+                <div className="pt-2">
+                  <button
+                    onClick={() => {
+                      // Remove notification locally
+                      setNotifications(current => current.filter(n => n.id !== feedbackEvent.notificationId))
+                      setFeedbackEvent(null)
+                    }}
+                    className="w-full rounded-xl bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground hover:bg-primary/95 transition-all shadow-md shadow-primary/20 cursor-pointer"
+                  >
+                    Back to Notifications
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-5">
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-yellow-500 bg-yellow-500/10 border border-yellow-500/20 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                    <Star className="h-3 w-3 fill-yellow-500" /> Share Experience
+                  </span>
+                  <h3 className="text-xl font-bold text-foreground mt-2 leading-tight">Rate Event</h3>
+                  <p className="text-xs text-muted-foreground mt-1">Please provide your feedback for <strong>{feedbackEvent.title}</strong></p>
+                </div>
+
+                {feedbackError && (
+                  <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-medium text-center">
+                    {feedbackError}
+                  </div>
+                )}
+
+                {/* Stars Rating Selector */}
+                <div className="flex flex-col items-center justify-center gap-2 py-2 bg-muted/20 border border-border/40 rounded-2xl relative">
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Overall Rating</span>
+                  <div className="flex items-center gap-1.5">
+                    {[1, 2, 3, 4, 5].map((star) => {
+                      const isActive = feedbackHoverRating !== null ? star <= feedbackHoverRating : star <= feedbackRating
+                      return (
+                        <button
+                          key={star}
+                          type="button"
+                          onMouseEnter={() => setFeedbackHoverRating(star)}
+                          onMouseLeave={() => setFeedbackHoverRating(null)}
+                          onClick={() => setFeedbackRating(star)}
+                          className="p-1 hover:scale-125 transition-transform duration-100 cursor-pointer"
+                        >
+                          <Star 
+                            className={`h-8 w-8 transition-all ${
+                              isActive 
+                                ? "text-yellow-400 fill-yellow-400 filter drop-shadow-[0_0_6px_rgba(250,204,21,0.4)]" 
+                                : "text-zinc-600 hover:text-zinc-500"
+                            }`} 
+                          />
+                        </button>
+                      )
+                    })}
+                  </div>
+                  <span className="text-xs font-semibold text-foreground h-4">
+                    {(() => {
+                      const currentVal = feedbackHoverRating !== null ? feedbackHoverRating : feedbackRating
+                      if (currentVal === 5) return "Excellent! Loved it! 😍"
+                      if (currentVal === 4) return "Very Good! 🚀"
+                      if (currentVal === 3) return "Good / Average! 👍"
+                      if (currentVal === 2) return "Could be better! 😕"
+                      return "Poor experience! 😞"
+                    })()}
+                  </span>
+                </div>
+
+                {/* Feedback Text Area */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider flex items-center gap-1.5">
+                    <MessageSquare className="h-3.5 w-3.5" /> Comments & Suggestions (Optional)
+                  </label>
+                  <textarea
+                    value={feedbackText}
+                    onChange={(e) => setFeedbackText(e.target.value)}
+                    rows={4}
+                    placeholder="Tell us what you liked, what can be improved, or share event suggestions..."
+                    className="w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary placeholder-muted-foreground resize-none leading-relaxed transition-all"
+                  />
+                </div>
+
+                <div className="pt-2 flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setFeedbackEvent(null)}
+                    disabled={submittingFeedback}
+                    className="flex-1 rounded-xl border border-border px-4 py-2.5 text-xs font-semibold text-foreground hover:bg-muted transition-colors disabled:opacity-50 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setSubmittingFeedback(true)
+                      setFeedbackError(null)
+                      const res = await submitFeedbackAction(
+                        feedbackEvent.id,
+                        feedbackRating,
+                        feedbackText,
+                        feedbackEvent.notificationId
+                      )
+                      if (res.error) {
+                        setFeedbackError(res.error)
+                        setSubmittingFeedback(false)
+                      } else {
+                        setFeedbackSuccess(true)
+                        setSubmittingFeedback(false)
+                      }
+                    }}
+                    disabled={submittingFeedback}
+                    className="flex-1 rounded-xl bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground hover:bg-primary/95 transition-all shadow-md shadow-primary/20 disabled:opacity-50 cursor-pointer flex items-center justify-center gap-1"
+                  >
+                    {submittingFeedback ? (
+                      <Loader />
+                    ) : (
+                      "Submit Feedback"
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

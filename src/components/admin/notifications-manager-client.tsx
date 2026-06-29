@@ -22,6 +22,66 @@ const TEMPLATES = [
     title: "Important Update",
     message: "Please note there has been a sudden change in schedule. Check the portal for the latest updates.",
     type: "alert"
+  },
+  {
+    label: "Venue Relocation",
+    title: "Urgent: Event Venue Shifted",
+    message: "Attention participants! The venue for the upcoming event has been changed. Please check your dashboard tickets portal for the new venue assignment.",
+    type: "alert"
+  },
+  {
+    label: "Registration Closing",
+    title: "Last Call: Registrations Closing Soon",
+    message: "Hurry up! Registrations for the upcoming hackathon/tournament are closing in a few hours. Complete your team formations and seed your rosters now.",
+    type: "event"
+  },
+  {
+    label: "Pass Ready",
+    title: "Entry Tickets & Passes Released",
+    message: "Your entry passes are now active! Please navigate to the 'My Tickets' section on your student dashboard and download the PDF ticket or keep the QR code ready for check-in.",
+    type: "event"
+  },
+  {
+    label: "Roster Seeding Match",
+    title: "Tournament Fixtures Published",
+    message: "The official brackets and schedules have been drafted! Captains, please check the 'Tournament' page for your squad's match timings and pitch/court details.",
+    type: "event"
+  },
+  {
+    label: "Esports Credentials",
+    title: "Esports Match Room Details Dispatched",
+    message: "Lobby details are live! Check your tournament section for the custom Room ID and Room Password. Make sure to join the lobby 10 minutes prior to the schedule.",
+    type: "event"
+  },
+  {
+    label: "Attendance Verified",
+    title: "Check-in Confirmed & Verified",
+    message: "Welcome to the event! Your check-in attendance has been verified. Digital certificates will be auto-generated and made available on your dashboard upon completion.",
+    type: "system"
+  },
+  {
+    label: "Certificates Released",
+    title: "Digital Certificates Available Now",
+    message: "Congratulations! Verified PDF certificates for the recent campus event have been dispatched. You can view, download, or share them from your profile certificates page.",
+    type: "system"
+  },
+  {
+    label: "Results Announced",
+    title: "Tournament Winners & Results Out",
+    message: "The wait is over! The final brackets and team standings have been published. Big congratulations to all the winners and participants. Check the standings portal!",
+    type: "system"
+  },
+  {
+    label: "Maintenance Notice",
+    title: "Scheduled Server Maintenance",
+    message: "Crew Sync will undergo scheduled database optimizations tonight from 02:00 AM to 03:00 AM. Access passes and tickets verification will be offline during this period.",
+    type: "system"
+  },
+  {
+    label: "Feedback Survey",
+    title: "Help Us Improve: Share Your Feedback",
+    message: "Thank you for participating! Please take 2 minutes to fill out the event feedback questionnaire on your dashboard. Your review helps us host better student experiences.",
+    type: "system"
   }
 ]
 
@@ -86,15 +146,15 @@ export function NotificationsManagerClient() {
         {/* Templates */}
         <div className="space-y-4">
           <h2 className="text-lg font-semibold">Saved Templates</h2>
-          <div className="grid gap-4">
+          <div className="grid gap-4 max-h-[580px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
             {TEMPLATES.map((t, i) => (
-              <div key={i} className="rounded-2xl border border-border bg-card/20 p-5 hover:bg-card/40 transition-colors cursor-pointer" onClick={() => applyTemplate(i)}>
+              <div key={i} className="rounded-2xl border border-border bg-card/25 border-zinc-800/80 p-5 hover:bg-card/45 hover:border-primary/30 transition-all cursor-pointer shadow-sm select-none" onClick={() => applyTemplate(i)}>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold uppercase tracking-wider text-primary">{t.label}</span>
                   <span className="text-[10px] bg-muted px-2 py-1 rounded-md capitalize">{t.type}</span>
                 </div>
                 <h3 className="font-semibold text-foreground mb-1">{t.title}</h3>
-                <p className="text-xs text-muted-foreground line-clamp-2">{t.message}</p>
+                <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{t.message}</p>
               </div>
             ))}
           </div>
