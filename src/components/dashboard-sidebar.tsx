@@ -55,6 +55,7 @@ export function DashboardSidebar({ role, isOpen, onClose }: DashboardSidebarProp
     { label: "My Teams", href: "/student/teams", icon: Users },
     { label: "My Attendance", href: "/student/attendance", icon: CheckSquare },
     { label: "My Certificates", href: "/student/certificates", icon: Award },
+    { label: "Notifications", href: "/student/notifications", icon: Bell },
     { label: "Profile", href: "/student/profile", icon: User },
   ]
 
