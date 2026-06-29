@@ -52,7 +52,7 @@ export default function ResetPasswordPage() {
               </div>
             )}
 
-            <div>
+             <div>
               <label htmlFor="password" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 New Password
               </label>
@@ -62,6 +62,7 @@ export default function ResetPasswordPage() {
                   name="password"
                   type="password"
                   required
+                  suppressHydrationWarning
                   className="block w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-sm transition-all"
                   placeholder="••••••••"
                 />
@@ -72,6 +73,7 @@ export default function ResetPasswordPage() {
               <button
                 type="submit"
                 disabled={loading}
+                suppressHydrationWarning
                 className="relative flex w-full items-center justify-center rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-lg hover:bg-primary/95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all disabled:opacity-50"
               >
                 {loading ? (
