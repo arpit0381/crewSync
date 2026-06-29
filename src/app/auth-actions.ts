@@ -132,11 +132,18 @@ export async function resetPasswordAction(formData: FormData) {
       return { error: error.message }
     }
 
-    const actionLink = data?.properties?.action_link
-
-    if (!actionLink) {
-      return { error: "Failed to generate password recovery link." }
+    let tokenHash: string | null = data.properties?.hashed_token || null
+    if (!tokenHash && data.properties?.action_link) {
+      const url = new URL(data.properties.action_link)
+      tokenHash = url.searchParams.get("token")
     }
+
+    if (!tokenHash) {
+      return { error: "Failed to generate password recovery link token." }
+    }
+
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const actionLink = `${appUrl}/api/auth/callback?token_hash=${tokenHash}&type=recovery&next=/reset-password`
 
     // Build the premium HTML template
     const subject = "Reset Your Password - Crew Sync"

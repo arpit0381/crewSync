@@ -4,8 +4,24 @@ import { createClient } from "@/lib/supabase/server"
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get("code")
+  const tokenHash = searchParams.get("token_hash")
+  const type = searchParams.get("type")
   const next = searchParams.get("next") ?? "/"
 
+  // 1. Handle direct token hash verification (e.g. password recovery link generated via Admin API)
+  if (tokenHash && type) {
+    const supabase = await createClient()
+    const { error } = await supabase.auth.verifyOtp({
+      token_hash: tokenHash,
+      type: type as any
+    })
+    
+    if (!error) {
+      return NextResponse.redirect(`${origin}${next}`)
+    }
+  }
+
+  // 2. Handle PKCE code exchange
   if (code) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
