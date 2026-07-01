@@ -1,15 +1,24 @@
 import { createClient } from "@/lib/supabase/server"
 import { TournamentMatchesClient } from "@/components/admin/tournament-matches-client"
 
+export const dynamic = "force-dynamic"
 
 export default async function TournamentMatchesPage() {
   let dbEvents: any[] = []
   let dbMatches: any[] = []
+  let isAdmin = false
 
   try {
     const supabase = await createClient()
 
-    // Fetch team events that have a tournament linked
+    // 1. Fetch user role to determine if they are admin
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      const role = user.user_metadata?.role || "student"
+      isAdmin = ["super_admin", "department_admin", "club_admin", "tournament_admin"].includes(role)
+    }
+
+    // 2. Fetch team events that have a tournament linked
     const { data: events } = await supabase
       .from("events")
       .select(`
@@ -25,7 +34,7 @@ export default async function TournamentMatchesPage() {
       dbEvents = events
     }
 
-    // Fetch matches
+    // 3. Fetch all matches with event_id for client-side filtering
     const { data: matches } = await supabase
       .from("matches")
       .select(`
@@ -37,7 +46,8 @@ export default async function TournamentMatchesPage() {
         team2_score,
         team1:team1_id (id, name),
         team2:team2_id (id, name),
-        winner_id
+        winner_id,
+        event_id
       `)
       .order("round", { ascending: true })
       .order("match_number", { ascending: true })
@@ -49,8 +59,11 @@ export default async function TournamentMatchesPage() {
     console.warn("Database connection failed when fetching matches:", err)
   }
 
-  const events = dbEvents
-  const matches = dbMatches
-
-  return <TournamentMatchesClient events={events} initialMatches={matches} />
+  return (
+    <TournamentMatchesClient 
+      events={dbEvents} 
+      initialMatches={dbMatches} 
+      isAdmin={isAdmin} 
+    />
+  )
 }

@@ -39,7 +39,9 @@ export default async function EventDetailsPage({
       is_paid,
       fee_amount,
       payment_qr_url,
-      payment_remarks
+      payment_remarks,
+      sports_tournaments(id, type, game_name, status),
+      esports_tournaments(id, game_name, room_id, room_password, status)
     `)
     .eq("id", id)
     .single()

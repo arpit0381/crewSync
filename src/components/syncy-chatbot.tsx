@@ -16,6 +16,7 @@ import {
   Sparkles
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
+import { usePathname } from "next/navigation"
 import { askSyncyAction } from "@/app/syncy-actions"
 
 interface Message {
@@ -26,6 +27,7 @@ interface Message {
 }
 
 export function SyncyChatbot() {
+  const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
@@ -157,6 +159,10 @@ export function SyncyChatbot() {
     { label: "Sports tournaments", icon: "🏀" },
     { label: "How QR attendance works", icon: "🔍" }
   ]
+
+  if (pathname?.startsWith("/admin")) {
+    return null
+  }
 
   return (
     <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end gap-3 font-sans select-none">

@@ -21,6 +21,7 @@ interface Match {
   team1?: Team | null
   team2?: Team | null
   winner_id: string | null
+  event_id?: string
 }
 
 interface EventTournament {
@@ -34,9 +35,10 @@ interface EventTournament {
 interface TournamentMatchesClientProps {
   events: EventTournament[]
   initialMatches: Match[]
+  isAdmin?: boolean
 }
 
-export function TournamentMatchesClient({ events, initialMatches }: TournamentMatchesClientProps) {
+export function TournamentMatchesClient({ events, initialMatches, isAdmin = false }: TournamentMatchesClientProps) {
   const [selectedEventId, setSelectedEventId] = React.useState(events[0]?.id || "")
   const [matches, setMatches] = React.useState<Match[]>(initialMatches)
   const [loading, setLoading] = React.useState(false)
@@ -44,10 +46,14 @@ export function TournamentMatchesClient({ events, initialMatches }: TournamentMa
   const [success, setSuccess] = React.useState<string | null>(null)
   const router = useRouter()
 
+  React.useEffect(() => {
+    setMatches(initialMatches)
+  }, [initialMatches])
+
   const activeEvent = events.find((e) => e.id === selectedEventId)
   
-  // Filter matches for the selected event (if needed in the future)
-  const activeMatches = matches
+  // Filter matches for the selected event
+  const activeMatches = matches.filter((m) => m.event_id === selectedEventId)
 
   const handleGenerateFixtures = async () => {
     if (!activeEvent) return
@@ -100,20 +106,22 @@ export function TournamentMatchesClient({ events, initialMatches }: TournamentMa
           </select>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleGenerateFixtures}
-            disabled={loading}
-            className="flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/95 transition-all shadow-md shadow-primary/20 disabled:opacity-50"
-          >
-            {loading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <RefreshCw className="h-4 w-4" />
-            )}
-            Generate Fixtures
-          </button>
-        </div>
+        {isAdmin && (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleGenerateFixtures}
+              disabled={loading}
+              className="flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/95 transition-all shadow-md shadow-primary/20 disabled:opacity-50"
+            >
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4" />
+              )}
+              Generate Fixtures
+            </button>
+          </div>
+        )}
       </div>
 
       {error && (
@@ -129,9 +137,9 @@ export function TournamentMatchesClient({ events, initialMatches }: TournamentMa
         </div>
       )}
 
-      {/* Render Brackets view with Admin scoring controls enabled */}
+      {/* Render Brackets view with appropriate admin state */}
       <div className="rounded-3xl border border-border bg-card/10 p-6 md:p-8">
-        <BracketsView initialMatches={matches} isAdmin={true} />
+        <BracketsView initialMatches={activeMatches} isAdmin={isAdmin} />
       </div>
     </div>
   )

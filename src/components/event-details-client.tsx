@@ -4,7 +4,7 @@ import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { registerForEventAction } from "@/app/event-actions"
-import { Calendar, MapPin, Users, Loader2, ArrowLeft, Clock, Info, Shield, CheckCircle, Ticket, X, Share2, Check, Maximize2 } from "lucide-react"
+import { Calendar, MapPin, Users, Loader2, ArrowLeft, Clock, Info, Shield, CheckCircle, Ticket, X, Share2, Check, Maximize2, Gamepad, Trophy, Copy } from "lucide-react"
 
 interface EventDetails {
   id: string
@@ -26,6 +26,19 @@ interface EventDetails {
   fee_amount?: number
   payment_qr_url?: string | null
   payment_remarks?: string | null
+  sports_tournaments?: {
+    id: string
+    type: "knockout" | "round_robin" | "league" | "group_stage"
+    game_name: string
+    status: string
+  }[]
+  esports_tournaments?: {
+    id: string
+    game_name: string
+    room_id: string | null
+    room_password: string | null
+    status: string
+  }[]
 }
 
 interface EventDetailsClientProps {
@@ -386,6 +399,116 @@ export function EventDetailsClient({ event, isRegistered, registrationStatus, is
                  <p className="whitespace-pre-wrap break-words">{event.description}</p>
                </div>
             </div>
+
+            {/* Tournament Hub Section */}
+            {isSuccessfullyRegistered && (event.sports_tournaments?.length || 0) > 0 && (
+              <div className="rounded-3xl border border-zinc-800 bg-zinc-900/30 p-6 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-primary/10 rounded-xl text-primary border border-primary/20">
+                    <Trophy className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-bold text-white">Tournament Hub</h2>
+                    <p className="text-xs text-zinc-400">View schedules, brackets, and standings for this sport.</p>
+                  </div>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2 pt-2">
+                  {event.sports_tournaments?.map((tourney) => (
+                    <div key={tourney.id} className="rounded-2xl border border-zinc-800 bg-black/40 p-4 flex flex-col justify-between space-y-3">
+                      <div>
+                        <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 border border-primary/20 px-2.5 py-0.5 text-[10px] font-bold text-primary uppercase tracking-wider">
+                          {tourney.type.replace("_", " ")}
+                        </span>
+                        <h3 className="text-sm font-bold text-zinc-100 mt-1">{tourney.game_name}</h3>
+                        <p className="text-xs text-zinc-400 capitalize">Status: {tourney.status}</p>
+                      </div>
+                      <Link
+                        href={`/tournament/brackets?id=${tourney.id}`}
+                        className="w-full flex items-center justify-center gap-1.5 rounded-xl bg-zinc-900 border border-zinc-800 hover:bg-zinc-850 px-4 py-2.5 text-xs font-bold text-white transition-all"
+                      >
+                        View Bracket & Standings
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Esports Lobby Details Section */}
+            {isSuccessfullyRegistered && (event.esports_tournaments?.length || 0) > 0 && (
+              <div className="rounded-3xl border border-purple-900/30 bg-purple-950/10 p-6 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-purple-500/10 rounded-xl text-purple-400 border border-purple-500/20">
+                    <Gamepad className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-bold text-white">Esports Match Lobby</h2>
+                    <p className="text-xs text-zinc-400">Connect to the custom game room and play.</p>
+                  </div>
+                </div>
+
+                <div className="grid gap-4 pt-2">
+                  {event.esports_tournaments?.map((tourney) => {
+                    const hasRoom = !!tourney.room_id
+                    return (
+                      <div key={tourney.id} className="rounded-2xl border border-zinc-800/80 bg-black/40 p-4 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-sm font-bold text-zinc-100">{tourney.game_name}</h3>
+                          <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                            hasRoom ? "bg-green-500/10 border border-green-500/20 text-green-400" : "bg-zinc-850 border border-zinc-800 text-zinc-400"
+                          }`}>
+                            {hasRoom ? "Lobby Active" : "Waiting for Admin"}
+                          </span>
+                        </div>
+
+                        {hasRoom ? (
+                          <div className="grid gap-3 sm:grid-cols-2">
+                            <div className="rounded-xl bg-zinc-900/80 border border-zinc-800 p-3 flex items-center justify-between font-mono text-xs">
+                              <div className="min-w-0">
+                                <p className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold">Room ID</p>
+                                <p className="text-zinc-200 font-bold mt-0.5 truncate select-all">{tourney.room_id}</p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(tourney.room_id || "")
+                                  showToast("Room ID copied to clipboard!")
+                                }}
+                                className="p-1.5 hover:bg-zinc-850 text-zinc-400 hover:text-white rounded-lg transition-colors"
+                              >
+                                <Copy className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+
+                            <div className="rounded-xl bg-zinc-900/80 border border-zinc-800 p-3 flex items-center justify-between font-mono text-xs">
+                              <div className="min-w-0">
+                                <p className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold">Password</p>
+                                <p className="text-zinc-200 font-bold mt-0.5 truncate select-all">{tourney.room_password}</p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(tourney.room_password || "")
+                                  showToast("Lobby Password copied to clipboard!")
+                                }}
+                                className="p-1.5 hover:bg-zinc-850 text-zinc-400 hover:text-white rounded-lg transition-colors"
+                              >
+                                <Copy className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="rounded-xl bg-zinc-900/30 border border-dashed border-zinc-800 p-4 text-center text-xs text-zinc-500 font-medium">
+                            The custom Lobby ID and Password will appear here once the admin dispatches them. Keep checking this page!
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right Column: Poster */}
