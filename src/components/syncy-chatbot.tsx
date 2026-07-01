@@ -326,23 +326,8 @@ export function SyncyChatbot() {
         )}
       </AnimatePresence>
 
-      {/* Row containing tooltip + button */}
-      <div className="flex items-center gap-2">
-        <AnimatePresence>
-          {!isOpen && (
-            <motion.div
-              initial={{ opacity: 0, x: 10, scale: 0.8 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, x: 10, scale: 0.8 }}
-              transition={{ delay: 1, duration: 0.3 }}
-              className="whitespace-nowrap rounded-2xl border border-border bg-card px-3.5 py-2 text-xs font-bold text-foreground shadow-lg flex items-center gap-1.5 pointer-events-none"
-            >
-              <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-              Hi, I'm Syncy! 👋
-            </motion.div>
-          )}
-        </AnimatePresence>
-
+      {/* Column containing button + tooltip */}
+      <div className="flex flex-col items-center gap-1.5">
         {/* Floating Action Button */}
         <motion.button
           onClick={() => setIsOpen(!isOpen)}
@@ -362,6 +347,21 @@ export function SyncyChatbot() {
             </span>
           )}
         </motion.button>
+
+        <AnimatePresence>
+          {!isOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.8 }}
+              transition={{ delay: 1, duration: 0.3 }}
+              className="whitespace-nowrap rounded-full border border-border bg-card px-2.5 py-1 text-[10px] font-bold text-foreground shadow-sm flex items-center gap-1 pointer-events-none"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+              Hi, I'm Syncy! 👋
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )
