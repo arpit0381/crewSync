@@ -83,8 +83,6 @@ export async function verifyAndCheckInAction(ticketCode: string, expectedEventId
     return { error: "Failed to save attendance record: " + checkinErr.message }
   }
 
-  revalidatePath("/admin/attendance")
-  revalidatePath("/admin")
   return {
     success: "Check-in Successful!",
     studentName: student.name,

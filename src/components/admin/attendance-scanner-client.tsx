@@ -218,7 +218,7 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
       // Cooldown timer to prevent rapid duplicate scanner hits
       setTimeout(() => {
         if (isMountedRef.current) setScanLock(false)
-      }, 2000)
+      }, 1200)
     }
   }, [selectedEventId])
 
@@ -252,7 +252,7 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
           scanner = new Html5QrcodeScanner(
             "qr-reader",
             { 
-              fps: 10, 
+              fps: 25, 
               qrbox: { width: 280, height: 280 },
               aspectRatio: 1.0 
             },
