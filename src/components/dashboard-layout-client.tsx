@@ -17,7 +17,13 @@ export function DashboardLayoutClient({
   userRole = "student",
   children,
 }: DashboardLayoutClientProps) {
-  const [sidebarOpen, setSidebarOpen] = React.useState(false)
+  const [sidebarOpen, setSidebarOpen] = React.useState(true)
+
+  React.useEffect(() => {
+    if (window.innerWidth < 768) {
+      setSidebarOpen(false)
+    }
+  }, [])
 
   const handleCloseSidebar = React.useCallback(() => setSidebarOpen(false), [])
   const handleToggleSidebar = React.useCallback(() => setSidebarOpen(prev => !prev), [])
@@ -35,6 +41,7 @@ export function DashboardLayoutClient({
           userEmail={userEmail}
           userName={userName}
           userRole={userRole}
+          sidebarOpen={sidebarOpen}
           toggleSidebar={handleToggleSidebar}
         />
         <main className="flex-1 overflow-y-auto p-4 md:p-6 min-w-0 max-w-full overflow-x-hidden transition-all duration-200">
