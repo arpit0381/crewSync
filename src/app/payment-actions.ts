@@ -97,6 +97,7 @@ export async function verifyPaymentAction(registrationId: string) {
         event_date,
         event_time,
         venue,
+        is_paid,
         categories (
           name
         )
@@ -116,28 +117,31 @@ export async function verifyPaymentAction(registrationId: string) {
       const ticketCode = ticketData?.ticket_code
 
       if (profile?.email && event && ticketCode) {
-        try {
-          const pdfBase64 = await generateTicketPDFBase64({
-            ticketCode,
-            userName: profile.name || "Student",
-            userRoll: profile.roll_number || "N/A",
-            userEmail: profile.email,
-            eventTitle: event.title,
-            eventDate: event.event_date,
-            eventTime: event.event_time,
-            venue: event.venue,
-            categoryName: event.categories?.name || "General"
-          })
+        // Only generate and send email tickets for paid events
+        if (event.is_paid) {
+          try {
+            const pdfBase64 = await generateTicketPDFBase64({
+              ticketCode,
+              userName: profile.name || "Student",
+              userRoll: profile.roll_number || "N/A",
+              userEmail: profile.email,
+              eventTitle: event.title,
+              eventDate: event.event_date,
+              eventTime: event.event_time,
+              venue: event.venue,
+              categoryName: event.categories?.name || "General"
+            })
 
-          await sendTicketEmailAction(
-            profile.email,
-            profile.name || "Student",
-            event.title,
-            ticketCode,
-            pdfBase64
-          )
-        } catch (err: any) {
-          console.error(`Failed to generate/send ticket email for registration ${r.id}:`, err)
+            await sendTicketEmailAction(
+              profile.email,
+              profile.name || "Student",
+              event.title,
+              ticketCode,
+              pdfBase64
+            )
+          } catch (err: any) {
+            console.error(`Failed to generate/send ticket email for registration ${r.id}:`, err)
+          }
         }
       }
     }
