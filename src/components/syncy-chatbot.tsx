@@ -160,7 +160,7 @@ export function SyncyChatbot() {
     { label: "How QR attendance works", icon: "🔍" }
   ]
 
-  if (pathname?.startsWith("/admin")) {
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/events/")) {
     return null
   }
 
