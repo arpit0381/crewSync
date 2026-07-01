@@ -20,7 +20,8 @@ import {
   GitFork,
   X,
   Bell,
-  CreditCard
+  CreditCard,
+  Mail
 } from "lucide-react"
 
 interface SidebarItem {
@@ -71,6 +72,7 @@ export function DashboardSidebar({ role, isOpen, onClose }: DashboardSidebarProp
     { label: "Departments", href: "/admin/departments", icon: Building },
     { label: "Clubs", href: "/admin/clubs", icon: Flag },
     { label: "User Management", href: "/admin/users", icon: Users },
+    { label: "Email Center", href: "/admin/emails", icon: Mail },
     { label: "Notifications", href: "/admin/notifications", icon: Bell },
     { label: "System Settings", href: "/admin/settings", icon: Settings },
   ]
