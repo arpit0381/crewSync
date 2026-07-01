@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { PWARegister } from "@/components/pwa-register";
+import { SyncyChatbot } from "@/components/syncy-chatbot";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -51,6 +52,7 @@ export default function RootLayout({
         >
           <PWARegister />
           {children}
+          <SyncyChatbot />
         </ThemeProvider>
       </body>
     </html>
