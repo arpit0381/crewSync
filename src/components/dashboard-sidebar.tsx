@@ -40,7 +40,15 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({ role, isOpen, onClose }: DashboardSidebarProps) {
   const pathname = usePathname()
 
-
+  // Close sidebar on Escape key
+  React.useEffect(() => {
+    if (!isOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose()
+    }
+    document.addEventListener("keydown", handleKeyDown)
+    return () => document.removeEventListener("keydown", handleKeyDown)
+  }, [isOpen, onClose])
 
   const studentItems: SidebarItem[] = [
     { label: "Home", href: "/student", icon: Home },
@@ -109,14 +117,13 @@ export function DashboardSidebar({ role, isOpen, onClose }: DashboardSidebarProp
       {isOpen && (
         <div 
           className="fixed inset-0 z-40 bg-background/60 backdrop-blur-sm md:hidden" 
+          onClick={onClose}
         />
       )}
 
       <aside
-        className={`fixed bottom-0 top-0 left-0 z-50 flex flex-col bg-card/60 backdrop-blur-xl transition-[width,transform,opacity] duration-200 ease-in-out md:sticky ${
-          isOpen 
-            ? "w-64 border-r border-border translate-x-0 visible opacity-100" 
-            : "w-64 md:w-0 md:border-r-0 -translate-x-full md:translate-x-0 md:invisible opacity-0 overflow-hidden"
+        className={`fixed bottom-0 top-0 left-0 z-50 flex w-64 flex-col border-r border-border bg-card/60 backdrop-blur-xl transition-transform duration-300 md:sticky md:translate-x-0 ${
+          isOpen ? "translate-x-0" : "-translate-x-full invisible md:visible"
         }`}
       >
         <div className="flex h-16 items-center justify-between px-6 md:justify-center">
@@ -137,7 +144,7 @@ export function DashboardSidebar({ role, isOpen, onClose }: DashboardSidebarProp
           </button>
         </div>
 
-        <nav className="flex-1 space-y-1 px-4 py-4 pb-16 overflow-y-auto">
+        <nav className="flex-1 space-y-1 px-4 py-4 overflow-y-auto">
           {items.map((item) => {
             const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
             const Icon = item.icon
@@ -146,6 +153,7 @@ export function DashboardSidebar({ role, isOpen, onClose }: DashboardSidebarProp
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={onClose}
                 className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-200 ${
                   isActive
                     ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-[1.02]"

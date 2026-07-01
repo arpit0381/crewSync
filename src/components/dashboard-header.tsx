@@ -20,11 +20,10 @@ interface DashboardHeaderProps {
   userEmail?: string
   userName?: string
   userRole?: string
-  sidebarOpen?: boolean
   toggleSidebar?: () => void
 }
 
-export function DashboardHeader({ userEmail, userName, userRole, sidebarOpen = false, toggleSidebar }: DashboardHeaderProps) {
+export function DashboardHeader({ userEmail, userName, userRole, toggleSidebar }: DashboardHeaderProps) {
   const { setTheme, resolvedTheme } = useNextTheme()
   const { themePack, setThemePack } = useTheme()
   const [dropdownOpen, setDropdownOpen] = React.useState(false)
@@ -59,14 +58,10 @@ export function DashboardHeader({ userEmail, userName, userRole, sidebarOpen = f
         {toggleSidebar && (
           <button
             onClick={toggleSidebar}
-            className="relative h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted focus:outline-none transition-colors"
+            className="rounded-lg p-1.5 hover:bg-muted md:hidden"
             aria-label="Toggle Sidebar"
           >
-            <div className="relative flex flex-col items-center justify-center w-5 h-5">
-              <span className={`block absolute h-0.5 w-5 bg-foreground rounded-full transform transition-all duration-300 ease-in-out ${sidebarOpen ? 'rotate-45' : '-translate-y-1.5'}`} />
-              <span className={`block absolute h-0.5 w-5 bg-foreground rounded-full transform transition-all duration-300 ease-in-out ${sidebarOpen ? 'opacity-0 translate-x-3' : 'opacity-100'}`} />
-              <span className={`block absolute h-0.5 w-5 bg-foreground rounded-full transform transition-all duration-300 ease-in-out ${sidebarOpen ? '-rotate-45' : 'translate-y-1.5'}`} />
-            </div>
+            <Menu className="h-5 w-5" />
           </button>
         )}
         <div className="flex items-center gap-2.5">
