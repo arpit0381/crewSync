@@ -3,7 +3,8 @@
 import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Bell, Check, Loader2 } from "lucide-react"
+import { Bell, Check, Loader2, X } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 import { getNotificationsAction, markAllNotificationsAsReadAction, markNotificationAsReadAction } from "@/app/notification-actions"
 import { createClient } from "@/lib/supabase/client"
 
@@ -11,6 +12,7 @@ export function NotificationBell() {
   const [notifications, setNotifications] = React.useState<any[]>([])
   const [isOpen, setIsOpen] = React.useState(false)
   const [loading, setLoading] = React.useState(true)
+  const [activeToast, setActiveToast] = React.useState<any | null>(null)
   const popoverRef = React.useRef<HTMLDivElement>(null)
   const router = useRouter()
 
@@ -73,6 +75,12 @@ export function NotificationBell() {
           (payload) => {
             playNotificationSound()
             setNotifications((current) => [payload.new, ...current])
+            setActiveToast(payload.new)
+            
+            // Auto hide toast after 6 seconds
+            setTimeout(() => {
+              setActiveToast((current: any) => current?.id === payload.new.id ? null : current)
+            }, 6000)
           }
         )
         .subscribe()
@@ -203,6 +211,44 @@ export function NotificationBell() {
           </div>
         </div>
       )}
+
+      {/* Real-time Floating Toast Alert */}
+      <AnimatePresence>
+        {activeToast && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.9 }}
+            onClick={() => {
+              setIsOpen(true) // Open bell panel on click
+              setActiveToast(null)
+            }}
+            className="fixed top-6 right-6 z-[9999] max-w-sm w-[calc(100vw-3rem)] sm:w-96 bg-card/90 border border-primary/20 hover:border-primary/40 backdrop-blur-2xl p-4 rounded-2xl shadow-2xl flex gap-3 cursor-pointer group"
+          >
+            <div className="h-9 w-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 mt-0.5 group-hover:bg-primary/20 transition-all">
+              <Bell className="h-5 w-5 animate-bounce" />
+            </div>
+            
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs font-bold text-foreground truncate">{activeToast.title}</p>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setActiveToast(null)
+                  }}
+                  className="p-1 hover:bg-muted rounded-lg text-muted-foreground hover:text-foreground shrink-0 transition-colors"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+              <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
+                {activeToast.message}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
