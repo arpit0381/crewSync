@@ -335,7 +335,7 @@ export function SyncyChatbot() {
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 10, scale: 0.8 }}
               transition={{ delay: 1, duration: 0.3 }}
-              className="whitespace-nowrap rounded-2xl border border-border bg-card/90 backdrop-blur-md px-3.5 py-2 text-xs font-bold text-foreground shadow-lg flex items-center gap-1.5 pointer-events-none"
+              className="whitespace-nowrap rounded-2xl border border-border bg-card px-3.5 py-2 text-xs font-bold text-foreground shadow-lg flex items-center gap-1.5 pointer-events-none"
             >
               <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
               Hi, I'm Syncy! 👋
@@ -348,7 +348,7 @@ export function SyncyChatbot() {
           onClick={() => setIsOpen(!isOpen)}
           whileHover={{ scale: 1.1, rotate: [0, -5, 5, -5, 0], transition: { duration: 0.4 } }}
           whileTap={{ scale: 0.92 }}
-          className="relative flex h-14 w-14 md:h-16 md:w-16 items-center justify-center transition-all focus:outline-none group cursor-pointer shrink-0 animate-bounce [animation-duration:4s]"
+          className="relative flex h-14 w-14 md:h-16 md:w-16 items-center justify-center transition-all focus:outline-none group cursor-pointer shrink-0"
           aria-label="Open Syncy Assistant"
         >
           <img 
