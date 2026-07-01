@@ -61,6 +61,17 @@ const playBeep = (type: "success" | "error" | "warning") => {
       osc.start(ctx.currentTime);
       osc.stop(ctx.currentTime + 0.15);
     }
+
+    // Add tactile vibration feedback for mobile devices (extremely useful in loud fests)
+    if (typeof navigator !== "undefined" && navigator.vibrate) {
+      if (type === "success") {
+        navigator.vibrate(100); // Short confirmation buzz
+      } else if (type === "error") {
+        navigator.vibrate([150, 80, 150]); // Double alert pulse
+      } else {
+        navigator.vibrate([80, 50, 80]); // Warning pulse
+      }
+    }
   } catch (e) {
     // Ignore audio errors
   }
@@ -106,6 +117,38 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
       setTotalCheckins(attResult.count || 0)
     }
     fetchStats()
+  }, [selectedEventId, supabase])
+
+  // Realtime subscription for multi-gate coordination sync
+  React.useEffect(() => {
+    if (!selectedEventId) return
+
+    const channel = supabase
+      .channel(`attendance-gate-sync-${selectedEventId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "attendance",
+          filter: `event_id=eq.${selectedEventId}`
+        },
+        async () => {
+          // Re-query database to fetch fresh true check-in counts
+          const { count } = await supabase
+            .from("attendance")
+            .select("*", { count: "exact", head: true })
+            .eq("event_id", selectedEventId)
+          if (count !== null && isMountedRef.current) {
+            setTotalCheckins(count)
+          }
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [selectedEventId, supabase])
 
   // Sync ref with state for scanner callback access without re-binding
