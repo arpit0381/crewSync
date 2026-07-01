@@ -1,7 +1,10 @@
 import { notFound } from "next/navigation"
+import { Suspense } from "react"
 import { createClient, createAdminClient } from "@/lib/supabase/server"
 import { EventDetailsClient } from "@/components/event-details-client"
+import { Loader2 } from "lucide-react"
 
+// Force dynamic rendering since we read user session / live registration counts
 export const dynamic = "force-dynamic"
 
 export default async function EventDetailsPage({
@@ -9,12 +12,26 @@ export default async function EventDetailsPage({
 }: {
   params: Promise<{ id: string }>
 }) {
-  const { id } = await params
+  return (
+    <main className="container mx-auto px-4 max-w-7xl min-h-[60vh] flex items-center justify-center">
+      <Suspense fallback={
+        <div className="flex flex-col items-center justify-center gap-3 py-20 text-muted-foreground animate-pulse">
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+          <p className="text-sm font-semibold tracking-wide">Syncing event details...</p>
+        </div>
+      }>
+        {params.then(({ id }) => {
+          if (!id) {
+            notFound()
+          }
+          return <EventDetailsContainer id={id} />
+        })}
+      </Suspense>
+    </main>
+  )
+}
 
-  if (!id) {
-    notFound()
-  }
-
+async function EventDetailsContainer({ id }: { id: string }) {
   const supabase = await createClient()
 
   // 1. Fetch Event Details
@@ -81,15 +98,13 @@ export default async function EventDetailsPage({
   }
 
   return (
-    <main className="container mx-auto px-4 max-w-7xl">
-      <EventDetailsClient 
-        event={event as any} 
-        isRegistered={isRegistered} 
-        registrationStatus={registrationStatus}
-        isLoggedIn={!!user}
-        isFull={isFull}
-        isClosed={isClosed}
-      />
-    </main>
+    <EventDetailsClient 
+      event={event as any} 
+      isRegistered={isRegistered} 
+      registrationStatus={registrationStatus}
+      isLoggedIn={!!user}
+      isFull={isFull}
+      isClosed={isClosed}
+    />
   )
 }
