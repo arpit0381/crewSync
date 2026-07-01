@@ -21,7 +21,8 @@ import {
   X,
   Bell,
   CreditCard,
-  Mail
+  Mail,
+  MessageSquare
 } from "lucide-react"
 
 interface SidebarItem {
@@ -73,6 +74,7 @@ export function DashboardSidebar({ role, isOpen, onClose }: DashboardSidebarProp
     { label: "Clubs", href: "/admin/clubs", icon: Flag },
     { label: "User Management", href: "/admin/users", icon: Users },
     { label: "Email Center", href: "/admin/emails", icon: Mail },
+    { label: "Contact Messages", href: "/admin/contacts", icon: MessageSquare },
     { label: "Notifications", href: "/admin/notifications", icon: Bell },
     { label: "System Settings", href: "/admin/settings", icon: Settings },
   ]

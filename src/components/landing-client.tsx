@@ -284,6 +284,7 @@ export function LandingClient({ events, userEmail, userRole, userName }: Landing
               <a href="#features" className="hover:text-primary transition-colors">Features</a>
               <a href="#discovery" className="hover:text-primary transition-colors">Events</a>
               <a href="#attendance" className="hover:text-primary transition-colors">Check-in</a>
+              <Link href="/contact" className="hover:text-primary transition-colors">Contact</Link>
             </nav>
 
             {/* Theme Settings & Actions */}
@@ -411,6 +412,7 @@ export function LandingClient({ events, userEmail, userRole, userName }: Landing
                     <a href="#features" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/10 hover:text-primary transition-colors">Features</a>
                     <a href="#discovery" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/10 hover:text-primary transition-colors">Events</a>
                     <a href="#attendance" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/10 hover:text-primary transition-colors">Check-in</a>
+                    <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/10 hover:text-primary transition-colors">Contact</Link>
                   </nav>
                   
                   <div className="pt-4 border-t border-border/50">
