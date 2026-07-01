@@ -76,12 +76,21 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
   
   const [lastScan, setLastScan] = React.useState<ScanLog | null>(null)
   const [overlayVisible, setOverlayVisible] = React.useState(false)
+  const [manualCode, setManualCode] = React.useState("")
   
   // Stats
   const [totalRegs, setTotalRegs] = React.useState(0)
   const [totalCheckins, setTotalCheckins] = React.useState(0)
   
   const supabase = createClient()
+  const isMountedRef = React.useRef(true)
+
+  React.useEffect(() => {
+    isMountedRef.current = true
+    return () => {
+      isMountedRef.current = false
+    }
+  }, [])
 
   // Fetch stats when event changes
   React.useEffect(() => {
@@ -104,6 +113,80 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
     scanLockRef.current = scanLock
   }, [scanLock])
 
+  // Central Check-in Processing Callback (for QR scans & Manual inputs)
+  const processCheckIn = React.useCallback(async (code: string) => {
+    if (!selectedEventId || scanLockRef.current) return
+    setScanLock(true)
+    
+    try {
+      const result = await verifyAndCheckInAction(code, selectedEventId)
+      
+      const status = result.error ? "error" : result.warning ? "warning" : "success"
+      playBeep(status)
+      
+      const newLog: ScanLog = {
+        id: Math.random().toString(),
+        time: new Date().toLocaleTimeString(),
+        code: code,
+        status: status,
+        message: result.error 
+          ? result.error 
+          : result.warning 
+            ? `${result.warning} already checked in` 
+            : `Successfully checked in`,
+        student: result.studentName,
+        roll: result.rollNumber
+      }
+
+      if (result.success) {
+        setTotalCheckins((prev) => prev + 1)
+      }
+
+      if (isMountedRef.current) {
+        setLastScan(newLog)
+        setOverlayVisible(true)
+        setScanLogs((prev) => [newLog, ...prev])
+      }
+      
+      // Auto-hide overlay after 3 seconds
+      setTimeout(() => {
+        if (isMountedRef.current) setOverlayVisible(false)
+      }, 3000)
+      
+    } catch (err: any) {
+      playBeep("error")
+      const newLog: ScanLog = {
+        id: Math.random().toString(),
+        time: new Date().toLocaleTimeString(),
+        code: code,
+        status: "error",
+        message: "Network error: " + err.message
+      }
+      if (isMountedRef.current) {
+        setLastScan(newLog)
+        setOverlayVisible(true)
+        setScanLogs((prev) => [newLog, ...prev])
+      }
+      
+      setTimeout(() => {
+        if (isMountedRef.current) setOverlayVisible(false)
+      }, 3000)
+    } finally {
+      // Cooldown timer to prevent rapid duplicate scanner hits
+      setTimeout(() => {
+        if (isMountedRef.current) setScanLock(false)
+      }, 2000)
+    }
+  }, [selectedEventId])
+
+  const handleManualSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!manualCode.trim() || !selectedEventId || scanLock) return
+    const code = manualCode.trim().toUpperCase()
+    setManualCode("")
+    processCheckIn(code)
+  }
+
   React.useEffect(() => {
     let scanner: Html5QrcodeScanner | null = null
     let isMounted = true
@@ -115,66 +198,9 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
       }
       setCameraError(null)
 
-      const onScanSuccess = async (decodedText: string) => {
+      const onScanSuccess = (decodedText: string) => {
         if (scanLockRef.current) return
-        
-        // Lock scanner during DB round-trip
-        setScanLock(true)
-        
-        try {
-          const result = await verifyAndCheckInAction(decodedText, selectedEventId)
-          
-          const status = result.error ? "error" : result.warning ? "warning" : "success"
-          playBeep(status)
-          
-          const newLog: ScanLog = {
-            id: Math.random().toString(),
-            time: new Date().toLocaleTimeString(),
-            code: decodedText,
-            status: status,
-            message: result.error 
-              ? result.error 
-              : result.warning 
-                ? `${result.warning} already checked in` 
-                : `Successfully checked in`,
-            student: result.studentName,
-            roll: result.rollNumber
-          }
-
-          if (result.success) {
-            setTotalCheckins((prev) => prev + 1)
-          }
-
-          setLastScan(newLog)
-          setOverlayVisible(true)
-          setScanLogs((prev) => [newLog, ...prev])
-          
-          // Hide overlay after 3 seconds
-          setTimeout(() => {
-            if (isMounted) setOverlayVisible(false)
-          }, 3000)
-          
-        } catch (err: any) {
-          playBeep("error")
-          const newLog: ScanLog = {
-            id: Math.random().toString(),
-            time: new Date().toLocaleTimeString(),
-            code: decodedText,
-            status: "error",
-            message: "Network error: " + err.message
-          }
-          setLastScan(newLog)
-          setOverlayVisible(true)
-          setScanLogs((prev) => [newLog, ...prev])
-          setTimeout(() => {
-            if (isMounted) setOverlayVisible(false)
-          }, 3000)
-        } finally {
-          // Release lock after 3 seconds cooldown
-          setTimeout(() => {
-            if (isMounted) setScanLock(false)
-          }, 3000)
-        }
+        processCheckIn(decodedText)
       }
 
       const initTimer = setTimeout(() => {
@@ -208,7 +234,7 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
         }
       }
     }
-  }, [scannerActive, selectedEventId])
+  }, [scannerActive, processCheckIn])
 
   const toggleScanner = () => {
     // Need user gesture to initialize AudioContext, so play a silent beep if starting
@@ -295,6 +321,27 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
                 {scannerActive ? "Stop Camera" : "Start Camera Scan"}
               </button>
             </div>
+
+            <div className="border-t border-border/40 pt-4 space-y-3">
+              <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">Manual Ticket Check-in</label>
+              <form onSubmit={handleManualSubmit} className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="E.g. CRS-2026-123456"
+                  value={manualCode}
+                  onChange={(e) => setManualCode(e.target.value)}
+                  disabled={scanLock || !selectedEventId}
+                  className="flex-1 px-3 py-2 text-xs rounded-xl border border-border bg-background text-foreground uppercase placeholder:normal-case font-mono focus:border-primary focus:outline-none transition-all disabled:opacity-50"
+                />
+                <button
+                  type="submit"
+                  disabled={scanLock || !manualCode.trim() || !selectedEventId}
+                  className="px-4 py-2 rounded-xl bg-primary/20 hover:bg-primary/30 border border-primary/30 text-primary font-bold text-xs transition-all disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
+                >
+                  {scanLock && manualCode ? <RefreshCw className="h-3 w-3 animate-spin" /> : "Verify"}
+                </button>
+              </form>
+            </div>
           </div>
 
           {/* Camera Frame */}
@@ -321,8 +368,14 @@ export function AttendanceScannerClient({ events }: AttendanceScannerClientProps
             
             {/* Scan Result Overlay */}
             {overlayVisible && lastScan && (
-              <div className={`absolute inset-0 z-20 flex flex-col items-center justify-center p-6 animate-in fade-in zoom-in duration-200 ${overlayColor}`}>
-                <div className="text-center space-y-4 w-full max-w-sm">
+              <div 
+                onClick={() => {
+                  setOverlayVisible(false)
+                  setScanLock(false)
+                }}
+                className={`absolute inset-0 z-20 flex flex-col items-center justify-center p-6 animate-in fade-in zoom-in duration-200 cursor-pointer ${overlayColor}`}
+              >
+                <div className="text-center space-y-4 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
                   {lastScan.status === "success" && <CheckCircle className={`h-24 w-24 mx-auto ${textColor}`} />}
                   {lastScan.status === "warning" && <AlertTriangle className={`h-24 w-24 mx-auto ${textColor}`} />}
                   {lastScan.status === "error" && <XCircle className={`h-24 w-24 mx-auto ${textColor}`} />}
