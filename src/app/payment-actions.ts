@@ -3,6 +3,8 @@
 import { createClient, createAdminClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import { broadcastNotificationAction } from "./notification-actions"
+import { generateTicketPDFBase64 } from "@/lib/server-ticket-pdf"
+import { sendTicketEmailAction } from "./certificate-actions"
 
 export async function verifyPaymentAction(registrationId: string) {
   const supabase = createAdminClient()
@@ -77,6 +79,68 @@ export async function verifyPaymentAction(registrationId: string) {
       message: `Your payment for ${reg.events?.title} has been verified and your ticket is ready!`,
       type: "system"
     })
+  }
+
+  // 6. Generate and send PDF tickets via email
+  const { data: updatedRegs } = await supabase
+    .from("registrations")
+    .select(`
+      id,
+      user_id,
+      profiles (
+        name,
+        email,
+        roll_number
+      ),
+      events:event_id (
+        title,
+        event_date,
+        event_time,
+        venue,
+        categories (
+          name
+        )
+      ),
+      tickets (
+        ticket_code
+      )
+    `)
+    .in("id", registrationsToUpdate)
+
+  if (updatedRegs) {
+    for (const r of updatedRegs) {
+      const profile = r.profiles as any
+      const event = r.events as any
+      const ticketsArray = r.tickets as any
+      const ticketData = Array.isArray(ticketsArray) ? ticketsArray[0] : ticketsArray
+      const ticketCode = ticketData?.ticket_code
+
+      if (profile?.email && event && ticketCode) {
+        try {
+          const pdfBase64 = await generateTicketPDFBase64({
+            ticketCode,
+            userName: profile.name || "Student",
+            userRoll: profile.roll_number || "N/A",
+            userEmail: profile.email,
+            eventTitle: event.title,
+            eventDate: event.event_date,
+            eventTime: event.event_time,
+            venue: event.venue,
+            categoryName: event.categories?.name || "General"
+          })
+
+          await sendTicketEmailAction(
+            profile.email,
+            profile.name || "Student",
+            event.title,
+            ticketCode,
+            pdfBase64
+          )
+        } catch (err: any) {
+          console.error(`Failed to generate/send ticket email for registration ${r.id}:`, err)
+        }
+      }
+    }
   }
 
   revalidatePath("/admin/payments")

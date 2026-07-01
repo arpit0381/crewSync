@@ -56,7 +56,13 @@ export async function sendResendEmail({
 }
 
 // ─── Ticket Email (unchanged) ───────────────────────────────────────
-export async function sendTicketEmailAction(email: string, studentName: string, eventTitle: string, ticketCode: string) {
+export async function sendTicketEmailAction(
+  email: string, 
+  studentName: string, 
+  eventTitle: string, 
+  ticketCode: string,
+  pdfBase64?: string
+) {
   const subject = `Entry Ticket Confirmed: ${eventTitle}`
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px; background-color: #ffffff;">
@@ -67,11 +73,20 @@ export async function sendTicketEmailAction(email: string, studentName: string, 
         <p style="margin: 0; font-size: 14px; color: #4b5563;">YOUR ENTRY TICKET CODE:</p>
         <p style="margin: 5px 0 0 0; font-size: 24px; font-weight: bold; letter-spacing: 2px; color: #1f2937;">${ticketCode}</p>
       </div>
-      <p style="font-size: 14px; color: #6b7280;">You can download your PDF ticket from your Crew Sync student dashboard. Present the QR code at the event entrance for scanning.</p>
+      <p style="font-size: 14px; color: #6b7280;">Your entry ticket is attached as a PDF to this email. Present the QR code at the event entrance for scanning.</p>
       <p>Regards,<br/>Crew Sync Team</p>
     </div>
   `
-  return await sendResendEmail({ to: email, subject, html })
+
+  const attachments = pdfBase64 ? [
+    {
+      content: pdfBase64,
+      filename: `Ticket-${eventTitle.replace(/\s+/g, "-")}.pdf`,
+      contentType: "application/pdf"
+    }
+  ] : undefined
+
+  return await sendResendEmail({ to: email, subject, html, attachments })
 }
 
 // ─── Save Certificate Design (V2) ──────────────────────────────────

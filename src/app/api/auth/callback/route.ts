@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server"
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || origin
   const code = searchParams.get("code")
   const tokenHash = searchParams.get("token_hash")
   const type = searchParams.get("type")
@@ -17,7 +18,7 @@ export async function GET(request: Request) {
     })
     
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`)
+      return NextResponse.redirect(`${baseUrl}${next}`)
     }
   }
 
@@ -32,12 +33,12 @@ export async function GET(request: Request) {
         const role = user.user_metadata?.role || "student"
         if (next === "/") {
           const redirectPath = role === "student" ? "/student" : role === "tournament_admin" ? "/tournament" : "/admin"
-          return NextResponse.redirect(`${origin}${redirectPath}`)
+          return NextResponse.redirect(`${baseUrl}${redirectPath}`)
         }
       }
-      return NextResponse.redirect(`${origin}${next}`)
+      return NextResponse.redirect(`${baseUrl}${next}`)
     }
   }
 
-  return NextResponse.redirect(`${origin}/login?error=Could not authenticate user`)
+  return NextResponse.redirect(`${baseUrl}/login?error=Could not authenticate user`)
 }
