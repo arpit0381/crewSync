@@ -93,8 +93,11 @@ export function DashboardSidebar({ role, isOpen, onClose }: DashboardSidebarProp
     switch (role) {
       case "super_admin":
       case "department_admin":
-      case "club_admin":
         return adminItems
+      case "club_admin":
+        return adminItems.filter(item => 
+          ["Dashboard", "Events", "Registrations", "Payments", "Attendance Scan", "Certificates", "Email Center", "Notifications"].includes(item.label)
+        )
       case "tournament_admin":
         return tournamentItems
       case "scanner":
